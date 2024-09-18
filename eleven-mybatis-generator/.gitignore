@@ -1,0 +1,8 @@
+/target/
+/log/
+/bin/
+/coverage-report
+.classpath
+.settings/
+.idea/
+cims-mybatis-generator.iml

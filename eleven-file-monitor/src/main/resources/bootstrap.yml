@@ -1,0 +1,37 @@
+file:
+  monitor:
+    thread:
+      pool:
+      - threadGroupName: file-monitor-server-group
+        threadPoolName: file
+        threadNamePrefix: file-server
+        corePoolSize: 5
+        maximumPoolSize: 10
+        keepAliveTime: 60
+        workQueueNum: 50
+        unit: SECONDS
+      - threadGroupName: file-monitor-server-group-1
+        threadPoolName: file
+        threadNamePrefix: file-server
+        corePoolSize: 5
+        maximumPoolSize: 10
+        keepAliveTime: 60
+        workQueueNum: 50
+        unit: SECONDS
+    logPath: D:\qycache\log
+    monitorDir: D:\qycache\log #filemonitortest
+    #shell: F:\cwRsync-master\slave2master_30s.bat
+    #serverIP:
+    #port:
+    transmissionMode: RSYNC
+    #targetDir: D:\back
+
+h2:
+  db:
+    url: jdbc:h2:file:./db/h2DB
+    username: root
+    password: root
+    maxConnections: 10
+    timeout: 30
+    schemaSql: classpath:/sql/h2-schema.sql
+    dataSql: classpath:/sql/h2-data.sql

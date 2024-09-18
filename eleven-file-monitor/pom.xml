@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.hx.nine.eleven.file.monitor</groupId>
+  <artifactId>eleven-file-monitor</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+
+    <vertx.version>4.4.0</vertx.version>
+    <junit-jupiter.version>5.9.1</junit-jupiter.version>
+    <launcher.class>io.vertx.core.Launcher</launcher.class>
+    <main-class>com.hx.nine.eleven.file.monitor.VertxFileMonitorApplicationMain</main-class>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-stack-depchain</artifactId>
+        <version>${vertx.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <!-- H2内置数据库 -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>2.1.214</version>
+<!--      <scope>runtime</scope>-->
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.13.3</version>
+    </dependency>
+    <dependency>
+      <groupId>net.contentobjects.jnotify</groupId>
+      <artifactId>jnotify</artifactId>
+      <version>0.94</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.36</version>
+    </dependency>
+    <!-- log4j2日志以来 -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.20.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.20.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j18-impl</artifactId>
+      <version>2.18.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.logging.log4j</groupId>-->
+    <!--      <artifactId>log4j-slf4j-impl</artifactId>-->
+    <!--      <version>2.20.0</version>-->
+    <!--      <scope>test</scope>-->
+    <!--    </dependency>-->
+
+    <!-- yaml文件读取 -->
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <!-- 协程 -->
+    <dependency>
+      <groupId>co.paralleluniverse</groupId>
+      <artifactId>quasar-core</artifactId>
+      <version>0.7.10</version>
+    </dependency>
+    <dependency>
+      <groupId>co.paralleluniverse</groupId>
+      <artifactId>quasar-actors</artifactId>
+      <version>0.7.10</version>
+    </dependency>
+    <dependency>
+      <groupId>co.paralleluniverse</groupId>
+      <artifactId>quasar-reactive-streams</artifactId>
+      <version>0.7.10</version>
+    </dependency>
+    <dependency>
+      <groupId>co.paralleluniverse</groupId>
+      <artifactId>quasar-disruptor</artifactId>
+      <version>0.7.10</version>
+    </dependency>
+    <dependency>
+      <groupId>co.paralleluniverse</groupId>
+      <artifactId>quasar-kotlin</artifactId>
+      <version>0.7.10</version>
+    </dependency>
+    <dependency>
+      <groupId>com.esotericsoftware</groupId>
+      <artifactId>reflectasm</artifactId>
+      <version>1.11.7</version>
+    </dependency>
+    <!-- package扫描 -->
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.10.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- 导入敏感词匹配包 -->
+    <!--        <dependency>-->
+    <!--            <groupId>net.contentobjects</groupId>-->
+    <!--            <artifactId>jnotify</artifactId>-->
+    <!--            <version>0.94</version>-->
+    <!--            <scope>system</scope> &lt;!&ndash;system，类似provided，需要显式提供依赖的jar以后，Maven就不会在Repository中查找它&ndash;&gt;-->
+    <!--            <systemPath>${project.basedir}/src/main/lib/jnotify-0.94.jar</systemPath>-->
+    <!--        </dependency>-->
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-config-yaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-templ-thymeleaf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-templ-freemarker</artifactId>
+    </dependency>
+
+    <!-- junit 测试 -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.f4b6a3</groupId>
+      <artifactId>ulid-creator</artifactId>
+      <version>5.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>3.14.16</version>
+    </dependency>
+
+
+  </dependencies>
+
+  <build>
+    <finalName>${project.name}</finalName>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <!--          <release>${maven.compiler.source}</release>-->
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${maven-shade-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>${launcher.class}</Main-Class>
+                    <Main-Verticle>${main-class}</Main-Verticle>
+                  </manifestEntries>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar
+              </outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin.version}</version>
+        <configuration>
+          <mainClass>io.vertx.core.Launcher</mainClass>
+          <arguments>
+            <argument>run</argument>
+            <argument>${main-class}</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
+
+</project>

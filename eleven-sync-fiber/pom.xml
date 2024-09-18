@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hx.nine.eleven.sync.fiber</groupId>
+    <artifactId>eleven-sync-fiber</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>eleven-sync-fiber</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <vertx.version>4.4.3</vertx.version>
+        <quasar-core.version>0.7.10</quasar-core.version>
+        <quasar-maven-plugin.version>0.7.9</quasar-maven-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-dependencies</artifactId>
+                <version>${vertx.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hx.nine.eleven.commons</groupId>
+            <artifactId>eleven-common-toolkit</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-codegen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-docgen</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+            <version>0.7.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.dropwizard.metrics</groupId>
+                    <artifactId>metrics-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.latencyutils</groupId>
+                    <artifactId>LatencyUtils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hdrhistogram</groupId>
+                    <artifactId>HdrHistogram</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
+                <!--        <exclusion>-->
+                <!--          <groupId>com.google.guava</groupId>-->
+                <!--          <artifactId>guava</artifactId>-->
+                <!--        </exclusion>-->
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.f4b6a3</groupId>
+            <artifactId>ulid-creator</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <name>maven-releases</name>
+            <url>http://:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <name>maven-snapshots</name>
+            <url>http://:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.vlkan</groupId>
+                <artifactId>quasar-maven-plugin</artifactId>
+                <version>${quasar-maven-plugin.version}</version>
+                <configuration>
+                    <check>true</check>
+                    <debug>true</debug>
+                    <verbose>true</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <!--
+                    override the internal dependency to use the same quasar version as the one used by vert.x sync, it
+                    works until they change the API.
+                    -->
+                    <dependency>
+                        <groupId>co.paralleluniverse</groupId>
+                        <artifactId>quasar-core</artifactId>
+                        <version>${quasar-core.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- Collecting classpath entries as properties in the form groupId:artifactId:type:[classifier]
+                as per http://maven.apache.org/plugins/maven-dependency-plugin/properties-mojo.html -->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-dependency-plugin</artifactId>-->
+<!--                <version>2.10</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>getClasspathFilenames</id>-->
+<!--                        <goals>-->
+<!--                            <goal>properties</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <configuration>-->
+
+<!--                    &lt;!&ndash;<systemPropertyVariables>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<co.paralleluniverse.fibers.verifyInstrumentation>true</co.paralleluniverse.fibers.verifyInstrumentation>&ndash;&gt;-->
+<!--                    &lt;!&ndash;</systemPropertyVariables>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<argLine>-Dco.paralleluniverse.fibers.verifyInstrumentation=true</argLine>&ndash;&gt;-->
+
+<!--                    &lt;!&ndash; Enable if using compile-time (AoT) instrumentation &ndash;&gt;-->
+<!--                    &lt;!&ndash; argLine>-Dco.paralleluniverse.fibers.disableAgentWarning</argLine &ndash;&gt;-->
+<!--                    <argLine>-javaagent:${co.paralleluniverse:quasar-core:jar:jdk}</argLine>-->
+<!--                    &lt;!&ndash;<forkCount>1</forkCount>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<reuseForks>true</reuseForks>&ndash;&gt;-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+        </plugins>
+    </build>
+</project>

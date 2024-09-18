@@ -1,0 +1,103 @@
+<dependency>
+      <groupId>co.paralleluniverse</groupId>
+      <artifactId>quasar-core</artifactId>
+      <version>0.7.10</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.latencyutils</groupId>
+          <artifactId>LatencyUtils</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hdrhistogram</groupId>
+          <artifactId>HdrHistogram</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+	
+	
+	 <!--方式一：jar包独立-->
+            <!-- 使用maven-jar-plugin和maven-dependency-plugin插件打包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.maven.test.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+           <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+          </plugin>
+	
+	
+	
+    <!-- 使用maven-assembly-plugin插件打包 -->
+    <!--方式二： jar 不独立，包含jar包 -->
+    </build>  
+        </plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.maven.test.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>

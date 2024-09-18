@@ -1,0 +1,16 @@
+2023-03-13 10:08:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]@table_bigen:MENU:false\000aINSERT INTO MENU VALUES(1,'系统设置',0,'');"; SQL statement:
+@table_bigen:MENU:false
+INSERT INTO MENU VALUES(1,'系统设置',0,''); [42000-214]
+2023-03-13 11:16:45 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select * from [*]SELECT COUNT(1) FROM MEUN"; expected "identifier"; SQL statement:
+select * from SELECT COUNT(1) FROM MEUN [42001-214]
+2023-03-13 11:17:22 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select * from [*]SELECT COUNT(1) FROM MEUN"; expected "identifier"; SQL statement:
+select * from SELECT COUNT(1) FROM MEUN [42001-214]
+2023-03-13 11:17:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MEUN" not found; SQL statement:
+select count(*) from MEUN [42102-214]
+2023-03-13 11:18:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MEUN" not found; SQL statement:
+select count(*) from MEUN [42102-214]

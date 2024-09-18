@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!--Configuration后面的status,这个用于设置log4j2自身内部的信息输出,可以不设置,当设置成trace时,你会看到log4j2内部各种详细输出-->
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身,设置间隔秒数-->
+<Configuration status = "warn" monitorInterval = "5">
+  <!-- ==============================================公共配置============================================== -->
+  <Properties>
+    <property name ="LOG_HOME">/data/home/wml/devcode/app/log/</property>
+    <property name="logFileName">fileMonitor</property>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p}{TRACE=blue, DEBUG=green, INFO=green,
+            WARN=yellow, ERROR=red, FATAL=red} %tid --- [%style{%15.15t}{magenta}] %-40.40logger{39}---[%4L] : %m%n"/>
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %tid --- [%15.15t] %-40.40logger{39}---[%4L] : %m%n"/>
+    <!-- 日志文件默认输出格式,不带行号输出(行号显示会影响日志输出性能);%C:大写,类名;%M:方法名;%m:错误信息;%n:换行 -->
+    <!-- <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %C.%M - %m%n</property> -->
+    <!-- 日志文件默认输出格式,另类带行号输出(对日志输出性能未知);%C:大写,类名;%M:方法名;%L:行号;%m:错误信息;%n:换行 -->
+    <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %C.%M[%L line] - %m%n</property>
+
+  </Properties>
+
+
+  <!--日志处理-->
+  <Appenders>
+    <!-- 控制台输出appender-->
+    <Console name = "Console" target = "SYSTEM_OUT">
+      <PatternLayout pattern = "%d{HH:mm:ss.SSS} [%t] [%-5level] %l %c{36}:%L ---%m%n"/>
+    </Console>
+
+    <!-- 日志文件输出appender-->
+    <File name = "file" fileName = "${LOG_HOME}/file-monitor-%d{ yyyy-MM-dd}.log">
+      <PatternLayout pattern = "%d{ yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %l %c{36} ---%m%n"/>
+    </File>
+
+    <!-- 使用随机读写流的文件输出appender,性能提高-->
+    <RandomAccessFile name = "accessFile" fileName = "${LOG_HOME}/myAccess.log">
+      <PatternLayout pattern="%d{ yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %l %c{36} ---%m%n"></PatternLayout>
+    </RandomAccessFile>
+
+    <!--按照一定规则拆分日志文件的appender-->
+    <RollingFile name = "rollingFile" fileName = "${LOG_HOME}/myrolling.log"
+                 filePattern = "${LOG_HOME}/$${data:yyyy-MM-dd/myrolling-%d{yyyy-MM-dd-HH-mm}-%i.log}">
+      <!--日志级别过滤器-->
+      <ThresholdFilter level = "debug" onMatch = "DENY"/>
+      <!--指定日志消息的格式-->
+      <PatternLayout pattern="%d{ yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %l %c{36} ---%m%n"></PatternLayout>
+      <!--日志拆分规则-->
+      <Policies>
+        <!--在系统启动时，触发拆分规则，生产一个新的日志文件-->
+        <OnStartupTriggeringPolicy/>
+        <!--按照文件大小进行拆分-->
+        <SizeBasedTriggeringPolicy size = "10 MB"/>
+        <!--按照时间规则进行拆分-->
+        <TimeBasedTriggeringPolicy/>
+      </Policies>
+      <!--在同一个目录下，文件的个数限定为30个 超过进行覆盖-->
+      <DefaultRolloverStrategy max = "30"/>
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <AsyncLogger name="com.lance.logging" level="debug" additivity="false" includeLocation="true">
+      <AppenderRef ref="Console"/>
+      <appender-ref ref="FILE"/>
+    </AsyncLogger>
+    <Root level="debug">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="FILE"/>
+    </Root>
+  </Loggers>
+</Configuration>
