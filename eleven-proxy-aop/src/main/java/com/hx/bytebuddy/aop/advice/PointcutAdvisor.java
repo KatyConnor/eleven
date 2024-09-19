@@ -1,6 +1,6 @@
-package com.hx.bytebuddy.aop.advice;
+package com.hx.nine.eleven.bytebuddy.aop.advice;
 
-import com.hx.bytebuddy.aop.interceptor.jdk.MethodInvocationInterceptor;
+import com.hx.nine.eleven.bytebuddy.aop.interceptor.jdk.MethodInvocationInterceptor;
 
 public interface PointcutAdvisor {
 

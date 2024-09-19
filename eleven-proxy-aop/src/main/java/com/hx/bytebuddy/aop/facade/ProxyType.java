@@ -1,4 +1,4 @@
-package com.hx.bytebuddy.aop.facade;
+package com.hx.nine.eleven.bytebuddy.aop.facade;
 
 public interface ProxyType {
 

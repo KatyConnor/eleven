@@ -1,4 +1,4 @@
-package com.hx.bytebuddy.aop.exception;
+package com.hx.nine.eleven.bytebuddy.aop.exception;
 
 public class ProxyCreatorException extends Exception{
 	public ProxyCreatorException() {
