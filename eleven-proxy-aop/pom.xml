@@ -22,6 +22,17 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>2334813-release-V2fReL</id>
+            <url>https://packages.aliyun.com/maven/repository/2334813-release-V2fReL</url>
+        </repository>
+        <snapshotRepository>
+            <id>2334813-snapshot-o6H6fS</id>
+            <url>https://packages.aliyun.com/maven/repository/2334813-snapshot-o6H6fS</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.hx.nine.eleven.commons</groupId>

@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.core.factory.impl;
 
-import com.hx.lang.commons.utils.BeanUtils;
+import com.hx.nine.eleven.commons.utils.BeanUtils;
 import com.hx.nine.eleven.core.annotations.NestedConfigurationProperty;
 import com.hx.nine.eleven.core.annotations.Order;
 import com.hx.nine.eleven.core.constant.ConstantType;

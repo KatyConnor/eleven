@@ -21,7 +21,7 @@ public abstract class AbstractThreadFactory implements ThreadFactory {
             setDefaultThreadGroup();
         }
 
-        this.threadNamePrefix = "thread-";
+        this.threadNamePrefix = "thread-fiber-";
     }
 
     public ThreadGroup getThreadGroup() {
@@ -43,7 +43,7 @@ public abstract class AbstractThreadFactory implements ThreadFactory {
     }
 
     private void setDefaultThreadGroup(){
-        this.threadGroup = new ThreadGroup("hx-thread-pool-"+poolNumber.getAndIncrement());
+        this.threadGroup = new ThreadGroup("thread-fiber-pool-"+poolNumber.getAndIncrement());
         threadGroupMap.put(this.getThreadGroup().getName(),new AtomicInteger(1));
     }
 }

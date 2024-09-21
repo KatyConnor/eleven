@@ -7,7 +7,6 @@
   <groupId>com.hx.nine.eleven.doop</groupId>
   <artifactId>eleven-doop</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-
   <name>eleven-doop</name>
 
   <properties>

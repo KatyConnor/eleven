@@ -56,7 +56,6 @@ com\hx\nine\eleven\core\core\HXVertxWebApplicationInitializer.class
 com\hx\nine\eleven\core\handler\servlet\DefaultWebServletRouter.class
 com\hx\nine\eleven\core\core\context\ApplicationContextContainer.class
 com\hx\nine\eleven\core\handler\servlet\responese\AsyncFileResponse.class
-com\hx\nine\eleven\core\Demo.class
 com\hx\nine\eleven\core\core\context\DefaultVertxApplicationContext$Sigle.class
 com\hx\nine\eleven\core\core\entity\BeanResourceEntity.class
 com\hx\nine\eleven\core\web\WebRouterInitializer.class

@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.core.utils;
 
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.core;
 
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.constant.DefualtProperType;
 import com.hx.nine.eleven.core.core.context.ClassPathBeanDefinitionScanner;
 import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;

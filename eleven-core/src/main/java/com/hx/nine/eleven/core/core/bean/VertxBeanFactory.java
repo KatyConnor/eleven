@@ -2,7 +2,7 @@ package com.hx.nine.eleven.core.core.bean;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.hx.lang.commons.utils.CollectionUtils;
+import com.hx.nine.eleven.commons.utils.CollectionUtils;
 import com.hx.nine.eleven.core.annotations.BeanRegister;
 import com.hx.nine.eleven.core.annotations.ConditionalOnBean;
 import com.hx.nine.eleven.core.annotations.ConditionalOnClass;

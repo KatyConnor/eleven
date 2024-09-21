@@ -1,14 +1,11 @@
 package org.jooq.impl;
 
-import com.hx.lang.commons.utils.Builder;
-import com.hx.lang.commons.utils.ObjectUtils;
-import com.hx.vertx.jooq.jdbc.tx.JooqTransactionManagerEntity;
-import com.hx.vertx.jooq.jdbc.tx.JooqTransactionManagerHolder;
-import org.jooq.Configuration;
+import  com.hx.nine.eleven.commons.utils.Builder;
+import  com.hx.nine.eleven.commons.utils.ObjectUtils;
+import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManagerEntity;
+import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManagerHolder;
 import org.jooq.TransactionContext;
 import org.jooq.tools.JooqLogger;
-
-import java.util.Optional;
 
 /**
  *

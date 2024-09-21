@@ -1,7 +1,7 @@
 package com.hx.nine.eleven.core.properties;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.hx.lang.commons.annotation.FieldTypeConvert;
+import com.hx.nine.eleven.commons.annotation.FieldTypeConvert;
 import com.hx.nine.eleven.core.annotations.ConfigurationPropertiesBind;
 import com.hx.nine.eleven.core.convert.FieldIntegerToLongConvert;
 import com.hx.nine.eleven.core.convert.FieldStringToArraysDeserializer;

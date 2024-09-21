@@ -8,7 +8,7 @@
     </jdbc>
     <generator>
         <strategy>
-            <name>com.hx.vertx.jooq.jdbc.generator.HXGeneratorStrategy</name>
+            <name>com.hx.nine.eleven.jooq.jdbc.generator.HXGeneratorStrategy</name>
         </strategy>
         <database>
             <name>org.jooq.util.mysql.MySQLDatabase</name><!-- 数据库类型 -->

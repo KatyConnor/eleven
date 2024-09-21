@@ -1,6 +1,7 @@
 package com.hx.nine.eleven.core.exception;
 
-import com.hx.lang.commons.utils.StringUtils;
+
+import com.hx.nine.eleven.commons.utils.StringUtils;
 
 public class ApplicationInitialzerException extends RuntimeException{
 

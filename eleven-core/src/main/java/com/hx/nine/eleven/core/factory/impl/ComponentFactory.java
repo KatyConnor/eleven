@@ -2,7 +2,10 @@ package com.hx.nine.eleven.core.factory.impl;
 
 import com.esotericsoftware.reflectasm.FieldAccess;
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.hx.lang.commons.utils.*;
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
+import com.hx.nine.eleven.commons.utils.CollectionUtils;
+import com.hx.nine.eleven.commons.utils.ObjectUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.annotations.*;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
@@ -141,7 +144,7 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 		}
 
 		if (!ObjectUtils.isEmpty(component) || !ObjectUtils.isEmpty(methodAccess)){
-			String value = !ObjectUtils.isEmpty(component)?component.value():StringUtils.valueOf(methodAccess.invoke(an,"value"));
+			String value = !ObjectUtils.isEmpty(component)?component.value(): StringUtils.valueOf(methodAccess.invoke(an,"value"));
 			String methodInit = !ObjectUtils.isEmpty(component)?component.init():StringUtils.valueOf(methodAccess.invoke(an,"init"));
 			if (StringUtils.isNotEmpty(value) && DefaultVertxApplicationContext
 					.build().getBean(value) != null ||

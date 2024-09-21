@@ -1,7 +1,7 @@
 package com.hx.logchain.toolkit;
 
 import com.hx.logchain.toolkit.util.MDCThreadUtil;
-import com.hx.thread.pool.executor.factory.DefaultThreadFactory;
+import com.hx.nine.eleven.thread.pool.executor.factory.DefaultThreadFactory;
 import com.hx.vertx.boot.annotations.Component;
 import org.slf4j.MDC;
 import javax.annotation.Resource;

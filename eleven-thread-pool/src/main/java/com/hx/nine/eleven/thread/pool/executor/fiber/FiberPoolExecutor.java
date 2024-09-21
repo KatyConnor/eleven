@@ -1,5 +1,8 @@
 package com.hx.nine.eleven.thread.pool.executor.fiber;
 
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import co.paralleluniverse.fibers.FiberScheduler;
+import co.paralleluniverse.fibers.Suspendable;
 import com.hx.nine.eleven.sync.fiber.HXFiberSync;
 import com.hx.nine.eleven.thread.pool.executor.event.ThreadPoolEvent;
 import com.hx.nine.eleven.thread.pool.executor.factory.ThreadPoolFactory;
