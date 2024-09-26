@@ -12,6 +12,7 @@ import com.hx.nine.eleven.core.core.bean.VertxBeanFactory;
 import com.hx.nine.eleven.core.env.HXVertxYamlReadUtils;
 import com.hx.nine.eleven.core.exception.ApplicationInitialzerException;
 import com.hx.nine.eleven.core.factory.ApplicationAnnotationFactory;
+import com.hx.nine.eleven.core.factory.ApplicationSubTypesInitFactory;
 import com.hx.nine.eleven.core.handler.DefaultHttpRequestServletRouterHandler;
 import com.hx.nine.eleven.core.handler.HttpRequestServletRouterHandler;
 import com.hx.nine.eleven.core.handler.WebRequestServiceHandler;
@@ -55,13 +56,15 @@ public class ClassPathBeanDefinitionScanner {
 	private void doComponentReflections(Reflections reflections) {
 		//1、注册bean
 		initApplicationBeanRegister(reflections);
-		//2、 查找ApplicationAnnotationFactory子类,初始化注解类
+		//2、加载指定类的所有子类，并自定义实现
+		initApplicationSubTypes(reflections);
+		//3、 查找ApplicationAnnotationFactory子类,初始化注解类
 		initApplicationAnnotationFactory(reflections);
-		//3、加载服务
+		//4、加载服务
 		initHXVertxWebApplicationInitializer(reflections);
-		//4、注册servlet
+		//5、注册servlet
 		initWebRequestServletHandler(reflections);
-		//5、httpRequest拦截
+		//6、httpRequest拦截
 		initHttpRequestRouterHandler(reflections);
 	}
 
@@ -109,6 +112,25 @@ public class ClassPathBeanDefinitionScanner {
 		Set<Class<? extends ApplicationBeanRegister>> annotationFactories = reflections.getSubTypesOf(ApplicationBeanRegister.class);
 		Optional.ofNullable(annotationFactories).ifPresent(an -> {
 			DefaultVertxApplicationContext.build().addSubTypesOfBeanClass(ApplicationBeanRegister.class, an);
+		});
+	}
+
+	/**
+	 * 加载指定类的所有子类，并自定义实现
+	 *
+	 * @param reflections
+	 */
+	private void initApplicationSubTypes(Reflections reflections) {
+		Set<Class<? extends ApplicationSubTypesInitFactory>> subTypesOf = reflections.getSubTypesOf(ApplicationSubTypesInitFactory.class);
+		Optional.ofNullable(subTypesOf).ifPresent(an -> {
+			DefaultVertxApplicationContext.build().addSubTypesOfBeanClass(ApplicationSubTypesInitFactory.class, an);
+		});
+		// 处理
+		subTypesOf.forEach(an -> {
+			ConstructorAccess constructorAccess = ConstructorAccess.get(an);
+			Object obj = constructorAccess.newInstance();
+			MethodAccess methodAccess = MethodAccess.get(an);
+			methodAccess.invoke(obj, ConstantType.loadApplication, reflections);
 		});
 	}
 

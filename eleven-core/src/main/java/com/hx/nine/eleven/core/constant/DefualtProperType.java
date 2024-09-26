@@ -9,10 +9,10 @@ public interface DefualtProperType {
      String DEFAULT_FILE_NAME = "bootstrap";
      String SUFFIX = ".yml";
      String CLASS_PATH="path";
-     String ACTIVE_PROFILE="vertx.hx.boot.active";
-     String CONFIG_PATH = "vertx.hx.boot.configPath";
+     String ACTIVE_PROFILE="eleven.boot.active";
+     String CONFIG_PATH = "eleven.boot.configPath";
      String CLASS_PROPERTIES = "properties";
      String SYNC_FILE = "SYNC_FILE";
-     String SCAN_PACKAGES = "vertx.hx.boot.scanPackages";
+     String SCAN_PACKAGES = "eleven.boot.scanPackages";
      String TARGET_FILE_PATH = "targetFilePath";
 }
