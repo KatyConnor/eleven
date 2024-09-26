@@ -1,7 +1,7 @@
 package com.hx.nine.eleven.core.handler;
 
 import com.hx.nine.eleven.core.constant.ConstantType;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.utils.MDCThreadUtil;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
@@ -15,7 +15,7 @@ public class GlobalDefaultExceptionHandler implements Handler<RoutingContext> {
 
 	@Override
 	public void handle(RoutingContext ctx) {
-		GlobalExceptionHandler exceptionHandler = VertxApplicationContextAware.getSubTypesOfBean(GlobalExceptionHandler.class);
+		GlobalExceptionHandler exceptionHandler = ElevenApplicationContextAware.getSubTypesOfBean(GlobalExceptionHandler.class);
 		exceptionHandler.handle(ctx,ctx.get(ConstantType.RESPONSE_BODY));
 		MDCThreadUtil.clear(); //清空
 	}

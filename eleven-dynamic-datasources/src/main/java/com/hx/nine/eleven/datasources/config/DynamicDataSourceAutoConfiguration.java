@@ -66,7 +66,7 @@ public class DynamicDataSourceAutoConfiguration {
         DataSourcePermissionCheck.setDefaultDataSource(properties.getPrimary()); // 默认数据源名称
         dataSource.setMasterDataSource(properties.getPrimary());
         DefaultVertxApplicationContext.build().addBean("dataSource",dataSource);
-        // 初始化事务管理
+        // jooq框架初始化事务管理
         HXLogger.build(this).info("开始初始化jooq事务管理器");
         JooqTransactionManager jooqTransactionManager = new JooqTransactionManager(dataSource);
         DefaultVertxApplicationContext.build().addBean(jooqTransactionManager);

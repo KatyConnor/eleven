@@ -2,10 +2,10 @@ package com.hx.nine.eleven.core.web;
 
 import com.hx.nine.eleven.core.auth.HXJWTAuthHandler;
 import com.hx.nine.eleven.core.constant.ConstantType;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.handler.*;
-import com.hx.nine.eleven.core.properties.VertxApplicationProperties;
+import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
 import com.hx.nine.eleven.core.utils.MDCThreadUtil;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -32,24 +32,24 @@ public class WebRouterInitializer {
 
 	private Router router;
 	private JWTAuth authProvider;
-	private VertxApplicationProperties vertxApplicationProperties;
+	private ElevenBootApplicationProperties elevenBootApplicationProperties;
 
 	public WebRouterInitializer(){
-		vertxApplicationProperties = DefaultVertxApplicationContext.build().getProperties(VertxApplicationProperties.class);
+		elevenBootApplicationProperties = DefaultElevenApplicationContext.build().getProperties(ElevenBootApplicationProperties.class);
 	}
 
 	public void webInit(Vertx vertx, JWTAuthOptions config) {
 		// 所有请求都要验证权限,权限通过才进行下一个router
-		router.route(vertxApplicationProperties.getAuthInterceptPath())
+		router.route(elevenBootApplicationProperties.getAuthInterceptPath())
 				.handler(this.createBodyHandler())
 				.handler(HXJWTAuthHandler.create(vertx,authProvider,config));
 		//配置Router路由,POST请求
-		router.route(HttpMethod.POST, vertxApplicationProperties.getServletPath())
+		router.route(HttpMethod.POST, elevenBootApplicationProperties.getServletPath())
 				.handler(this.createRouteHandler());
-		router.route(HttpMethod.GET, vertxApplicationProperties.getServletPath()+"/"+vertxApplicationProperties.getDoGetUrlPath())
+		router.route(HttpMethod.GET, elevenBootApplicationProperties.getServletPath()+"/"+ elevenBootApplicationProperties.getDoGetUrlPath())
 				.handler(this.createGetRouteHandler());
 		router.route().handler(this.createCorsHandler());
-		router.route(vertxApplicationProperties.getStaticPath()).handler(this.createStaticHandler());
+		router.route(elevenBootApplicationProperties.getStaticPath()).handler(this.createStaticHandler());
 		router.route().last().failureHandler(this.createGlobalDefaultExceptionHandler());
 	}
 
@@ -77,17 +77,17 @@ public class WebRouterInitializer {
 
 	private BodyHandler createBodyHandler(){
 		return FileBodyHandlerImpl.createBodyHandler()
-				.setHandleFileUploads(vertxApplicationProperties.getHandleFileUploads())
-				.setBodyLimit(vertxApplicationProperties.getBodyLimit()) //设置body接受数据大小，如果要控制网络传输速度可以控制大小
-				.setPreallocateBodyBuffer(vertxApplicationProperties.getPreallocateBodyBuffer())
-				.setUploadsDirectory(vertxApplicationProperties.getUploadsDirectory())  //自定义文件上传到哪
-				.setMergeFormAttributes(vertxApplicationProperties.getMergeFormAttributes())
-				.setDeleteUploadedFilesOnEnd(vertxApplicationProperties.getDeleteUploadedFilesOnEnd()); //请求结束后是否删除上传文件
+				.setHandleFileUploads(elevenBootApplicationProperties.getHandleFileUploads())
+				.setBodyLimit(elevenBootApplicationProperties.getBodyLimit()) //设置body接受数据大小，如果要控制网络传输速度可以控制大小
+				.setPreallocateBodyBuffer(elevenBootApplicationProperties.getPreallocateBodyBuffer())
+				.setUploadsDirectory(elevenBootApplicationProperties.getUploadsDirectory())  //自定义文件上传到哪
+				.setMergeFormAttributes(elevenBootApplicationProperties.getMergeFormAttributes())
+				.setDeleteUploadedFilesOnEnd(elevenBootApplicationProperties.getDeleteUploadedFilesOnEnd()); //请求结束后是否删除上传文件
 	}
 
 	private Handler<RoutingContext> createRouteHandler(){
 		return ctx->{
-			HttpRequestServletRouterHandler servletRouterHandler = VertxApplicationContextAware.
+			HttpRequestServletRouterHandler servletRouterHandler = ElevenApplicationContextAware.
 					getBean(DefaultHttpRequestServletRouterHandler.class);
 			Object res = null;
 			try {
@@ -124,7 +124,7 @@ public class WebRouterInitializer {
 
 	private Handler<RoutingContext> createGetRouteHandler(){
 		return ctx->{
-			HttpRequestServletRouterHandler servletRouterHandler = VertxApplicationContextAware.
+			HttpRequestServletRouterHandler servletRouterHandler = ElevenApplicationContextAware.
 					getBean(GetHttpRequestServletRouterHandler.class);
 			Object res = null;
 			try {
@@ -155,7 +155,7 @@ public class WebRouterInitializer {
 	}
 
 	private StaticHandler createStaticHandler(){
-		return StaticHandler.create(vertxApplicationProperties.getStaticRoot());
+		return StaticHandler.create(elevenBootApplicationProperties.getStaticRoot());
 	}
 
 	private GlobalDefaultExceptionHandler createGlobalDefaultExceptionHandler(){

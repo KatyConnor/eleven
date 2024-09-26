@@ -27,8 +27,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.hx.etx.sync.fiber</groupId>
-      <artifactId>hx-vertx-sync-fiber</artifactId>
+      <groupId>com.hx.nine.eleven.sync.fiber</groupId>
+      <artifactId>eleven-sync-fiber</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -47,13 +47,13 @@
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.sys.message.code</groupId>
-      <artifactId>hx-sys-messagecode</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <groupId>com.hx.nine.eleven.messagecode</groupId>
+      <artifactId>eleven-messagecode</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.vertx.jooq.jdbc</groupId>
-      <artifactId>hx-vertx-jooq-jdbc</artifactId>
+      <groupId>com.hx.nine.eleven.jooq.jdbc</groupId>
+      <artifactId>eleven-jooq-jdbc</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>

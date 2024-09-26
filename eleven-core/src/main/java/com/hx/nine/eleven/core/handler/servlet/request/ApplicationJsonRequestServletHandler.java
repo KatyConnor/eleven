@@ -1,9 +1,9 @@
 package com.hx.nine.eleven.core.handler.servlet.request;
 
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.handler.WebRequestServiceHandler;
 import com.hx.nine.eleven.core.handler.servlet.ServletHandler;
-import com.hx.nine.eleven.core.utils.HXLogger;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import com.hx.nine.eleven.core.web.DefaultHttpHeader;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
@@ -31,7 +31,7 @@ public class ApplicationJsonRequestServletHandler implements ServletHandler {
                jsonObject = jsonObjectBuff.get();
            }catch (Exception exception){
                // body数据为空
-               HXLogger.build(this).error("request body is null,or Request has already been read");
+               ElevenLoggerFactory.build(this).error("request body is null,or Request has already been read");
            }
         } else {
             jsonObject = bodyBuffer.toJsonObject();
@@ -39,7 +39,7 @@ public class ApplicationJsonRequestServletHandler implements ServletHandler {
 
         try {
             // 调用路由
-            WebRequestServiceHandler servletHandler = DefaultVertxApplicationContext.build().getBean(WebRequestServiceHandler.class);
+            WebRequestServiceHandler servletHandler = DefaultElevenApplicationContext.build().getBean(WebRequestServiceHandler.class);
             if (!Optional.of(servletHandler).isPresent()) {
                 throw new RuntimeException("could not find class implement WebRequestServiceHandler");
             }
@@ -47,7 +47,7 @@ public class ApplicationJsonRequestServletHandler implements ServletHandler {
             setHeader(context, DefaultHttpHeader.build().setApplicationJsonResHeader().getHeaders());
             res = servletHandler.doService(context, jsonObject);
         } catch (Throwable ex) {
-            HXLogger.build(this).error("------POST请求交易处理失败");
+            ElevenLoggerFactory.build(this).error("------POST请求交易处理失败");
             throw ex;
         }
         return res;

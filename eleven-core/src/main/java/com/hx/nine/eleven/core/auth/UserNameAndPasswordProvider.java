@@ -2,10 +2,10 @@ package com.hx.nine.eleven.core.auth;
 
 import com.hx.nine.eleven.commons.utils.Builder;
 import com.hx.nine.eleven.core.constant.ConstantType;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.handler.DefaultHttpRequestServletRouterHandler;
 import com.hx.nine.eleven.core.handler.HttpRequestServletRouterHandler;
-import com.hx.nine.eleven.core.utils.HXLogger;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import com.hx.nine.eleven.core.utils.MDCThreadUtil;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -26,7 +26,7 @@ public class UserNameAndPasswordProvider{
 
     private Future<Object> authenticate(RoutingContext ctx){
         MDCThreadUtil.wrap();
-        HttpRequestServletRouterHandler servletRouterHandler = VertxApplicationContextAware.
+        HttpRequestServletRouterHandler servletRouterHandler = ElevenApplicationContextAware.
                 getBean(DefaultHttpRequestServletRouterHandler.class);
         Object res = null;
         try {
@@ -51,7 +51,7 @@ public class UserNameAndPasswordProvider{
             AuthenticateResponse response = Builder.of(AuthenticateResponse::new)
                     .with(AuthenticateResponse::setCode,"B0000000001")
                     .with(AuthenticateResponse::setCode,"用户登录授权失败").build();
-            HXLogger.build(this).error("用户登录授权失败",ex);
+            ElevenLoggerFactory.build(this).error("用户登录授权失败",ex);
            return Future.failedFuture(JsonObject.mapFrom(response).toString());
         }
     }

@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.core.handler;
 
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.handler.servlet.request.ApplicationJsonGetRequestServletHandler;
 import io.vertx.ext.web.RoutingContext;
 
@@ -18,7 +18,7 @@ public class GetHttpRequestServletRouterHandler implements HttpRequestServletRou
 
     @Override
     public void preRouter(RoutingContext context) {
-        routerHandlers = VertxApplicationContextAware.getSubTypesOfBeans(HttpRequestServletRouterHandler.class);
+        routerHandlers = ElevenApplicationContextAware.getSubTypesOfBeans(HttpRequestServletRouterHandler.class);
         routerHandlers.forEach(handler -> {
             if (!(handler instanceof GetHttpRequestServletRouterHandler)){
                 handler.preRouter(context);

@@ -3,13 +3,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.hx.nine.eleven.parent</groupId>
-    <artifactId>eleven-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <relativePath></relativePath>
-  </parent>
-  <groupId>com.hx.nine.eleven.mybatis.flex</groupId>
+
+  <groupId>com.hx.nine.eleven.mybatisflex</groupId>
   <artifactId>eleven-mybatis-flex</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>eleven-mybatis-flex</name>
@@ -20,23 +15,50 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.hx.nine.eleven.dependencies</groupId>
+        <artifactId>eleven-dependencies</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
-<!--    <dependency>-->
-<!--      <groupId>com.mybatis-flex</groupId>-->
-<!--      <artifactId>mybatis-flex-spring-boot-starter</artifactId>-->
-<!--      <version>1.5.9</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>com.mybatis-flex</groupId>
       <artifactId>mybatis-flex-core</artifactId>
-      <version>1.5.9</version>
+      <version>1.9.7</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>com.mybatis-flex</groupId>-->
-<!--      <artifactId>mybatis-flex-processor</artifactId>-->
-<!--      <version>1.5.9</version>-->
-<!--      <scope>provided</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>com.mybatis-flex</groupId>
+      <artifactId>mybatis-flex-processor</artifactId>
+      <version>1.9.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.hx.nine.eleven.datasources</groupId>
+      <artifactId>eleven-dynamic-datasources</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hx.nine.eleven.core</groupId>
+      <artifactId>eleven-core</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.mybatis-flex</groupId>
+      <artifactId>mybatis-flex-spring</artifactId>
+      <version>1.9.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.mybatis-flex</groupId>
+      <artifactId>mybatis-flex-spring-boot-starter</artifactId>
+      <version>1.9.7</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -44,6 +66,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
         <configuration>
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>

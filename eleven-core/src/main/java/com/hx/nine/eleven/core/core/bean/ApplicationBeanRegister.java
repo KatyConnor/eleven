@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.core.core.bean;
 
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 
 /**
  * bean 初始化之前、初始化之后处理，这里可以指定
@@ -25,13 +25,13 @@ public abstract class ApplicationBeanRegister<T> {
 	 * bean 初始化之前处理
 	 * @param context
 	 */
-	abstract void before(DefaultVertxApplicationContext context);
+	abstract void before(DefaultElevenApplicationContext context);
 
 	/**
 	 * bean初始化之后处理
 	 * @param context
 	 */
-	abstract void after(DefaultVertxApplicationContext context);
+	abstract void after(DefaultElevenApplicationContext context);
 
 	public boolean isCreateBean() {
 		return createBean;

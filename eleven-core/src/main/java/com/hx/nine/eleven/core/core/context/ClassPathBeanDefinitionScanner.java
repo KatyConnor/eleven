@@ -6,17 +6,16 @@ import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.core.annotations.Order;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.constant.DefualtProperType;
-import com.hx.nine.eleven.core.core.HXVertxWebApplicationInitializer;
+import com.hx.nine.eleven.core.core.ElevenWebApplicationInitializer;
 import com.hx.nine.eleven.core.core.bean.ApplicationBeanRegister;
-import com.hx.nine.eleven.core.core.bean.VertxBeanFactory;
-import com.hx.nine.eleven.core.env.HXVertxYamlReadUtils;
+import com.hx.nine.eleven.core.core.bean.ElevenBeanFactory;
+import com.hx.nine.eleven.core.env.ElevenYamlReadUtils;
 import com.hx.nine.eleven.core.exception.ApplicationInitialzerException;
 import com.hx.nine.eleven.core.factory.ApplicationAnnotationFactory;
 import com.hx.nine.eleven.core.factory.ApplicationSubTypesInitFactory;
 import com.hx.nine.eleven.core.handler.DefaultHttpRequestServletRouterHandler;
 import com.hx.nine.eleven.core.handler.HttpRequestServletRouterHandler;
 import com.hx.nine.eleven.core.handler.WebRequestServiceHandler;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
@@ -41,7 +40,7 @@ public class ClassPathBeanDefinitionScanner {
 	 * 扫描项目所有package包，初始化整个依赖类
 	 */
 	public void initClass() {
-		Object packages = HXVertxYamlReadUtils.build().getValueMap().get(DefualtProperType.SCAN_PACKAGES);
+		Object packages = ElevenYamlReadUtils.build().getValueMap().get(DefualtProperType.SCAN_PACKAGES);
 		String[] scanPackages = packages != null ? stringToArrays(packages) : null;
 		Reflections reflections = ObjectUtils.isNotEmpty(scanPackages) ?
 				new Reflections(new ConfigurationBuilder().forPackages(scanPackages)) : new Reflections();
@@ -84,21 +83,21 @@ public class ClassPathBeanDefinitionScanner {
 			return Integer.valueOf(order1 == null ? ++count[0] : order1.order())
 					.compareTo(order2 == null ? ++count[0] : order2.order());
 		}).forEach(classes -> {
-			Object obj = VertxBeanFactory.createBean(classes);
+			Object obj = ElevenBeanFactory.createBean(classes);
 			MethodAccess methodAccess = MethodAccess.get(classes);
 			methodAccess.invoke(obj, ConstantType.annotationMethod, reflections);
 		});
 	}
 
 	private void initHXVertxWebApplicationInitializer(Reflections reflections) {
-		Set<Class<? extends HXVertxWebApplicationInitializer>> annotationFactories = reflections.getSubTypesOf(HXVertxWebApplicationInitializer.class);
-		ApplicationContextContainer.build().addBean(HXVertxWebApplicationInitializer.class.getName(), annotationFactories);
+		Set<Class<? extends ElevenWebApplicationInitializer>> annotationFactories = reflections.getSubTypesOf(ElevenWebApplicationInitializer.class);
+		ApplicationContextContainer.build().addBean(ElevenWebApplicationInitializer.class.getName(), annotationFactories);
 		// 处理
 		annotationFactories.forEach(an -> {
 			ConstructorAccess constructorAccess = ConstructorAccess.get(an);
 			Object obj = constructorAccess.newInstance();
 			MethodAccess methodAccess = MethodAccess.get(an);
-			methodAccess.invoke(obj, ConstantType.loadApplication, DefaultVertxApplicationContext.build());
+			methodAccess.invoke(obj, ConstantType.loadApplication, DefaultElevenApplicationContext.build());
 		});
 	}
 
@@ -111,7 +110,7 @@ public class ClassPathBeanDefinitionScanner {
 	private void initApplicationBeanRegister(Reflections reflections) {
 		Set<Class<? extends ApplicationBeanRegister>> annotationFactories = reflections.getSubTypesOf(ApplicationBeanRegister.class);
 		Optional.ofNullable(annotationFactories).ifPresent(an -> {
-			DefaultVertxApplicationContext.build().addSubTypesOfBeanClass(ApplicationBeanRegister.class, an);
+			DefaultElevenApplicationContext.build().addSubTypesOfBeanClass(ApplicationBeanRegister.class, an);
 		});
 	}
 
@@ -123,7 +122,7 @@ public class ClassPathBeanDefinitionScanner {
 	private void initApplicationSubTypes(Reflections reflections) {
 		Set<Class<? extends ApplicationSubTypesInitFactory>> subTypesOf = reflections.getSubTypesOf(ApplicationSubTypesInitFactory.class);
 		Optional.ofNullable(subTypesOf).ifPresent(an -> {
-			DefaultVertxApplicationContext.build().addSubTypesOfBeanClass(ApplicationSubTypesInitFactory.class, an);
+			DefaultElevenApplicationContext.build().addSubTypesOfBeanClass(ApplicationSubTypesInitFactory.class, an);
 		});
 		// 处理
 		subTypesOf.forEach(an -> {
@@ -147,14 +146,14 @@ public class ClassPathBeanDefinitionScanner {
 			}
 
 			if (an.size() == 1) {
-				DefaultVertxApplicationContext.build().
-						addBean(WebRequestServiceHandler.class.getName(), VertxBeanFactory.createBean(an.stream().findFirst().get()));
+				DefaultElevenApplicationContext.build().
+						addBean(WebRequestServiceHandler.class.getName(), ElevenBeanFactory.createBean(an.stream().findFirst().get()));
 			}
 		});
 	}
 
 	private void initHttpRequestRouterHandler(Reflections reflections) {
-		DefaultVertxApplicationContext.build().
+		DefaultElevenApplicationContext.build().
 				addBean(DefaultHttpRequestServletRouterHandler.class.getName(), new DefaultHttpRequestServletRouterHandler());
 		Set<Class<? extends HttpRequestServletRouterHandler>> routerHandler = reflections.getSubTypesOf(HttpRequestServletRouterHandler.class);
 		Optional.ofNullable(routerHandler).ifPresent(tclass -> {
@@ -168,10 +167,10 @@ public class ClassPathBeanDefinitionScanner {
 							.compareTo(order2 == null ? ++count[0] : order2.order());
 				}).forEach(c -> {
 					if (!c.equals(DefaultHttpRequestServletRouterHandler.class)) {
-						subTypesOfBean.add(VertxBeanFactory.createBean(c));
+						subTypesOfBean.add(ElevenBeanFactory.createBean(c));
 					}
 				});
-				DefaultVertxApplicationContext.build().
+				DefaultElevenApplicationContext.build().
 						addSubTypesOfBean(HttpRequestServletRouterHandler.class, subTypesOfBean);
 			}
 		});

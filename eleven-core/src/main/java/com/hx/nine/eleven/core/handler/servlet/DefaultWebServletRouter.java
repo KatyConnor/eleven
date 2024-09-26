@@ -3,7 +3,7 @@ package com.hx.nine.eleven.core.handler.servlet;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.enums.ContentTypeEnums;
-import com.hx.nine.eleven.core.exception.VertxApplicationRunException;
+import com.hx.nine.eleven.core.exception.ElevenApplicationRunException;
 import com.hx.nine.eleven.core.handler.WebServletRouter;
 import com.hx.nine.eleven.core.handler.servlet.request.ApplicationJsonRequestServletHandler;
 import com.hx.nine.eleven.core.handler.servlet.request.MultipartFormDataRequestServletHandler;
@@ -34,7 +34,7 @@ public class DefaultWebServletRouter implements WebServletRouter {
 				return ApplicationJsonRequestServletHandler.build().doRequest(context);
 			default:
 				//暂不支持的类型
-				throw new VertxApplicationRunException("暂不支持的content-type类型");
+				throw new ElevenApplicationRunException("暂不支持的content-type类型");
 		}
 	}
 

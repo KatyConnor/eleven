@@ -2,12 +2,12 @@ package com.hx.nine.eleven.core.core.entity;
 
 import com.hx.nine.eleven.commons.utils.DateUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.nine.eleven.core.properties.VertxApplicationProperties;
-import com.hx.nine.eleven.core.utils.HXLogger;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import com.hx.nine.eleven.core.utils.SystemUtils;
 import com.hx.nine.eleven.core.utils.UUIDGenerator;
-import com.hx.nine.eleven.core.utils.VertxObjectUtils;
+import com.hx.nine.eleven.core.utils.ElevenObjectUtils;
 import io.vertx.ext.web.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +91,7 @@ public class FileUploadEntity {
 		try {
 			this.fileSize = Files.size(Paths.get(uploadedFileName));
 		} catch (IOException e) {
-			HXLogger.build(this).error("文件大小获取异常",e);
+			ElevenLoggerFactory.build(this).error("文件大小获取异常",e);
 		}
 		if (!uploadFile(this.uploadedFileName,targetFile)){
 			throw new RuntimeException(StringUtils.format("[{}] 文件保存失败",this.fileName));
@@ -104,18 +104,18 @@ public class FileUploadEntity {
 			//检查文件是否存在,如果重复上传,方案一:直接覆盖,方案二：不覆盖重命名保存
 			Path targetFilePath = Paths.get(targetFile);
 			if (Files.exists(targetFilePath)) {
-				VertxApplicationProperties properties = VertxApplicationContextAware.getProperties(VertxApplicationProperties.class);
+				ElevenBootApplicationProperties properties = ElevenApplicationContextAware.getProperties(ElevenBootApplicationProperties.class);
 				// 不直接覆盖源文件
 				if (!properties.getWhetherToOverwriteOrReplace()) {
 					analysisTargetFile(targetFile);
-					VertxObjectUtils.build().move(uploadedFileName,this.targetFile);
+					ElevenObjectUtils.build().move(uploadedFileName,this.targetFile);
 					LOGGER.info(StringUtils.format("[{}]文件已经存在, 文件重命名为[{}]保存 ",targetFile,this.targetFile));
 					return true;
 				}
 				// 同步删掉文件
-				VertxObjectUtils.build().delete(targetFilePath);
+				ElevenObjectUtils.build().delete(targetFilePath);
 			}
-			VertxObjectUtils.build().move(uploadedFileName,targetFile,VertxObjectUtils.DEFAULT_OPTIONS);
+			ElevenObjectUtils.build().move(uploadedFileName,targetFile, ElevenObjectUtils.DEFAULT_OPTIONS);
 			LOGGER.info(StringUtils.format("文件保存成功,保存地址 [{}]",targetFile));
 		} catch (Exception e) {
 			LOGGER.error("文件上传失败,[]: ",e.getMessage(),e);

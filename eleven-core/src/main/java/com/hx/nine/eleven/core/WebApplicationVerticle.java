@@ -1,13 +1,13 @@
 package com.hx.nine.eleven.core;
 
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.nine.eleven.core.properties.VertxApplicationProperties;
-import com.hx.nine.eleven.core.task.HXVertxScheduledTask;
-import com.hx.nine.eleven.core.task.HXVertxThreadTask;
-import com.hx.nine.eleven.core.utils.HXVertxHttpclient;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
+import com.hx.nine.eleven.core.task.ElevenScheduledTask;
+import com.hx.nine.eleven.core.task.ElevenThreadTask;
+import com.hx.nine.eleven.core.utils.ElevenHttpclient;
 import com.hx.nine.eleven.core.utils.MDCThreadUtil;
-import com.hx.nine.eleven.core.utils.VertxObjectUtils;
+import com.hx.nine.eleven.core.utils.ElevenObjectUtils;
 import com.hx.nine.eleven.core.web.WebRouterInitializer;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -15,7 +15,6 @@ import io.vertx.core.file.FileSystem;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
@@ -43,25 +42,25 @@ public class WebApplicationVerticle extends AbstractVerticle {
 	public void start(Promise<Void> startPromise) throws Exception {
 		//初始化Router
 		// 配置静态文件
-		VertxApplicationProperties vertxApplicationProperties = VertxApplicationContextAware.getVertxApplicationProperties();
+		ElevenBootApplicationProperties elevenBootApplicationProperties = ElevenApplicationContextAware.getVertxApplicationProperties();
 		router = Router.router(vertx);
 		JWTAuthOptions config = new JWTAuthOptions()
 				.addPubSecKey(new PubSecKeyOptions()
-						.setAlgorithm(vertxApplicationProperties.getAlgorithm())
-						.setBuffer(vertxApplicationProperties.getJwtSecretKey()));
+						.setAlgorithm(elevenBootApplicationProperties.getAlgorithm())
+						.setBuffer(elevenBootApplicationProperties.getJwtSecretKey()));
 		JWTAuth authProvider = JWTAuth.create(vertx, config);
 		WebRouterInitializer.build().setAuthProvider(authProvider).setRouter(router).webInit(vertx,config);
 		//将Router与vertx HttpServer 绑定
-		vertx.createHttpServer().requestHandler(router).listen(vertxApplicationProperties.getPort(), http -> {
+		vertx.createHttpServer().requestHandler(router).listen(elevenBootApplicationProperties.getPort(), http -> {
 			if (http.succeeded()) {
 				startPromise.complete();
-				LOGGER.info("-----------------HTTP server started on port" + vertxApplicationProperties.getPort());
+				LOGGER.info("-----------------HTTP server started on port" + elevenBootApplicationProperties.getPort());
 			} else {
 				startPromise.fail(http.cause());
 			}
 		});
 
-		HXVertxScheduledTask scheduledTask = VertxApplicationContextAware.getSubTypesOfBean(HXVertxScheduledTask.class);
+		ElevenScheduledTask scheduledTask = ElevenApplicationContextAware.getSubTypesOfBean(ElevenScheduledTask.class);
 		if (ObjectUtils.isNotEmpty(scheduledTask)) {
 			vertx.setPeriodic(7000, 1000, id -> {
 				if (ObjectUtils.isNotEmpty(scheduledTask)) {
@@ -79,7 +78,7 @@ public class WebApplicationVerticle extends AbstractVerticle {
 					});
 				}
 			});
-			HXVertxThreadTask threadTask = VertxApplicationContextAware.getSubTypesOfBean(HXVertxThreadTask.class);
+			ElevenThreadTask threadTask = ElevenApplicationContextAware.getSubTypesOfBean(ElevenThreadTask.class);
 			vertx.setPeriodic(8000, 200, id -> {
 				if (ObjectUtils.isNotEmpty(threadTask)) {
 					vertx.executeBlocking(future -> {
@@ -100,8 +99,8 @@ public class WebApplicationVerticle extends AbstractVerticle {
 
 		fs = vertx.fileSystem();
 		httpClient = vertx.createHttpClient();
-		VertxObjectUtils.build().setFileSystem(fs);
-		HXVertxHttpclient.build().setHttpClient(httpClient);
+		ElevenObjectUtils.build().setFileSystem(fs);
+		ElevenHttpclient.build().setHttpClient(httpClient);
 	}
 
 //	public static void main(String[] args) {

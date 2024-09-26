@@ -2,7 +2,7 @@ package com.hx.nine.eleven.core.handler.servlet.request;
 
 import com.hx.nine.eleven.commons.utils.*;
 import com.hx.nine.eleven.core.constant.DefualtProperType;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
 import com.hx.nine.eleven.core.handler.WebRequestServiceHandler;
 import com.hx.nine.eleven.core.handler.servlet.ServletHandler;
@@ -64,7 +64,7 @@ public class MultipartFormDataRequestServletHandler implements ServletHandler {
 		// 文件,默认处理
 		List<FileUpload> fileUploads = context.fileUploads();
 		// 调用路由
-		WebRequestServiceHandler servletHandler = DefaultVertxApplicationContext.build().getBean(WebRequestServiceHandler.class);
+		WebRequestServiceHandler servletHandler = DefaultElevenApplicationContext.build().getBean(WebRequestServiceHandler.class);
 		if(!Optional.of(servletHandler).isPresent()){
 			throw new RuntimeException("could not find class implement WebRequestServiceHandler");
 		}

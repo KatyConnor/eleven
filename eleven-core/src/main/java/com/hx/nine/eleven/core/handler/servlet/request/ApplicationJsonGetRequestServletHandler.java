@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.core.handler.servlet.request;
 
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.handler.WebRequestServiceHandler;
 import com.hx.nine.eleven.core.handler.servlet.ServletHandler;
 import io.vertx.core.MultiMap;
@@ -24,7 +24,7 @@ public class ApplicationJsonGetRequestServletHandler implements ServletHandler {
             });
         }
         // 调用路由
-        WebRequestServiceHandler servletHandler = DefaultVertxApplicationContext.build().getBean(WebRequestServiceHandler.class);
+        WebRequestServiceHandler servletHandler = DefaultElevenApplicationContext.build().getBean(WebRequestServiceHandler.class);
         if(!Optional.of(servletHandler).isPresent()){
             throw new RuntimeException("could not find class implement WebRequestServiceHandler");
         }

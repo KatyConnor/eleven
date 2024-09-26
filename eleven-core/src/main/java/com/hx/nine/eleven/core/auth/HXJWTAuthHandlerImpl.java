@@ -4,9 +4,9 @@ import com.hx.nine.eleven.commons.utils.Builder;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.constant.ConstantType;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.nine.eleven.core.properties.VertxApplicationProperties;
-import com.hx.nine.eleven.core.utils.HXLogger;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.file.FileSystemException;
@@ -55,7 +55,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
     public HXJWTAuthHandlerImpl(Vertx vertx, JWTAuth authProvider, String realm, JWTAuthOptions config) {
         super(authProvider, realm);
-        VertxApplicationProperties properties = VertxApplicationContextAware.getVertxApplicationProperties();
+        ElevenBootApplicationProperties properties = ElevenApplicationContextAware.getVertxApplicationProperties();
         this.authProvider = authProvider;
         this.authentication = properties.getAuthentication();
         String[] ignoreAuthentications = properties.getIgnoreAuthentication();
@@ -111,7 +111,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                     try {
                         jwt.addJWK(new JWK(jwk));
                     } catch (Exception e) {
-                        HXLogger.build(this).warn("Unsupported JWK", e);
+                        ElevenLoggerFactory.build(this).warn("Unsupported JWK", e);
                     }
                 }
             }
@@ -148,13 +148,13 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                             .getJsonObject(ConstantType.DATA)
                             .getJsonObject(ConstantType.USER);
                     String token = this.authProvider.generateToken(user, new JWTOptions()
-                            .setExpiresInMinutes(VertxApplicationContextAware.getVertxApplicationProperties().getExpires()));
-                    HXLogger.build(this).info("登录认证成功");
+                            .setExpiresInMinutes(ElevenApplicationContextAware.getVertxApplicationProperties().getExpires()));
+                    ElevenLoggerFactory.build(this).info("登录认证成功");
                     data.getJsonObject(ConstantType.HTTP_RESPONSE_BODY).getJsonObject(ConstantType.RESPONSE_HEADER_ENTITY).put(ConstantType.AUTH_TOKEN, token);
                     // 登录验证成功，设置token和权限菜单
                     ctx.response().putHeader(ConstantType.AUTH_TOKEN, token).send(data.toString());
                 } else {
-                    HXLogger.build(this).info("认证失败,请输出正确的用户名和密码");
+                    ElevenLoggerFactory.build(this).info("认证失败,请输出正确的用户名和密码");
                     Throwable result = auth.cause();
                     if (StringUtils.isNotEmpty(result)){
                         ctx.response().send(result.getMessage());
@@ -212,11 +212,11 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                     User user = auth.result();
                     JsonObject authData = user.principal();
                     String userId = authData.getString("userCode");
-                    HXLogger.build(this).info("用户 {} token认证成功！", userId);
+                    ElevenLoggerFactory.build(this).info("用户 {} token认证成功！", userId);
                     authNext.set(true);
                     // 解析token，将解析信息放入请求中
                 } else {
-                    HXLogger.build(this).info("认证失败,token无效");
+                    ElevenLoggerFactory.build(this).info("认证失败,token无效");
                 }
             });
             return authNext.get();

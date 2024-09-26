@@ -8,9 +8,9 @@ import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.annotations.*;
 import com.hx.nine.eleven.core.constant.ConstantType;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.nine.eleven.core.core.bean.VertxBeanFactory;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.core.bean.ElevenBeanFactory;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.core.entity.BeanResourceEntity;
 import com.hx.nine.eleven.core.env.ApplicationEnvConfigProperty;
 import com.hx.nine.eleven.core.factory.ApplicationAnnotationFactory;
@@ -97,7 +97,7 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 	 * 所有bean创建完之后，扫描依赖条件的class进行初始化
 	 */
 	private void afterBeanCreate() {
-		ConcurrentLinkedQueue<Class<?>> afterBeansQueue = VertxApplicationContextAware.
+		ConcurrentLinkedQueue<Class<?>> afterBeansQueue = ElevenApplicationContextAware.
 				getBean(ConstantType.CONDITIONAL_ON_AFTER_BEAN);
 		Optional.ofNullable(afterBeansQueue).ifPresent(beans -> {
 			Class<?> bean = afterBeansQueue.peek();
@@ -109,16 +109,16 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 			}
 		});
 
-		ConcurrentLinkedQueue<BeanResourceEntity> resourceBeansQueue = VertxApplicationContextAware.
+		ConcurrentLinkedQueue<BeanResourceEntity> resourceBeansQueue = ElevenApplicationContextAware.
 				getBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN);
 		Optional.ofNullable(resourceBeansQueue).ifPresent(beans -> {
 			BeanResourceEntity bean = resourceBeansQueue.peek();
 			while (bean != null) {
 				Field field = bean.getField();
-				Object obj = VertxApplicationContextAware.getBean(bean.getObj());
+				Object obj = ElevenApplicationContextAware.getBean(bean.getObj());
 				field.setAccessible(true);
 				try {
-					field.set(obj,VertxApplicationContextAware.getBean(field.getType()));
+					field.set(obj, ElevenApplicationContextAware.getBean(field.getType()));
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -146,30 +146,30 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 		if (!ObjectUtils.isEmpty(component) || !ObjectUtils.isEmpty(methodAccess)){
 			String value = !ObjectUtils.isEmpty(component)?component.value(): StringUtils.valueOf(methodAccess.invoke(an,"value"));
 			String methodInit = !ObjectUtils.isEmpty(component)?component.init():StringUtils.valueOf(methodAccess.invoke(an,"init"));
-			if (StringUtils.isNotEmpty(value) && DefaultVertxApplicationContext
+			if (StringUtils.isNotEmpty(value) && DefaultElevenApplicationContext
 					.build().getBean(value) != null ||
-					DefaultVertxApplicationContext.build().getBean(bean) != null) {
+					DefaultElevenApplicationContext.build().getBean(bean) != null) {
 				LOGGER.warn("容器中已经初始化[{}]对象[]",!ObjectUtils.isEmpty(value)?value:bean.getName(),bean.getName());
 				return;
 			}
 
-			Object obj = VertxBeanFactory.initBean(bean);
+			Object obj = ElevenBeanFactory.initBean(bean);
 			if (obj != null) {
 				// 设置属性@Resource
 				setField(bean, obj, isSub);
 				// 调用初始化方法
 				if (StringUtils.isNotBlank(methodInit)) {
-					VertxBeanFactory.invoke(methodInit, obj);
+					ElevenBeanFactory.invoke(methodInit, obj);
 				}
 				//添加到容器
 				if (StringUtils.isNotEmpty(value)) {
-					DefaultVertxApplicationContext.build().addBean(value, obj);
+					DefaultElevenApplicationContext.build().addBean(value, obj);
 				} else {
 					if (isSub) {
 						Class<?> interfaces = (Class<?>) methodAccess.invoke(an,"interfaces");
-						DefaultVertxApplicationContext.build().addBean(interfaces.getName(),obj);
+						DefaultElevenApplicationContext.build().addBean(interfaces.getName(),obj);
 					} else {
-						DefaultVertxApplicationContext.build().addBean(obj);
+						DefaultElevenApplicationContext.build().addBean(obj);
 					}
 				}
 				LOGGER.info("注册bean=[{}]", bean.getSimpleName());
@@ -191,7 +191,7 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 			String havingValue = property.havingValue();
 			String[] names = property.name();
 			int count = 0;
-			ApplicationEnvConfigProperty envConfigProperty = DefaultVertxApplicationContext.build().getProperties();
+			ApplicationEnvConfigProperty envConfigProperty = DefaultElevenApplicationContext.build().getProperties();
 			for (String key : names) {
 				Object value = envConfigProperty.get(prefix + key);
 				if (value == null){
@@ -224,22 +224,22 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 			Resource resource = field.getAnnotation(Resource.class);
 			Optional.ofNullable(resource).ifPresent(f -> {
 				Class<?> fieldTypeClass = field.getType();
-				Object fieldObj = VertxApplicationContextAware.getBean(fieldTypeClass);
+				Object fieldObj = ElevenApplicationContextAware.getBean(fieldTypeClass);
 				if (fieldObj == null && checkProperty(fieldTypeClass)) {
 					SubComponent subComponent = fieldTypeClass.getAnnotation(SubComponent.class);
 					createBean(fieldTypeClass, subComponent != null);
 				}
 				// 判断属性类型时properties还是普通类
 				fieldObj = ObjectUtils.isEmpty(fieldTypeClass.getAnnotation(ConfigurationPropertiesBind.class))?
-						VertxApplicationContextAware.getBean(fieldTypeClass):VertxApplicationContextAware.getProperties(fieldTypeClass);
+						ElevenApplicationContextAware.getBean(fieldTypeClass): ElevenApplicationContextAware.getProperties(fieldTypeClass);
 				if (fieldObj == null) {
 					BeanResourceEntity resourceEntity = new BeanResourceEntity(field, obj.getClass().getName());
-					ConcurrentLinkedQueue<BeanResourceEntity> resourceBeansQueue = VertxApplicationContextAware.getBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN);
+					ConcurrentLinkedQueue<BeanResourceEntity> resourceBeansQueue = ElevenApplicationContextAware.getBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN);
 					if (CollectionUtils.isEmpty(resourceBeansQueue)) {
 						resourceBeansQueue = new ConcurrentLinkedQueue();
 					}
 					resourceBeansQueue.add(resourceEntity);
-					DefaultVertxApplicationContext.build().addBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN, resourceBeansQueue,true);
+					DefaultElevenApplicationContext.build().addBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN, resourceBeansQueue,true);
 					LOGGER.warn("[{}] 没有实例化",fieldTypeClass.getName());
 					return;
 				}
