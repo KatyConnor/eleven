@@ -3,7 +3,7 @@ package com.hx.nine.eleven.domain.context.thread;
 import com.hx.nine.eleven.domain.context.DomainContextEvent;
 import com.hx.nine.eleven.domain.properties.DomainEventListenerHandlerProperties;
 import com.github.f4b6a3.ulid.UlidCreator;
-//import com.hx.thread.pool.executor.fiber.task.FiberCallExecuteTask;
+//import com.hx.nine.eleven.thread.pool.executor.fiber.task.FiberCallExecuteTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 //@Component(init = "start")
 //@ConditionalOnClass(value = ThreadPoolService.class)
-//@ConditionalOnProperty(prefix = "vertx.hx.domain.watcher", name = "enabled", havingValue = "true",
+//@ConditionalOnProperty(prefix = "eleven.boot.domain.watcher", name = "enabled", havingValue = "true",
 //		propertiesClass = DomainEventListenerHandlerProperties.class)
 @Deprecated
 public class DomainContextListenerHandlerMain {

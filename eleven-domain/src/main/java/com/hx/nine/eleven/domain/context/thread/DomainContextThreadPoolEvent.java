@@ -4,7 +4,7 @@ import co.paralleluniverse.fibers.SuspendExecution;
 import com.hx.nine.eleven.domain.context.DomainContext;
 import com.hx.nine.eleven.domain.context.DomainContextListenerHandlerProcess;
 import com.hx.nine.eleven.domain.response.ResponseEntity;
-import com.hx.thread.pool.executor.event.ThreadPoolEvent;
+import com.hx.nine.eleven.thread.pool.executor.event.ThreadPoolEvent;
 
 public class DomainContextThreadPoolEvent extends ThreadPoolEvent<DomainContext,ResponseEntity> {
 

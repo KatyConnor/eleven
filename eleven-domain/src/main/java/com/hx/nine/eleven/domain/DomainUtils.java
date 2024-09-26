@@ -18,7 +18,7 @@ import com.hx.nine.eleven.domain.exception.DBExecuteException;
 import com.hx.nine.eleven.domain.exception.DomainOperatorException;
 import com.hx.nine.eleven.domain.obj.domain.Domain;
 import com.hx.nine.eleven.domain.syscode.DomainApplicationSysCode;
-import com.hx.nine.eleven.core.utils.HXLogger;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import net.sf.cglib.beans.BeanMap;
 
 import java.lang.reflect.Field;
@@ -191,7 +191,7 @@ public class DomainUtils {
 
 	private static void setDomainField(Object requestBody, Field field,DomainDO domainDO,BeanMap beanMap) {
 		if (!Optional.ofNullable(requestBody).isPresent()){
-			HXLogger.build(DomainUtils.class).info("requestBody为空");
+			ElevenLoggerFactory.build(DomainUtils.class).info("requestBody为空");
 			return;
 		}
 		Class<?> fieldClass = field.getType();
@@ -201,7 +201,7 @@ public class DomainUtils {
 				|| fieldClass.isAssignableFrom(List.class)
 				|| fieldClass.isAssignableFrom(Collection.class)) {
 			if (StringUtils.isEmpty(domainDO.convertType())){
-				HXLogger.build(DomainUtils.class).info("@DomainDO 没有指定 convertType 类型,[{}]赋值失败",field.getName());
+				ElevenLoggerFactory.build(DomainUtils.class).info("@DomainDO 没有指定 convertType 类型,[{}]赋值失败",field.getName());
 				return;
 			}
 			setListField(requestBody, beanMap,field.getName(), domainDO.convertType());

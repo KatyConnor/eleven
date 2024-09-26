@@ -2,8 +2,8 @@ package com.hx.nine.eleven.domain.obj.domain;
 
 import com.hx.nine.eleven.domain.entity.PageEntity;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.vertx.jooq.jdbc.tx.JooqTransactionManager;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManager;
 
 /**
  * 领域对象 DOMAIN Object
@@ -41,7 +41,7 @@ public class Domain {
      * 当正式打开数据库连接时才开启事务通道
      */
     public void commitTransaction(){
-        JooqTransactionManager jooqTransactionManager = VertxApplicationContextAware.getBean(JooqTransactionManager.class);
+        JooqTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(JooqTransactionManager.class);
         jooqTransactionManager.commit();
         jooqTransactionManager.begin();
     }

@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.domain.context;
 
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.domain.BeanFactoryLocator;
 import com.hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import com.hx.nine.eleven.domain.context.thread.DomainContextThreadPoolEvent;
@@ -14,8 +15,8 @@ import com.hx.nine.eleven.domain.obj.form.HeaderForm;
 import com.hx.nine.eleven.domain.service.WebServiceFacade;
 import com.hx.nine.eleven.domain.utils.MessageCodeUtils;
 import com.hx.nine.eleven.domain.web.WebServletRoutor;
-import com.hx.etx.sync.fiber.FiberCheck;
-import com.hx.etx.sync.fiber.HXFiberSync;
+import com.hx.nine.eleven.sync.fiber.FiberCheck;
+import com.hx.nine.eleven.sync.fiber.HXFiberSync;
 import com.hx.nine.eleven.commons.utils.BeanUtils;
 import com.hx.nine.eleven.domain.exception.DomainOperatorException;
 import com.hx.nine.eleven.domain.request.WebHttpRequest;
@@ -25,8 +26,7 @@ import com.github.f4b6a3.ulid.UlidCreator;
 import com.hx.nine.eleven.commons.utils.Builder;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.thread.pool.executor.pool.ThreadPoolService;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
+import com.hx.nine.eleven.thread.pool.executor.pool.ThreadPoolService;
 import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
 import io.vertx.core.Future;
 import net.sf.cglib.beans.BeanMap;
@@ -319,7 +319,7 @@ public class DomainContextAware {
 	 * @return
 	 */
 	public boolean isAutoSyncFile() {
-		DomainEventListenerHandlerProperties properties = VertxApplicationContextAware
+		DomainEventListenerHandlerProperties properties = ElevenApplicationContextAware
 				.getProperties(DomainEventListenerHandlerProperties.class);
 		return properties.getAutoSync();
 	}
@@ -329,7 +329,7 @@ public class DomainContextAware {
 	 * @return
 	 */
 	public boolean checkOpenFiber(){
-		DomainEventListenerHandlerProperties properties = VertxApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
+		DomainEventListenerHandlerProperties properties = ElevenApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
 		Boolean openFiber = properties.getOpenFiber();
 		return !ObjectUtils.isEmpty(openFiber) || openFiber;
 	}

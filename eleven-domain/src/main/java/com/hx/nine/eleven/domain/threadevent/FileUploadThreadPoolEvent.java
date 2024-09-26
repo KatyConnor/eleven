@@ -5,8 +5,8 @@ import com.hx.nine.eleven.domain.context.FileUploadExecuteProcess;
 import com.hx.nine.eleven.domain.entity.SyncFileUploadEntity;
 import com.hx.nine.eleven.domain.properties.DomainEventListenerHandlerProperties;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
-import com.hx.thread.pool.executor.event.ThreadPoolEvent;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
+import com.hx.nine.eleven.thread.pool.executor.event.ThreadPoolEvent;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +36,8 @@ public class FileUploadThreadPoolEvent extends ThreadPoolEvent<List<FileUploadEn
 
 	@Override
 	public Object run() throws SuspendExecution, InterruptedException {
-		FileUploadExecuteProcess fileUploadExecuteProcess = VertxApplicationContextAware.getSubTypesOfBean(FileUploadExecuteProcess.class);
-		DomainEventListenerHandlerProperties handlerProperties = VertxApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
+		FileUploadExecuteProcess fileUploadExecuteProcess = ElevenApplicationContextAware.getSubTypesOfBean(FileUploadExecuteProcess.class);
+		DomainEventListenerHandlerProperties handlerProperties = ElevenApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
 		if (this.checkSyncFileConfiguration(handlerProperties)){
 			throw new RuntimeException("文件同步服务集群配置缺失，请配置");
 		}

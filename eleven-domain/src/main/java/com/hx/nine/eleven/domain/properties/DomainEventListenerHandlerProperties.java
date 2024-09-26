@@ -4,7 +4,7 @@ import com.hx.nine.eleven.domain.conver.FieldStringToArraysDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hx.nine.eleven.core.annotations.ConfigurationPropertiesBind;
 
-@ConfigurationPropertiesBind(prefix = "vertx.hx.domain.watcher")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.domain.watcher")
 public class DomainEventListenerHandlerProperties {
 
 	/**

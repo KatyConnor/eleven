@@ -17,12 +17,11 @@ import com.hx.nine.eleven.domain.context.DomainContext;
 import com.hx.nine.eleven.domain.conver.BeanConvert;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.hx.nine.eleven.core.annotations.Component;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
-import com.hx.vertx.jooq.jdbc.tx.JooqTransactionManager;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
+import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ public class DomainExecuteService {
     private DefaultDomainFactory factory;
 
     public DomainExecuteService(){
-        this.factory = DefaultVertxApplicationContext.build().getBean(DefaultDomainFactory.class);
+        this.factory = DefaultElevenApplicationContext.build().getBean(DefaultDomainFactory.class);
     }
 
     /**
@@ -53,7 +52,7 @@ public class DomainExecuteService {
      * @return 返回泛型T
      */
     public <T> T excuteTransaction(Class<T> response, DomainExecutor<T> executor) {
-        JooqTransactionManager jooqTransactionManager = VertxApplicationContextAware.getBean(JooqTransactionManager.class);
+        JooqTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(JooqTransactionManager.class);
         boolean rollback = false;
         try{
             jooqTransactionManager.begin();

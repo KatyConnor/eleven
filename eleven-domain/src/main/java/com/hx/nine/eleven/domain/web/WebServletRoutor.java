@@ -19,10 +19,10 @@ import com.hx.nine.eleven.domain.request.WebHttpRequest;
 import com.hx.nine.eleven.domain.response.ResponseEntity;
 import com.hx.nine.eleven.domain.service.WebServiceFacade;
 import com.hx.nine.eleven.domain.obj.vo.ErrorVO;
-import com.hx.thread.pool.executor.pool.ThreadPoolService;
+import com.hx.nine.eleven.thread.pool.executor.pool.ThreadPoolService;
 import com.hx.nine.eleven.core.annotations.Component;
 import com.hx.nine.eleven.core.constant.ConstantType;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class WebServletRoutor {
 
 			String subTradeCode = requestHeaderDTO.getSubTradeCode();
 			// 异步处理文件,当接受到上传文件时实时同步到其他服务器
-			DomainEventListenerHandlerProperties properties = VertxApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
+			DomainEventListenerHandlerProperties properties = ElevenApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
 			if (!ObjectUtils.isEmpty(webHttpRequest.getFileUploadEntities()) && properties.getAutoSync()){
 				FileUploadThreadPoolEvent fileUploadThreadPoolEvent = new FileUploadThreadPoolEvent(webHttpRequest.getFileUploadEntities());
 				ThreadPoolService.build().run(fileUploadThreadPoolEvent);
@@ -150,6 +150,6 @@ public class WebServletRoutor {
 	}
 
 	public static WebServletRoutor build() {
-		return VertxApplicationContextAware.getBean(WebServletRoutor.class);
+		return ElevenApplicationContextAware.getBean(WebServletRoutor.class);
 	}
 }

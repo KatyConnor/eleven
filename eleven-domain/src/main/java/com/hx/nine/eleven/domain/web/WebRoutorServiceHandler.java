@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.domain.web;
 
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import com.hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import com.hx.nine.eleven.domain.exception.DomainOperatorException;
 import com.hx.nine.eleven.domain.exception.ParamsValidationExcetion;
@@ -14,7 +15,6 @@ import com.hx.nine.eleven.commons.utils.ValidationUtils;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
 import com.hx.nine.eleven.core.handler.WebRequestServiceHandler;
-import com.hx.nine.eleven.core.utils.HXLogger;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -33,7 +33,7 @@ public class WebRoutorServiceHandler implements WebRequestServiceHandler {
 		validation(context,webHttpRequest);
 		Object obj = WebServletRoutor.build().doService(context,webHttpRequest);
 		if (obj == null){
-			HXLogger.build(this).info("[WebRequestServiceHandler]: 业务处理返回对象为null。");
+			ElevenLoggerFactory.build(this).info("[WebRequestServiceHandler]: 业务处理返回对象为null。");
 			return obj;
 		}
 		JsonObject jsonObj = JsonObject.mapFrom(obj);
