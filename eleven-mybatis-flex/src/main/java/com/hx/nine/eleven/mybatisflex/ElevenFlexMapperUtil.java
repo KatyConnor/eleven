@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.mybatisflex;
 
-import com.mybatisflex.core.BaseMapper;
+import com.hx.nine.eleven.mybatisflex.mapper.ElevenFlexBaseMapper;
 import com.mybatisflex.core.field.FieldQuery;
 import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.paginate.Page;

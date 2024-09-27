@@ -2,6 +2,7 @@ package com.hx.nine.eleven.mybatisflex;
 
 import com.hx.nine.eleven.core.factory.ApplicationSubTypesInitFactory;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
+import com.hx.nine.eleven.mybatisflex.mapper.ElevenBaseMapper;
 import org.reflections.Reflections;
 
 import java.util.Set;

@@ -1,5 +1,6 @@
-package com.hx.nine.eleven.mybatisflex;
+package com.hx.nine.eleven.mybatisflex.mapper;
 
+import com.hx.nine.eleven.mybatisflex.ElevenFlexMapperUtil;
 import com.mybatisflex.core.exception.FlexAssert;
 import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.mybatis.MappedStatementTypes;

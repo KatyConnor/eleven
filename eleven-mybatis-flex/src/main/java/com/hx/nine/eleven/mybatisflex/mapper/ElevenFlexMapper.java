@@ -1,4 +1,4 @@
-package com.hx.nine.eleven.mybatisflex;
+package com.hx.nine.eleven.mybatisflex.mapper;
 
 import com.mybatisflex.core.mybatis.Mappers;
 

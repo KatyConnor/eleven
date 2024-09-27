@@ -1,4 +1,4 @@
-package com.hx.nine.eleven.mybatisflex;
+package com.hx.nine.eleven.mybatisflex.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

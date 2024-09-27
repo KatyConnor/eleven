@@ -1,6 +1,7 @@
 package com.hx.nine.eleven.mybatisflex;
 
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.mybatisflex.mapper.ElevenBaseMapper;
 import com.mybatisflex.core.MybatisFlexBootstrap;
 
 import javax.sql.DataSource;
@@ -27,7 +28,7 @@ public class ElevenMybatisFlexBootstrap extends MybatisFlexBootstrap{
 	}
 
 	public ElevenMybatisFlexBootstrap initDataSource() {
-		DataSource dataSource = VertxApplicationContextAware.getBean("dataSource");
+		DataSource dataSource = ElevenApplicationContextAware.getBean("dataSource");
 		super.setDataSource(dataSource);
 		return this;
 	}
