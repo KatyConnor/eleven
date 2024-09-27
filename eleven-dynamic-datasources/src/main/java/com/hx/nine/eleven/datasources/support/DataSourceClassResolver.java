@@ -19,7 +19,7 @@ import com.hx.nine.eleven.datasources.annotation.HXDataSource;
 import com.hx.nine.eleven.datasources.aop.MethodClassKey;
 import com.hx.nine.eleven.datasources.utils.ClassUtils;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.annotation.AnnotatedElementUtils;

@@ -1,8 +1,7 @@
 package com.hx.nine.eleven.mybatisflex;
 
-import com.hx.nine.eleven.core.factory.ApplicationAnnotationFactory;
 import com.hx.nine.eleven.core.factory.ApplicationSubTypesInitFactory;
-import com.hx.nine.eleven.core.utils.HXLogger;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import org.reflections.Reflections;
 
 import java.util.Set;
@@ -18,7 +17,7 @@ public class MapperScanFactory implements ApplicationSubTypesInitFactory {
 	public void loadSubTypesObject(Reflections reflections) throws Throwable {
 		Set<Class<? extends ElevenBaseMapper>> mapperSet = reflections.getSubTypesOf(ElevenBaseMapper.class);
 		if (mapperSet == null){
-			HXLogger.build(MapperScanFactory.class).warn("项目没有添加 MapperScans ，无法自动注入 mapper");
+			ElevenLoggerFactory.build(MapperScanFactory.class).warn("项目没有添加 MapperScans ，无法自动注入 mapper");
 			return;
 		}
 		ElevenMybatisFlexBootStarter.start(mapperSet);

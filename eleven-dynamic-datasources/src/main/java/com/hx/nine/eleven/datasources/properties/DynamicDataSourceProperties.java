@@ -15,6 +15,7 @@
  */
 package com.hx.nine.eleven.datasources.properties;
 
+import com.hx.nine.eleven.commons.annotation.FieldTypeConvert;
 import com.hx.nine.eleven.datasources.FieldListToObjectConvert;
 import com.hx.nine.eleven.datasources.enums.SeataMode;
 import com.hx.nine.eleven.datasources.properties.beecp.BeeCpDataSourceProperties;
@@ -24,7 +25,6 @@ import com.hx.nine.eleven.datasources.properties.hikari.HikariCpDataSourceProper
 import com.hx.nine.eleven.datasources.strategy.DynamicDataSourceStrategy;
 import com.hx.nine.eleven.datasources.strategy.LoadBalanceDynamicDataSourceStrategy;
 import com.hx.nine.eleven.datasources.utils.CryptoUtils;
-import com.hx.lang.commons.annotation.FieldTypeConvert;
 import com.hx.nine.eleven.core.annotations.ConfigurationPropertiesBind;
 import com.hx.nine.eleven.core.annotations.NestedConfigurationProperty;
 import lombok.Getter;

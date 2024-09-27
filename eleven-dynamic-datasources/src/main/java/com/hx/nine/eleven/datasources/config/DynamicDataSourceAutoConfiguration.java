@@ -21,12 +21,10 @@ import com.hx.nine.eleven.datasources.strategy.DynamicDataSourceStrategy;
 import com.hx.nine.eleven.datasources.HXDynamicRoutingDataSource;
 import com.hx.nine.eleven.datasources.utils.DataSourcePermissionCheck;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
-import com.hx.lang.commons.utils.ObjectUtils;
+import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.core.annotations.Component;
 import com.hx.nine.eleven.core.annotations.ConditionalOnBean;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
-import com.hx.vertx.jooq.jdbc.HXDSL;
-import com.hx.vertx.jooq.jdbc.tx.JooqTransactionManager;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import javax.sql.DataSource;
 import java.util.Map;
@@ -51,9 +49,9 @@ public class DynamicDataSourceAutoConfiguration {
      */
     public void initDataSource() {
         HXLogger.build(this).info("开始初始化数据源");
-        DynamicDataSourceProperties properties = DefaultVertxApplicationContext.build()
+        DynamicDataSourceProperties properties = DefaultElevenApplicationContext.build()
                 .getProperties(DynamicDataSourceProperties.class);
-        DefaultDynamicDataSourceCreator creator = DefaultVertxApplicationContext.build().getBean(DefaultDynamicDataSourceCreator.class);
+        DefaultDynamicDataSourceCreator creator = DefaultElevenApplicationContext.build().getBean(DefaultDynamicDataSourceCreator.class);
         HXDynamicRoutingDataSource dataSource = new HXDynamicRoutingDataSource();
         Map<Object,DataSource> dataSourceMap = creator.createAllDataSource(properties);
         Object object = dataSourceMap.get(properties.getPrimary()); // 默认数据源
@@ -62,16 +60,9 @@ public class DynamicDataSourceAutoConfiguration {
             throw new RuntimeException("默认数据源不能为空，请设置默认数据源");
         }
         dataSource.setTargetDataSources(dataSourceMap);    // 其他数据源
-        dataSource.setDefaultTargetDataSource(object);       // 默认数据源
+        dataSource.setDefaultTargetDataSource((DataSource)object);       // 默认数据源
         DataSourcePermissionCheck.setDefaultDataSource(properties.getPrimary()); // 默认数据源名称
         dataSource.setMasterDataSource(properties.getPrimary());
-        DefaultVertxApplicationContext.build().addBean("dataSource",dataSource);
-        // jooq框架初始化事务管理
-        HXLogger.build(this).info("开始初始化jooq事务管理器");
-        JooqTransactionManager jooqTransactionManager = new JooqTransactionManager(dataSource);
-        DefaultVertxApplicationContext.build().addBean(jooqTransactionManager);
-        //初始化jooq
-        HXLogger.build(this).info("--------------------初始化jooq与数据库的初始链接--------------------");
-        HXDSL.using(dataSource).selectCount();
+        DefaultElevenApplicationContext.build().addBean("dataSource",dataSource);
     }
 }

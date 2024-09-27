@@ -23,7 +23,7 @@ import com.hx.nine.eleven.datasources.properties.hikari.HikariCpDataSourceProper
 import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.DataSourcePermissionCheck;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 

@@ -30,8 +30,8 @@ import com.hx.nine.eleven.datasources.properties.druid.DruidStatConfigUtil;
 import com.hx.nine.eleven.datasources.properties.druid.DruidWallConfigUtil;
 import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
-import com.hx.lang.commons.utils.StringUtils;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.commons.utils.StringUtils;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.spi.DataSourceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -133,7 +133,7 @@ public class DruidDataSourceCreator extends AbstractDataSourceCreator implements
             }
         }
         for (Class<? extends Filter> filterId : properties.getProxyFilters()) {
-            proxyFilters.add(DefaultVertxApplicationContext.build().getBean(filterId));
+            proxyFilters.add(DefaultElevenApplicationContext.build().getBean(filterId));
         }
         return proxyFilters;
     }

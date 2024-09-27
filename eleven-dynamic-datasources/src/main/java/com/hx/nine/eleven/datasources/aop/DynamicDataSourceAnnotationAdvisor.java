@@ -15,12 +15,12 @@
  */
 package com.hx.nine.eleven.datasources.aop;
 
-import com.hx.bytebuddy.aop.advice.AbstractPointcutAdvisor;
+import com.hx.nine.eleven.bytebuddy.aop.advice.AbstractPointcutAdvisor;
 import com.hx.nine.eleven.datasources.annotation.HXDataSource;
 import com.hx.nine.eleven.datasources.interceptor.DynamicDataSourceAnnotationInterceptor;
 import com.hx.nine.eleven.datasources.properties.DynamicDatasourceAopProperties;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 
 /**
  * 通过注解实现aop拦截
@@ -33,7 +33,7 @@ public class DynamicDataSourceAnnotationAdvisor extends AbstractPointcutAdvisor 
     @Override
     public void init() {
         HXLogger.build(this).info("初始化数据源拦截器");
-        DynamicDatasourceAopProperties aopProperties = DefaultVertxApplicationContext.build()
+        DynamicDatasourceAopProperties aopProperties = DefaultElevenApplicationContext.build()
                 .getProperties().getProperty(DynamicDatasourceAopProperties.class);
         DynamicDataSourceAnnotationInterceptor interceptor = new DynamicDataSourceAnnotationInterceptor(aopProperties.getAllowedPublicOnly());
         this.addAnnotation(HXDataSource.class,interceptor);

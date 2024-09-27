@@ -20,7 +20,7 @@ import com.hx.nine.eleven.datasources.event.DataSourceInitEvent;
 import com.hx.nine.eleven.datasources.properties.DataSourceProperties;
 import com.hx.nine.eleven.datasources.support.ScriptRunner;
 import com.hx.lang.commons.utils.BeanMapUtil;
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.p6spy.engine.spy.P6DataSource;
 import io.seata.rm.datasource.DataSourceProxy;
 import io.seata.rm.datasource.xa.DataSourceProxyXA;

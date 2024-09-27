@@ -15,13 +15,13 @@
  */
 package com.hx.nine.eleven.datasources.interceptor;
 
-import com.hx.bytebuddy.aop.interceptor.MethodInterceptor;
-import com.hx.bytebuddy.aop.invoke.Invocation;
+import com.hx.nine.eleven.bytebuddy.aop.interceptor.MethodInterceptor;
+import com.hx.nine.eleven.bytebuddy.aop.invoke.Invocation;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.datasources.support.DataSourceClassResolver;
 import com.hx.nine.eleven.datasources.DynamicDataSourceContextHolder;
-import com.hx.lang.commons.utils.StringUtils;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.vertx.jooq.jdbc.tx.JooqTransactionManager;
+import com.hx.nine.eleven.commons.utils.StringUtils;
+import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManager;
 
 import java.lang.reflect.Method;
 
@@ -58,7 +58,7 @@ public class DynamicDataSourceAnnotationInterceptor implements MethodInterceptor
             return invocation.proceed();
         } finally {
             // 清除数据源信息时，需要同时提交当前数据源未提交事务
-            JooqTransactionManager jooqTransactionManager =VertxApplicationContextAware.getBean(JooqTransactionManager.class);
+            JooqTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(JooqTransactionManager.class);
             jooqTransactionManager.commit();
             DynamicDataSourceContextHolder.poll();
         }

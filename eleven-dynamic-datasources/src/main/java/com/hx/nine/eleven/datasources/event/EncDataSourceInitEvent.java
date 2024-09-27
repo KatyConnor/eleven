@@ -16,7 +16,7 @@
 package com.hx.nine.eleven.datasources.event;
 
 import com.hx.nine.eleven.datasources.utils.CryptoUtils;
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.annotations.Component;
 import lombok.extern.slf4j.Slf4j;
 import javax.sql.DataSource;

@@ -19,7 +19,7 @@ import com.hx.nine.eleven.datasources.properties.hikari.HikariCpDataSourceProper
 import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
 import com.hx.lang.commons.utils.BeanMapUtil;
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.vertx.core.json.JsonObject;

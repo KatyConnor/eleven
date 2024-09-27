@@ -3,13 +3,14 @@ package com.hx.nine.eleven.jooq.jdbc;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.fibers.jdbc.FiberDataSource;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
+import com.hx.nine.eleven.jdbc.AbstractRoutingDataSource;
 import com.hx.nine.eleven.sync.fiber.FiberThreadPoolScheduler;
 import  com.hx.nine.eleven.commons.utils.Builder;
 import  com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.jooq.jdbc.enums.SQLDialectEnums;
 import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManagerHolder;
-import  com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import  com.hx.nine.eleven.core.utils.HXLogger;
 import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManager;
 import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManagerEntity;
 import com.hx.nine.eleven.jooq.jdbc.utils.JdbcUrlUtils;
@@ -58,7 +59,7 @@ public class HXDSL extends DSL {
 	@Suspendable
 	public static DSLContext getDSLContext(DataSource datasource) throws SQLException {
 		if (!(datasource instanceof AbstractRoutingDataSource)){
-			HXLogger.build(HXDSL.class).error(StringUtils.format("不支持的数[{}]据源类型,数据源需要继承com.hx.vertx.jooq.jdbc.AbstractRoutingDataSource",
+			ElevenLoggerFactory.build(HXDSL.class).error(StringUtils.format("不支持的数[{}]据源类型,数据源需要继承com.hx.vertx.jooq.jdbc.AbstractRoutingDataSource",
 					datasource.getClass().getName()));
 			throw new DataAccessException(StringUtils.format("不支持的数[{}]据源类型,数据源需要继承com.hx.vertx.jooq.jdbc.AbstractRoutingDataSource",
 					datasource.getClass().getName()));
@@ -72,7 +73,7 @@ public class HXDSL extends DSL {
 			if(Fiber.currentFiber() == null){
 				ThreadPoolExecutor executor = FiberThreadPoolScheduler.build().getThreadPoolExecutor();
 				connection = FiberDataSource.wrap(datasource,executor).getConnection();
-				HXLogger.build(HXDSL.class).info("--------开启fiber模式执行connection---------");
+				ElevenLoggerFactory.build(HXDSL.class).info("--------开启fiber模式执行connection---------");
 			}else {
 				connection = datasource.getConnection();
 			}
@@ -84,7 +85,7 @@ public class HXDSL extends DSL {
 			JooqTransactionManagerHolder.addTransactionManager(managerEntity);
 			// 开启事务
 			if (JooqTransactionManagerHolder.getTransaction(dataSourceName)){
-				JooqTransactionManager jooqTransactionManager = VertxApplicationContextAware.getBean(JooqTransactionManager.class);
+				JooqTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(JooqTransactionManager.class);
 				jooqTransactionManager.begin();
 			}
 			return dslContext;

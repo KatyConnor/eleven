@@ -15,7 +15,7 @@
  */
 package com.hx.nine.eleven.datasources;
 
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.core.NamedThreadLocal;
 
 import java.util.ArrayDeque;

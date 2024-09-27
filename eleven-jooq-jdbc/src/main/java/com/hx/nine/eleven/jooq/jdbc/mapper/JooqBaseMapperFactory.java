@@ -2,7 +2,8 @@ package com.hx.nine.eleven.jooq.jdbc.mapper;
 
 import  com.hx.nine.eleven.commons.utils.DateUtils;
 import  com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.jooq.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.jooq.jdbc.ElevenJooqDataSource;
 import com.hx.nine.eleven.jooq.jdbc.HXDSL;
 import com.hx.nine.eleven.jooq.jdbc.enums.SQLDialectEnums;
 import com.hx.nine.eleven.jooq.jdbc.page.PageResult;
@@ -292,7 +293,7 @@ public class JooqBaseMapperFactory<R extends UpdatableRecord<R>, P, T> extends J
 	private AbstractRoutingDataSource getAbstractRoutingDataSource() {
 		DataSource dataSource = super.getTargetDataSource();
 		// 设置数据库类型（需要先判断当前类是否开启事务）
-		if (!(dataSource instanceof AbstractRoutingDataSource)) {
+		if (!(dataSource instanceof ElevenJooqDataSource)) {
 			throw new DataAccessException(StringUtils.format("不支持的数[{}]据源类型,数据源需要继承com.hx.vertx.jooq.jdbc.AbstractRoutingDataSource",
 					dataSource.getClass().getName()));
 		}

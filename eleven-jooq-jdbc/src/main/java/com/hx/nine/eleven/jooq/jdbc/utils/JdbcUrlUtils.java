@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.jooq.jdbc.utils;
 
-import com.hx.nine.eleven.jooq.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.jdbc.AbstractRoutingDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;

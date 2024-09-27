@@ -19,7 +19,7 @@ import com.hx.nine.eleven.datasources.properties.dbcp2.Dbcp2DataSourceProperties
 import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.ConfigMergeCreator;
 import com.hx.lang.commons.utils.BeanMapUtil;
-import com.hx.lang.commons.utils.StringUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.spi.DataSourceProvider;
 import org.apache.commons.dbcp2.BasicDataSource;

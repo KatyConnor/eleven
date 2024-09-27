@@ -21,7 +21,7 @@ import com.hx.nine.eleven.datasources.utils.ClassUtils;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
 import com.hx.nine.eleven.datasources.creator.*;
 import com.hx.nine.eleven.core.annotations.Component;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class DynamicDataSourceCreatorAutoConfiguration {
             creatorMap.put(obj.support(),obj);
         });
         DefaultDynamicDataSourceCreator defaultDynamicDataSourceCreator = new DefaultDynamicDataSourceCreator(creatorMap);
-        DefaultVertxApplicationContext.build().addBean(defaultDynamicDataSourceCreator);
+        DefaultElevenApplicationContext.build().addBean(defaultDynamicDataSourceCreator);
     }
 
     /**

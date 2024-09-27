@@ -1,8 +1,8 @@
 package com.hx.nine.eleven.datasources;
 
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
-import com.hx.lang.commons.utils.StringUtils;
-import com.hx.vertx.jooq.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.jdbc.AbstractRoutingDataSource;
 import lombok.Setter;
 import javax.sql.DataSource;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class HXDynamicRoutingDataSource extends AbstractRoutingDataSource {
      * @return 数据源名称
      */
     @Override
-    protected Object determineCurrentLookupKey() {
+    protected String determineCurrentLookupKey() {
         String dataSource = DynamicDataSourceContextHolder.peek();
         HXLogger.build(this).info("获取当前线程数据源，{}，datasource:[{}]",Thread.currentThread().getName(),dataSource);
         return dataSource;

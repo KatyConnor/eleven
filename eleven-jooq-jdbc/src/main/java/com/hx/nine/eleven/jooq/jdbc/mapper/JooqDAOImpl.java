@@ -5,14 +5,14 @@ import  com.hx.nine.eleven.commons.utils.Builder;
 import  com.hx.nine.eleven.commons.utils.CollectionUtils;
 import  com.hx.nine.eleven.commons.utils.ObjectUtils;
 import  com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.jooq.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
+import com.hx.nine.eleven.jdbc.AbstractRoutingDataSource;
 import com.hx.nine.eleven.jooq.jdbc.HXDSL;
 import com.hx.nine.eleven.jooq.jdbc.HXDataSourceConnectionProvider;
 import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManager;
 import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManagerEntity;
 import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManagerHolder;
-import  com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import  com.hx.nine.eleven.core.utils.HXLogger;
 import org.jooq.*;
 import org.jooq.conf.Settings;
 import org.jooq.exception.DataAccessException;
@@ -59,7 +59,7 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 	protected JooqDAOImpl(Table<R> table, Class<P> type, Configuration configuration) {
 		this.table = table;
 		this.type = type;
-		this.targetDataSource = VertxApplicationContextAware.getBean("dataSource");
+		this.targetDataSource = ElevenApplicationContextAware.getBean("dataSource");
 		DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
 		HXDataSourceConnectionProvider connectionProvider = new HXDataSourceConnectionProvider(this.targetDataSource);
 		defaultConfiguration.set(connectionProvider);
@@ -103,7 +103,7 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 			JooqTransactionManagerHolder.addTransactionManager(entity);
 			// 开启事务
 			if (JooqTransactionManagerHolder.getTransaction(dataSourceName)) {
-				JooqTransactionManager jooqTransactionManager = VertxApplicationContextAware.getBean(JooqTransactionManager.class);
+				JooqTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(JooqTransactionManager.class);
 				jooqTransactionManager.begin();
 			}
 		} catch (SQLException e) {
@@ -154,14 +154,14 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 	@Override
 	public void insert(Collection<P> objects) {
 		if (CollectionUtils.isEmpty(objects)){
-			HXLogger.build(this).info("数据对象为空，暂不执行 insert 操作");
+			ElevenLoggerFactory.build(this).info("数据对象为空，暂不执行 insert 操作");
 			return;
 		}
 		int result = 0;
 		if (objects.size() > 1){
 			List<R> records = this.records(objects, false);
 			if (records.size() <= 0){
-				HXLogger.build(this).info("生成record失败");
+				ElevenLoggerFactory.build(this).info("生成record失败");
 				return;
 			}
 			if (!FALSE.equals(settings().isReturnRecordToPojo())){
@@ -173,14 +173,14 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 			}
 
 			if (result == records.size()){
-				HXLogger.build(this).info("数据对象写入数据库成功，执行insert操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象写入数据库成功，执行insert操作[{}]条",result);
 			}
 		}
 		if (objects.size() == 1){
 			R record = this.records(objects, false).get(0);
 			result = ctx().executeInsert(record);
 			if (result == 1){
-				HXLogger.build(this).info("数据对象写入数据库成功，执行insert操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象写入数据库成功，执行insert操作[{}]条",result);
 			}
 		}
 	}
@@ -211,14 +211,14 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 	@Override
 	public void update(Collection<P> objects) {
 		if (CollectionUtils.isEmpty(objects)){
-			HXLogger.build(this).info("数据对象为空，暂不执行 update 操作");
+			ElevenLoggerFactory.build(this).info("数据对象为空，暂不执行 update 操作");
 			return;
 		}
 		int result = 0;
 		if (objects.size() > 1) {
 			List<R> records = this.records(objects, true);
 			if (records.size() <= 0){
-				HXLogger.build(this).info("生成record失败");
+				ElevenLoggerFactory.build(this).info("生成record失败");
 				return;
 			}
 			if (!FALSE.equals(settings().isReturnRecordToPojo()) &&
@@ -230,13 +230,13 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 				ctx().batchUpdate(records).execute();
 			}
 			if (result == records.size()){
-				HXLogger.build(this).info("数据对象进行数据库更新成功，执行update操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象进行数据库更新成功，执行update操作[{}]条",result);
 			}
 		} else if (objects.size() == 1) {
 			R record = this.records(objects, false).get(0);
 			result = ctx().executeUpdate(record);
 			if (result == 1){
-				HXLogger.build(this).info("数据对象进行数据库更新成功，执行update操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象进行数据库更新成功，执行update操作[{}]条",result);
 			}
 		}
 	}
@@ -255,14 +255,14 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 	@Override
 	public void merge(Collection<P> objects) {
 		if (CollectionUtils.isEmpty(objects)){
-			HXLogger.build(this).info("数据对象为空，暂不执行 merge 操作");
+			ElevenLoggerFactory.build(this).info("数据对象为空，暂不执行 merge 操作");
 			return;
 		}
 		int result = 0;
 		if (objects.size() > 1) {
 			List<R> records = this.records(objects, false);
 			if (records.size() <= 0){
-				HXLogger.build(this).info("生成record失败");
+				ElevenLoggerFactory.build(this).info("生成record失败");
 				return;
 			}
 			if (!FALSE.equals(settings().isReturnRecordToPojo()) &&
@@ -274,12 +274,12 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 				result = ctx().batchMerge(records).execute().length;
 			}
 			if (result == records.size()){
-				HXLogger.build(this).info("数据对象进行merge合并成功，执行 merge 操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象进行merge合并成功，执行 merge 操作[{}]条",result);
 			}
 		} else if (objects.size() == 1) {
 			result = this.records(objects, false).get(0).merge();
 			if (result == 1){
-				HXLogger.build(this).info("数据对象进行merge合并成功，执行 merge 操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象进行merge合并成功，执行 merge 操作[{}]条",result);
 			}
 		}
 	}
@@ -310,14 +310,14 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 	@Override
 	public void delete(Collection<P> objects) {
 		if (CollectionUtils.isEmpty(objects)){
-			HXLogger.build(this).info("数据对象为空，暂不执行 delete 操作");
+			ElevenLoggerFactory.build(this).info("数据对象为空，暂不执行 delete 操作");
 			return;
 		}
 		int result = 0;
 		if (objects.size() > 1) {
 			List<R> records = this.records(objects, true);
 			if (records.size() <= 0){
-				HXLogger.build(this).info("生成record失败");
+				ElevenLoggerFactory.build(this).info("生成record失败");
 				return;
 			}
 			if (!FALSE.equals(settings().isReturnRecordToPojo()) &&
@@ -329,13 +329,13 @@ public abstract class JooqDAOImpl<R extends UpdatableRecord<R>, P, T> implements
 				result = ctx().batchDelete(records).execute().length;
 			}
 			if (result == records.size()){
-				HXLogger.build(this).info("数据对象进行数据库物理删除成功，执行 delete 操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象进行数据库物理删除成功，执行 delete 操作[{}]条",result);
 			}
 		} else if (objects.size() == 1) {
 			R record = this.records(objects, true).get(0);
 			ctx().executeDelete(record);
 			if (result == 1){
-				HXLogger.build(this).info("数据对象进行数据库物理删除成功，执行 delete 操作[{}]条",result);
+				ElevenLoggerFactory.build(this).info("数据对象进行数据库物理删除成功，执行 delete 操作[{}]条",result);
 			}
 		}
 	}

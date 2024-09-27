@@ -1,6 +1,7 @@
 package com.hx.nine.eleven.jooq.jdbc.utils;
 
-import com.hx.nine.eleven.jooq.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.jooq.jdbc.ElevenJooqDataSource;
 import com.hx.nine.eleven.jooq.jdbc.HXDataSourceConnectionProvider;
 import org.jooq.ConnectionProvider;
 import org.jooq.impl.ThreadLocalTransactionProvider;
