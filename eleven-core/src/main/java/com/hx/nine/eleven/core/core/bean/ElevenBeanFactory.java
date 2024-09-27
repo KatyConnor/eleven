@@ -29,7 +29,7 @@ public class ElevenBeanFactory {
 	 * @param <T>
 	 * @return
 	 */
-	public static  <T> T initBean(Class<T> tClass) {
+	public static <T> T initBean(Class<T> tClass) {
 		ConstructorAccess<T> constructorAccess = ConstructorAccess.get(tClass);
 		// 获取bean创建之前处理类
 		Set<Class<? extends ApplicationBeanRegister>> beanRegisters = DefaultElevenApplicationContext.build()
@@ -37,7 +37,7 @@ public class ElevenBeanFactory {
 		T bean = null;
 		ApplicationBeanRegister beanRegister = null;
 		Class<? extends ApplicationBeanRegister> beanRegisterClass = null;
-		if (Optional.ofNullable(beanRegisters).isPresent() && beanRegisters.size() > 0){
+		if (Optional.ofNullable(beanRegisters).isPresent() && beanRegisters.size() > 0) {
 			beanRegisterClass = beanRegisters.stream().filter(br -> {
 				BeanRegister brAnnotation = br.getAnnotation(BeanRegister.class);
 				Class<?> bClass = null;
@@ -52,7 +52,7 @@ public class ElevenBeanFactory {
 		}
 
 		//检查onClass
-		if (!checkOnClass(tClass)){
+		if (!checkOnClass(tClass)) {
 			return null;
 		}
 
@@ -63,14 +63,14 @@ public class ElevenBeanFactory {
 		ElevenObjectProxy elevenObjectProxy = ElevenApplicationContextAware.getSubTypesOfBean(ElevenObjectProxy.class);
 		if (beanRegister != null) {
 			beanRegister.before(DefaultElevenApplicationContext.build());
-			bean = elevenObjectProxy.checkProxy(tClass)? elevenObjectProxy.newByteBuddyProxyInstancesss(tClass):constructorAccess.newInstance();
+			bean = elevenObjectProxy.checkProxy(tClass) ? elevenObjectProxy.newByteBuddyProxyInstancesss(tClass) : constructorAccess.newInstance();
 			beanRegister.setBean(bean);
 			beanRegister.after(DefaultElevenApplicationContext.build());
 			return (T) beanRegister.getBean();
 		} else {
-			bean = elevenObjectProxy.checkProxy(tClass)? elevenObjectProxy.newByteBuddyProxyInstancesss(tClass):constructorAccess.newInstance();
+			bean = elevenObjectProxy.checkProxy(tClass) ? elevenObjectProxy.newByteBuddyProxyInstancesss(tClass) : constructorAccess.newInstance();
 		}
-		Optional.ofNullable(beanRegisterClass).ifPresent(br ->{
+		Optional.ofNullable(beanRegisterClass).ifPresent(br -> {
 			beanRegisters.remove(br); // 删除处理之后的class
 		});
 		return bean;
@@ -81,18 +81,18 @@ public class ElevenBeanFactory {
 		return method.invoke(obj, methodName, args);
 	}
 
-	public static <T> T createBean(Class<T> tClass){
+	public static <T> T createBean(Class<T> tClass) {
 		ConstructorAccess<T> constructorAccess = ConstructorAccess.get(tClass);
 		return constructorAccess.newInstance();
 	}
 
-	private static boolean checkOnClass(Class<?> tClass){
+	private static boolean checkOnClass(Class<?> tClass) {
 		ConditionalOnClass conditionalOnClass = tClass.getAnnotation(ConditionalOnClass.class);
 		if (Optional.ofNullable(conditionalOnClass).isPresent()) {
 			Class<?>[] onClass = conditionalOnClass.value();
 			List<Class<?>> list = Arrays.asList(onClass);
-			for (Class<?> c : list){
-				if (!isPresent(c.getName())){
+			for (Class<?> c : list) {
+				if (!isPresent(c.getName())) {
 					return false;
 				}
 			}
@@ -116,6 +116,11 @@ public class ElevenBeanFactory {
 					}
 				}
 			}
+
+			if (next) {
+				return true;
+			}
+
 			Class<?>[] classes = conditionalAfterBean.value();
 			if (classes != null && classes.length > 0) {
 				for (Class<?> beanClass : classes) {
@@ -124,22 +129,28 @@ public class ElevenBeanFactory {
 					}
 				}
 			}
-			if (!next) {
-				ConcurrentLinkedQueue<Class<?>> afterBeansQueue = ElevenApplicationContextAware.
-						getBean(ConstantType.CONDITIONAL_ON_AFTER_BEAN);
-				if (CollectionUtils.isEmpty(afterBeansQueue)) {
-					afterBeansQueue = new ConcurrentLinkedQueue();
-				}
-				afterBeansQueue.add(tClass);
-				DefaultElevenApplicationContext.build().addBean(ConstantType.CONDITIONAL_ON_AFTER_BEAN, afterBeansQueue,true);
-				return false;
+
+			if (next) {
+				return true;
 			}
+
+
+			ConcurrentLinkedQueue<Class<?>> afterBeansQueue = ElevenApplicationContextAware.
+					getBean(ConstantType.CONDITIONAL_ON_AFTER_BEAN);
+			if (CollectionUtils.isEmpty(afterBeansQueue)) {
+				afterBeansQueue = new ConcurrentLinkedQueue();
+			}
+			afterBeansQueue.add(tClass);
+			DefaultElevenApplicationContext.build().addBean(ConstantType.CONDITIONAL_ON_AFTER_BEAN, afterBeansQueue, true);
+			return false;
+
 		}
 		return true;
 	}
 
 	/**
 	 * 判断类class 是否存在
+	 *
 	 * @param name
 	 * @return
 	 */
