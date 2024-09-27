@@ -237,25 +237,25 @@ public interface ElevenFlexBaseMapper {
 
 	/**
 	 * 根据主键删除数据。如果是多个主键的情况下，需要传入数组，例如：new Integer[]{100,101}
-	 * @param var1
+	 * @param id
 	 * @return
 	 */
 	@DeleteProvider(
 			type = EntitySqlProvider.class,
 			method = "deleteById"
 	)
-	int deleteById(@Param("$$primaryValue") Serializable var1);
+	int deleteById(@Param("$$primaryValue") Serializable id);
 
 	/**
 	 * 根据多个主键批量删除数据
-	 * @param var1
+	 * @param ids
 	 * @return
 	 */
 	@DeleteProvider(
 			type = EntitySqlProvider.class,
 			method = "deleteBatchByIds"
 	)
-	int deleteBatchByIds(@Param("$$primaryValue") Collection<? extends Serializable> var1);
+	int deleteBatchByIds(@Param("$$primaryValue") Collection<? extends Serializable> ids);
 
 	/**
 	 * 根据多个主键批量删除数据,多条数据时，根据指定数量切分删除，默认1000
@@ -333,7 +333,7 @@ public interface ElevenFlexBaseMapper {
 			type = EntitySqlProvider.class,
 			method = "update"
 	)
-	<T> int update(@Param("$$entity") T var1, @Param("$$ignoreNulls") boolean var2);
+	<T> int update(@Param("$$entity") T entity, @Param("$$ignoreNulls") boolean ignoreNulls);
 
 	/**
 	 * 根据 Map 构建的条件来更新数据
@@ -396,9 +396,9 @@ public interface ElevenFlexBaseMapper {
 
 	/**
 	 * 根据查询条件来更新数据
-	 * @param var1
-	 * @param var2
-	 * @param var3
+	 * @param entity
+	 * @param ignoreNulls
+	 * @param query
 	 * @param <T>
 	 * @return
 	 */
@@ -406,7 +406,7 @@ public interface ElevenFlexBaseMapper {
 			type = EntitySqlProvider.class,
 			method = "updateByQuery"
 	)
-	<T> int updateByQuery(@Param("$$entity") T var1, @Param("$$ignoreNulls") boolean var2, @Param("$$query") QueryWrapper var3);
+	<T> int updateByQuery(@Param("$$entity") T entity, @Param("$$ignoreNulls") boolean ignoreNulls, @Param("$$query") QueryWrapper query);
 
 	/**
 	 * 根据实体主键查询数据，便于对复合主键实体类的查询。
@@ -423,7 +423,7 @@ public interface ElevenFlexBaseMapper {
 
 	/**
 	 * 根据主键查询数据
-	 * @param var1
+	 * @param primaryValue
 	 * @param <T>
 	 * @return
 	 */
@@ -431,7 +431,7 @@ public interface ElevenFlexBaseMapper {
 			type = EntitySqlProvider.class,
 			method = "selectOneById"
 	)
-	<T> T selectOneById(@Param("$$primaryValue") Serializable var1);
+	<T> T selectOneById(@Param("$$primaryValue") Serializable primaryValue);
 
 	/**
 	 * 根据 Map 构建的条件来查询数据
@@ -603,7 +603,7 @@ public interface ElevenFlexBaseMapper {
 			type = EntitySqlProvider.class,
 			method = "selectListByIds"
 	)
-	<T> List<T> selectListByIds(@Param("$$primaryValue") Collection<? extends Serializable> var1);
+	<T> List<T> selectListByIds(@Param("$$primaryValue") Collection<? extends Serializable> ids);
 
 	/**
 	 * 根据 Map 来构建查询条件，查询多条数据
@@ -683,14 +683,14 @@ public interface ElevenFlexBaseMapper {
 	/**
 	 * 使用游标查询
 	 * 根据查询条件查询游标数据，该方法必须在事务中才能正常使用，非事务下无法获取数据
-	 * @param var1
+	 * @param query
 	 * @return
 	 */
 	@SelectProvider(
 			type = EntitySqlProvider.class,
 			method = "selectListByQuery"
 	)
-	<T> Cursor<T> selectCursorByQuery(@Param("$$query") QueryWrapper var1);
+	<T> Cursor<T> selectCursorByQuery(@Param("$$query") QueryWrapper query);
 
 	default <R> Cursor<R> selectCursorByQueryAs(QueryWrapper queryWrapper, Class<R> asType) {
 		Cursor var3;
@@ -706,14 +706,14 @@ public interface ElevenFlexBaseMapper {
 
 	/**
 	 * 根据查询条件查询 Row 数据
-	 * @param var1
+	 * @param queryWrapper
 	 * @return
 	 */
 	@SelectProvider(
 			type = EntitySqlProvider.class,
 			method = "selectListByQuery"
 	)
-	List<Row> selectRowsByQuery(@Param("$$query") QueryWrapper var1);
+	List<Row> selectRowsByQuery(@Param("$$query") QueryWrapper queryWrapper);
 
 	/**
 	 * 根据查询条件查询数据列表，要求返回的数据为 asType。这种场景一般用在 left join 时，有多出了实体类本身的字段内容，可以转换为 dto、vo 等场景
