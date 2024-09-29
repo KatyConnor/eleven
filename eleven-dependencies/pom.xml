@@ -212,18 +212,16 @@
         </dependencies>
     </dependencyManagement>
 
-<!--    <distributionManagement>-->
-<!--        <repository>-->
-<!--            <id>maven-releases</id>-->
-<!--            <name>maven-releases</name>-->
-<!--            <url>http://10.187.67.132:8081/repository/maven-releases/</url>-->
-<!--        </repository>-->
-<!--        <snapshotRepository>-->
-<!--            <id>maven-snapshots</id>-->
-<!--            <name>maven-snapshots</name>-->
-<!--            <url>http://10.187.67.132:8081/repository/maven-snapshots/</url>-->
-<!--        </snapshotRepository>-->
-<!--    </distributionManagement>-->
+    <distributionManagement>
+        <repository>
+            <id>2334813-release-V2fReL</id>
+            <url>https://packages.aliyun.com/maven/repository/2334813-release-V2fReL</url>
+        </repository>
+        <snapshotRepository>
+            <id>2334813-snapshot-o6H6fS</id>
+            <url>https://packages.aliyun.com/maven/repository/2334813-snapshot-o6H6fS</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <pluginManagement>

@@ -22,35 +22,6 @@
         <vertx.version>4.4.0</vertx.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-config-yaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-codegen</artifactId>
-            <version>4.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-auth-jwt</artifactId>
-<!--            <version>4.4.0</version>-->
-        </dependency>
-
-<!--       <dependency>-->
-<!--            <groupId>io.vertx</groupId>-->
-<!--            <artifactId>vertx-codetrans</artifactId>-->
-<!--            <version>4.1.0.Beta1</version>-->
-<!--        </dependency>-->
-
         <!-- package扫描 -->
         <dependency>
             <groupId>org.reflections</groupId>

@@ -1,5 +1,7 @@
 package com.hx.nine.eleven.core.env;
 
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
+import com.hx.nine.eleven.commons.utils.BeanUtils;
 import com.hx.nine.eleven.commons.utils.JSONObjectMapper;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
@@ -12,11 +14,6 @@ import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.exception.ElevenApplicationRunException;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import com.hx.nine.eleven.core.utils.SystemUtils;
-import io.vertx.config.ConfigRetriever;
-import io.vertx.config.ConfigRetrieverOptions;
-import io.vertx.config.ConfigStoreOptions;
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -194,27 +191,7 @@ public class ElevenYamlReadUtils {
 		return properties;
 	}
 
-	/**
-	 * 加载 yaml 配置文件
-	 *
-	 * @param vertx
-	 */
-	public void vertxConfig(Vertx vertx) {
-		ConfigStoreOptions store = new ConfigStoreOptions()
-				.setType(DefualtProperType.TYPE)
-				.setFormat(DefualtProperType.FORMAT)
-				.setOptional(DefualtProperType.OPTIONAL)
-				.setConfig(new JsonObject().put(DefualtProperType.CLASS_PATH, DefualtProperType.DEFAULT_FILE));
-		ConfigRetriever retriever = ConfigRetriever.create(vertx, new ConfigRetrieverOptions().addStore(store));
-		retriever.getConfig(prop -> {
-			if (prop.succeeded()) {
 
-
-			} else {
-				// 加载失败
-			}
-		});
-	}
 
 	public LinkedHashMap getValueMap() {
 		return valueMap;
@@ -226,7 +203,12 @@ public class ElevenYamlReadUtils {
 	}
 
 	public <T> T bind(Object obj, Class<T> target) {
-		return JsonObject.mapFrom(obj).mapTo(target);
+		if (obj instanceof Map){
+			return BeanMapUtil.mapToBean((Map<String, Object>)obj,target);
+		}
+
+		return BeanUtils.copy(obj,target);
+//		return JsonObject.mapFrom(obj).mapTo(target);
 	}
 
 	public <T> List<T> bindList(String prefix,List obj, Class<T> target) {
@@ -236,7 +218,8 @@ public class ElevenYamlReadUtils {
 			((Map) l).forEach((k, v) -> {
 				resultMap.put(k.toString().substring(prefix.length() + 1), v);
 			});
-			T p = JsonObject.mapFrom(resultMap).mapTo(target);
+			T p =  obj instanceof Map?BeanMapUtil.mapToBean((Map<String, Object>)obj,target): BeanUtils.copy(obj,target);
+			//JsonObject.mapFrom(resultMap).mapTo(target);
 			bindProperties.add(p);
 		});
 		return bindProperties;
