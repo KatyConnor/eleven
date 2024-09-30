@@ -43,7 +43,7 @@ public class WebHttpRequest implements Serializable {
 	/**
 	 * 上传文件列表
 	 */
-	private List<FileUploadEntity> fileUploadEntities;
+//	private List<FileUploadEntity> fileUploadEntities;
 	/**
 	 * 数据流
 	 */
@@ -99,21 +99,23 @@ public class WebHttpRequest implements Serializable {
 
 		Object tradeCode = bodyMap.get(WebHttpBodyConstant.TRADE_CODE);
 		if (!Optional.ofNullable(tradeCode).isPresent()){
-			tradeCode = JsonObject.mapFrom(this.requestHeader).getString(WebHttpBodyConstant.TRADE_CODE);
+			tradeCode = JSONObjectMapper.build().convertValue(this.requestHeader,Map.class).get(WebHttpBodyConstant.TRADE_CODE);
+//		JsonObject.mapFrom(this.requestHeader).getString(WebHttpBodyConstant.TRADE_CODE);
 		}
 		tradeCode = Optional.ofNullable(tradeCode).isPresent()?tradeCode:"";
 		Object subTradeCode = bodyMap.get(WebHttpBodyConstant.SUB_TRADE_CODE);
 		if (!Optional.ofNullable(subTradeCode).isPresent()){
-			subTradeCode = JsonObject.mapFrom(this.requestHeader).getString(WebHttpBodyConstant.SUB_TRADE_CODE);
+			subTradeCode = JSONObjectMapper.build().convertValue(this.requestHeader,Map.class).get(WebHttpBodyConstant.SUB_TRADE_CODE);
+			//JsonObject.mapFrom(this.requestHeader).getString(WebHttpBodyConstant.SUB_TRADE_CODE);
 		}
 		subTradeCode = Optional.ofNullable(subTradeCode).isPresent()?subTradeCode:"";
 		this.requestBody = BeanConvert.convert(bodyMap, StringUtils.append(tradeCode.toString(),subTradeCode.toString()), null, WebRouteParamsEnums.BODY_FORM.getName());
 	}
 
-	public List<FileUploadEntity> getFileUploadEntities() {
-		return fileUploadEntities;
-	}
-
+//	public List<FileUploadEntity> getFileUploadEntities() {
+//		return fileUploadEntities;
+//	}
+//
 	public void setFileUploadEntities(List<FileUploadEntity> fileUploadEntities) {
 		this.fileUploadEntities = fileUploadEntities;
 		if (!Optional.ofNullable(this.requestBody).isPresent() &&
