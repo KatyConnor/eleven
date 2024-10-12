@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.web.http;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -44,6 +45,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 	 */
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) {
+		if (!req.decoderResult().isSuccess()) {
+			sendError(ctx, HttpResponseStatus.BAD_REQUEST);
+			return;
+		}
+
 		// 检查请求是否期望发送 100 Continue 响应，这通常用于 Expect: 100-continue 请求头。
 		if (HttpUtil.is100ContinueExpected(req)) {
 			// 如果需要，发送 100 Continue 响应
@@ -132,5 +138,13 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 		// 设置响应头 Content-Length
 		response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
 		return response;
+	}
+
+	private void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
+		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status,
+				Unpooled.copiedBuffer(status.toString(), CharsetUtil.UTF_8));
+		response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
+
+		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 	}
 }
