@@ -13,24 +13,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.ftpserver</groupId>
-    <artifactId>ftpserver-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>Apache FtpServer Parent</name>
-    <version>1.2.0</version>
-    <url>https://mina.apache.org/ftpserverproject</url>
-
-    <modules>
-        <module>ftplet-api</module>
-        <module>ftpserver-core</module>
-    </modules>
-
-    <issueManagement>
-        <system>Jira</system>
-        <url>https://issues.apache.org/jira/browse/FTPSERVER</url>
-    </issueManagement>
-
-    <inceptionYear>2003</inceptionYear>
+    <groupId>com.hx.eleven.ftpserver</groupId>
+    <artifactId>eleven-ftpserver</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0.0-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -52,108 +38,8 @@
         </repository>
     </repositories>
 
-    <mailingLists>
-        <mailingList>
-            <name>FtpServer Users mailing list</name>
-            <subscribe>ftpserver-users-subscribe@mina.apache.org</subscribe>
-            <unsubscribe>ftpserver-users-unsubscribe@mina.apache.org</unsubscribe>
-            <post>ftpserver-users@mina.apache.org</post>
-            <archive>https://mail-archives.apache.org/mod_mbox/mina-ftpserver-users/</archive>
-        </mailingList>
-
-        <mailingList>
-            <name>MINA Development mailing list</name>
-            <subscribe>dev-subscribe@mina.apache.org</subscribe>
-            <unsubscribe>dev-unsubscribe@mina.apache.org</unsubscribe>
-            <post>dev@mina.apache.org</post>
-            <archive>https://mail-archives.apache.org/mod_mbox/mina-dev/</archive>
-            <otherArchives>
-                <otherArchive>http://www.nabble.com/Apache-MINA-f16868.html</otherArchive>
-            </otherArchives>
-        </mailingList>
-
-        <mailingList>
-            <name>MINA Commit mailing list</name>
-            <subscribe>commits-subscribe@mina.apache.org</subscribe>
-            <unsubscribe>commits-unsubscribe@mina.apache.org</unsubscribe>
-            <archive>https://mail-archives.apache.org/mod_mbox/mina-commits/</archive>
-        </mailingList>
-    </mailingLists>
-
-    <developers>
-        <developer>
-            <id>ngn</id>
-            <name>Niklas Gustavsson</name>
-            <email>niklas@protocol7.com</email>
-        </developer>
-
-        <developer>
-            <id>rana_b</id>
-            <name>Rana Battacharyya</name>
-            <email>rana_b.{aT}.yahoo.{d0T}.com</email>
-        </developer>
-
-        <developer>
-            <id>hammant</id>
-            <name>Paul Hammant</name>
-            <email>paul.{aT}.hammant.{d0T}.org</email>
-        </developer>
-
-        <developer>
-            <id>sergey</id>
-            <name>Sergey M Vladimirov</name>
-            <email>vlsergey.{aT}.gmail.{d0T}.com</email>
-            <organization>Netcracker corp.</organization>
-        </developer>
-    </developers>
-
-    <contributors>
-        <contributor>
-            <name>Birkir A. Barkarson</name>
-        </contributor>
-
-        <contributor>
-            <name>David H. DeWolf</name>
-            <email>ddewolf.{aT}.apache.{d0T}.org</email>
-            <organization>Vivare, INC</organization>
-        </contributor>
-
-        <contributor>
-            <name>Luis Sanabria</name>
-        </contributor>
-
-        <contributor>
-            <name>Daniel Hagen</name>
-        </contributor>
-
-        <contributor>
-            <name>KwangYul Seo</name>
-        </contributor>
-
-        <contributor>
-            <name>Dave Roberts</name>
-            <organization>SAA Consultants Ltd</organization>
-        </contributor>
-
-        <contributor>
-            <name>Nick Vincent</name>
-        </contributor>
-
-        <contributor>
-            <name>Andrea Francia</name>
-            <url>http://andreafrancia.blogspot.com</url>
-        </contributor>
-    </contributors>
-
-    <scm>
-        <connection>scm:git:https://gitbox.apache.org/repos/asf/mina-ftpserver.git</connection>
-        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mina-ftpserver.git</developerConnection>
-        <url>https://github.com/apache/mina-ftpserver/tree/${project.scm.tag}</url>
-        <tag>1.2.0</tag>
-    </scm>
-
     <properties>
-        <project.build.outputTimestamp>2022-03-07T23:33:20Z</project.build.outputTimestamp>
+<!--        <project.build.outputTimestamp>2022-03-07T23:33:20Z</project.build.outputTimestamp>-->
         <!-- Java version to use -->
         <maven.compile.source>1.8</maven.compile.source>
         <maven.compile.target>1.8</maven.compile.target>
@@ -168,7 +54,7 @@
         <commons.codec.version>1.17.1</commons.codec.version>
         <commons.net.version>3.11.1</commons.net.version>
         <commons.io.version>2.17.0</commons.io.version>
-        <hsqldb.version>2.7.3</hsqldb.version>
+        <hsqldb.version>2.5.2</hsqldb.version>
         <mina.core.version>2.1.6</mina.core.version>
         <junit.version>4.13.2</junit.version>
         <log4j.version>2.24.1</log4j.version>
@@ -182,6 +68,7 @@
 
         <!-- Maven plugin version -->
         <maven-javadoc-plugin-version>3.3.2</maven-javadoc-plugin-version>
+        <checkstyle.configdir>${basedir}/..</checkstyle.configdir>
     </properties>
 
     <dependencyManagement>
@@ -195,33 +82,10 @@
             </dependency>
             <!-- Submodules -->
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ftplet-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ftpserver-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.mina</groupId>
                 <artifactId>mina-core</artifactId>
                 <version>${mina.core.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -277,8 +141,70 @@
                 <artifactId>checkstyle</artifactId>
                 <version>${checkstyle.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.puppycrawl.tools</groupId>
+                <artifactId>checkstyle</artifactId>
+                <version>${checkstyle.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hx.nine.eleven.core</groupId>
+            <artifactId>eleven-core</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <!-- Use as Spring uses JCL -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>
@@ -287,8 +213,10 @@
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <inherited>true</inherited>
+                    <!-- 自定义配置参数 -->
                     <configuration>
                         <excludeSubProjects>false</excludeSubProjects>
+                        <!-- 排除检查文件 -->
                         <excludes>
                             <!-- MAVEN_DEFAULT_EXCLUDES -->
                             <exclude>**/target/**/*</exclude>
@@ -354,17 +282,67 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>${checkstyle.plugin.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>${checkstyle.version}</version>
-                        </dependency>
-                    </dependencies>
+<!--                    <dependencies>-->
+<!--                        <dependency>-->
+<!--                            <groupId>com.puppycrawl.tools</groupId>-->
+<!--                            <artifactId>checkstyle</artifactId>-->
+<!--                            <version>${checkstyle.version}</version>-->
+<!--                        </dependency>-->
+<!--                    </dependencies>-->
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            properties-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.0-alpha-1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
+                                                write-project-properties
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
-
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.handlers</include>
+                    <include>**/*.schemas</include>
+                    <include>**/*.xsd</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -399,9 +377,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagBase>https://svn.apache.org/repos/asf/mina/ftpserver/tags/</tagBase>
-                </configuration>
+<!--                <configuration>-->
+<!--                    <tagBase>https://svn.apache.org/repos/asf/mina/ftpserver/tags/</tagBase>-->
+<!--                </configuration>-->
             </plugin>
             <plugin>
                 <artifactId>maven-remote-resources-plugin</artifactId>
@@ -458,106 +436,134 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.rat</groupId>
-                <artifactId>apache-rat-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>check-apache-license-header</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.rat</groupId>-->
+<!--                <artifactId>apache-rat-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>check-apache-license-header</id>-->
+<!--                        <phase>validate</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>check</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>properties-maven-plugin</artifactId>-->
+<!--                <version>1.1.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>write-project-properties</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputFile>${project.build.outputDirectory}/org/apache/ftpserver/ftpserver.properties</outputFile>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>rat-maven-plugin</artifactId>-->
+<!--                <version>1.0-alpha-3</version>-->
+<!--                <configuration>-->
+<!--                    <excludes>-->
+<!--                        <exclude>res/user.gen</exclude>-->
+<!--                    </excludes>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>apache-release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>create-javadoc-jar</id>
-                                <goals>
-                                    <goal>javadoc</goal>
-                                </goals>
-                                <configuration>
-                                    <aggregate>true</aggregate>
-                                    <source>${maven.compile.source}</source>
-                                    <excludePackageNames>
-                                        *.impl:org.apache.ftpserver.example.*:org.apache.ftpserver.config.spring:org.apache.ftpserver.command.impl.listing:org.apache.ftpserver.listener.nio:org.apache.ftpserver.util
-                                    </excludePackageNames>
-                                </configuration>
-                            </execution>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>apache-release</id>-->
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <groupId>org.apache.maven.plugins</groupId>-->
+<!--                        <artifactId>maven-javadoc-plugin</artifactId>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <id>create-javadoc-jar</id>-->
+<!--                                <goals>-->
+<!--                                    <goal>javadoc</goal>-->
+<!--                                </goals>-->
+<!--                                <configuration>-->
+<!--                                    <aggregate>true</aggregate>-->
+<!--                                    <source>${maven.compile.source}</source>-->
+<!--                                    <excludePackageNames>-->
+<!--                                        *.impl:org.apache.ftpserver.example.*:org.apache.ftpserver.config.spring:org.apache.ftpserver.command.impl.listing:org.apache.ftpserver.listener.nio:org.apache.ftpserver.util-->
+<!--                                    </excludePackageNames>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
 
-                            <execution>
-                                <id>create-site-javadoc</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>aggregate</goal>
-                                </goals>
-                                <configuration>
-                                    <doctitle>Apache FtpServer ${project.version} Public API</doctitle>
-                                    <windowtitle>Apache FtpServer ${project.version} Public API</windowtitle>
-                                    <source>${maven.compile.source}</source>
-                                    <excludePackageNames>
-                                        *.impl:org.apache.ftpserver.example.*:org.apache.ftpserver.config.spring:org.apache.ftpserver.command.impl.listing:org.apache.ftpserver.listener.nio:org.apache.ftpserver.util
-                                    </excludePackageNames>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <modules>
-                <module>ftplet-api</module>
-                <module>core</module>
-                <module>examples</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>enforce</id>
-            <activation>
-                <property>
-                    <name>enforce.activate</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>${checkstyle.plugin.version}</version>
-                        <configuration>
-                            <configLocation>${checkstyle.configdir}/checkstyle.xml</configLocation>
-                            <suppressionsLocation>${checkstyle.configdir}/checkstyle-suppressions.xml
-                            </suppressionsLocation>
-                            <enableRulesSummary>false</enableRulesSummary>
-                            <propertyExpansion>basedir=${basedir}</propertyExpansion>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.puppycrawl.tools</groupId>
-                                <artifactId>checkstyle</artifactId>
-                                <version>${checkstyle.version}</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+<!--                            <execution>-->
+<!--                                <id>create-site-javadoc</id>-->
+<!--                                <phase>process-resources</phase>-->
+<!--                                <goals>-->
+<!--                                    <goal>aggregate</goal>-->
+<!--                                </goals>-->
+<!--                                <configuration>-->
+<!--                                    <doctitle>Apache FtpServer ${project.version} Public API</doctitle>-->
+<!--                                    <windowtitle>Apache FtpServer ${project.version} Public API</windowtitle>-->
+<!--                                    <source>${maven.compile.source}</source>-->
+<!--                                    <excludePackageNames>-->
+<!--                                        *.impl:org.apache.ftpserver.example.*:org.apache.ftpserver.config.spring:org.apache.ftpserver.command.impl.listing:org.apache.ftpserver.listener.nio:org.apache.ftpserver.util-->
+<!--                                    </excludePackageNames>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--            <modules>-->
+<!--                <module>ftplet-api</module>-->
+<!--                <module>core</module>-->
+<!--                <module>examples</module>-->
+<!--            </modules>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            <id>enforce</id>-->
+<!--            <activation>-->
+<!--                <property>-->
+<!--                    <name>enforce.activate</name>-->
+<!--                </property>-->
+<!--            </activation>-->
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--                        <version>${checkstyle.plugin.version}</version>-->
+<!--                        <configuration>-->
+<!--                            <configLocation>${checkstyle.configdir}/checkstyle.xml</configLocation>-->
+<!--                            <suppressionsLocation>${checkstyle.configdir}/checkstyle-suppressions.xml-->
+<!--                            </suppressionsLocation>-->
+<!--                            <enableRulesSummary>false</enableRulesSummary>-->
+<!--                            <propertyExpansion>basedir=${basedir}</propertyExpansion>-->
+<!--                        </configuration>-->
+<!--                        <dependencies>-->
+<!--                            <dependency>-->
+<!--                                <groupId>com.puppycrawl.tools</groupId>-->
+<!--                                <artifactId>checkstyle</artifactId>-->
+<!--                                <version>${checkstyle.version}</version>-->
+<!--                            </dependency>-->
+<!--                        </dependencies>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <goals>-->
+<!--                                    <goal>check</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 </project>
