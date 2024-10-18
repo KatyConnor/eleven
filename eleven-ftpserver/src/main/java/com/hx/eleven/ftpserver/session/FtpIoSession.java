@@ -29,13 +29,13 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 
 import com.hx.eleven.ftpserver.context.FtpServerContext;
-import com.hx.eleven.ftpserver.ftplet.DataType;
 import com.hx.eleven.ftpserver.ftplet.FileSystemView;
 import com.hx.eleven.ftpserver.ftplet.FtpFile;
 import com.hx.eleven.ftpserver.ftplet.FtpReply;
 import com.hx.eleven.ftpserver.ftplet.FtpSession;
 import com.hx.eleven.ftpserver.ftplet.Structure;
 import com.hx.eleven.ftpserver.ftplet.User;
+import com.hx.eleven.ftpserver.ftplet.enums.DataTypeEnum;
 import com.hx.eleven.ftpserver.impl.IODataConnectionFactory;
 import com.hx.eleven.ftpserver.impl.ServerDataConnectionFactory;
 import com.hx.eleven.ftpserver.observer.ServerFtpStatistics;
@@ -690,7 +690,7 @@ public class FtpIoSession implements IoSession {
         setAttribute(ATTRIBUTE_STRUCTURE, structure);
     }
 
-    public void setDataType(DataType dataType) {
+    public void setDataType(DataTypeEnum dataType) {
         setAttribute(ATTRIBUTE_DATA_TYPE, dataType);
 
     }
@@ -716,8 +716,8 @@ public class FtpIoSession implements IoSession {
         return (Structure) getAttribute(ATTRIBUTE_STRUCTURE, Structure.FILE);
     }
 
-    public DataType getDataType() {
-        return (DataType) getAttribute(ATTRIBUTE_DATA_TYPE, DataType.ASCII);
+    public DataTypeEnum getDataType() {
+        return (DataTypeEnum) getAttribute(ATTRIBUTE_DATA_TYPE, DataTypeEnum.ASCII);
     }
 
     public Date getLoginTime() {

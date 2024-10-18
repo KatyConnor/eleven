@@ -21,9 +21,9 @@ package com.hx.eleven.ftpserver.command.impl;
 
 import java.io.IOException;
 
+import com.hx.eleven.ftpserver.ftplet.enums.DataTypeEnum;
 import com.hx.eleven.ftpserver.session.FtpIoSession;
 import com.hx.eleven.ftpserver.command.AbstractCommand;
-import com.hx.eleven.ftpserver.ftplet.DataType;
 import com.hx.eleven.ftpserver.ftplet.FtpReply;
 import com.hx.eleven.ftpserver.ftplet.FtpRequest;
 import com.hx.eleven.ftpserver.context.FtpServerContext;
@@ -73,7 +73,7 @@ public class TYPE extends AbstractCommand {
 
         // set type
         try {
-            session.setDataType(DataType.parseArgument(type));
+            session.setDataType(DataTypeEnum.parseArgument(type));
             session.write(LocalizedFtpReply.translate(session, request, context,
                     FtpReply.REPLY_200_COMMAND_OKAY, "TYPE", null));
         } catch (IllegalArgumentException e) {

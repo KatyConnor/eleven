@@ -25,11 +25,11 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import com.hx.eleven.ftpserver.ftplet.enums.DataTypeEnum;
 import com.hx.eleven.ftpserver.session.FtpIoSession;
 import com.hx.eleven.ftpserver.command.AbstractCommand;
 import com.hx.eleven.ftpserver.ftplet.DataConnection;
 import com.hx.eleven.ftpserver.ftplet.DataConnectionFactory;
-import com.hx.eleven.ftpserver.ftplet.DataType;
 import com.hx.eleven.ftpserver.ftplet.DefaultFtpReply;
 import com.hx.eleven.ftpserver.ftplet.FtpException;
 import com.hx.eleven.ftpserver.ftplet.FtpFile;
@@ -223,7 +223,7 @@ public class RETR extends AbstractCommand {
     public InputStream openInputStream(FtpIoSession session, FtpFile file,
             long skipLen) throws IOException {
         InputStream in;
-        if (session.getDataType() == DataType.ASCII) {
+        if (session.getDataType() == DataTypeEnum.ASCII) {
             int c;
             long offset = 0L;
             in = new BufferedInputStream(file.createInputStream(0L));

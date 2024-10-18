@@ -23,12 +23,6 @@ import com.hx.eleven.ftpserver.ssl.SslConfiguration;
 import com.hx.eleven.ftpserver.DataConnectionConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -36,23 +30,23 @@ import org.w3c.dom.Element;
  *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public class ListenerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class ListenerBeanDefinitionParser {//extends AbstractSingleBeanDefinitionParser {
 
     private final Logger LOG = LoggerFactory.getLogger(ListenerBeanDefinitionParser.class);
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected Class<?> getBeanClass(final Element element) {
-        return null;
-    }
+//    @Override
+//    protected Class<?> getBeanClass(final Element element) {
+//        return null;
+//    }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+//    @Override
+//    protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
 //        BeanDefinitionBuilder factoryBuilder = BeanDefinitionBuilder.genericBeanDefinition(ListenerFactory.class);
 
@@ -115,7 +109,7 @@ public class ListenerBeanDefinitionParser extends AbstractSingleBeanDefinitionPa
 //        // set the factory on the listener bean
 //        builder.getRawBeanDefinition().setFactoryBeanName(listenerFactoryName);
 //        builder.getRawBeanDefinition().setFactoryMethodName("createListener");
-    }
+//    }
 
 //    private SslConfiguration parseSsl(final Element parent) {
 //        Element sslElm = SpringUtil.getChildElement(parent, FtpServerNamespaceHandler.FTPSERVER_NS, "ssl");

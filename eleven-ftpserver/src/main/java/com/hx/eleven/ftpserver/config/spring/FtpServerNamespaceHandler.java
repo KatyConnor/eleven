@@ -19,14 +19,13 @@
 
 package com.hx.eleven.ftpserver.config.spring;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * Registration point for FtpServer bean defintion parsers
  *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public class FtpServerNamespaceHandler extends NamespaceHandlerSupport {
+public class FtpServerNamespaceHandler {//extends NamespaceHandlerSupport {
 
     /**
      * The FtpServer Spring config namespace
@@ -38,12 +37,12 @@ public class FtpServerNamespaceHandler extends NamespaceHandlerSupport {
      * parser
      */
     public FtpServerNamespaceHandler() {
-        registerBeanDefinitionParser("server", new ServerBeanDefinitionParser());
-        registerBeanDefinitionParser("nio-listener", new ListenerBeanDefinitionParser());
-        registerBeanDefinitionParser("file-user-manager", new UserManagerBeanDefinitionParser());
-        registerBeanDefinitionParser("db-user-manager", new UserManagerBeanDefinitionParser());
-        registerBeanDefinitionParser("native-filesystem", new FileSystemBeanDefinitionParser());
-        registerBeanDefinitionParser("commands", new CommandFactoryBeanDefinitionParser());
+//        registerBeanDefinitionParser("server", new ServerBeanDefinitionParser());
+//        registerBeanDefinitionParser("nio-listener", new ListenerBeanDefinitionParser());
+//        registerBeanDefinitionParser("file-user-manager", new UserManagerBeanDefinitionParser());
+//        registerBeanDefinitionParser("db-user-manager", new UserManagerBeanDefinitionParser());
+//        registerBeanDefinitionParser("native-filesystem", new FileSystemBeanDefinitionParser());
+//        registerBeanDefinitionParser("commands", new CommandFactoryBeanDefinitionParser());
 
     }
 

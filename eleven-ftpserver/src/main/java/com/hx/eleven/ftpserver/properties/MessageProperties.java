@@ -1,12 +1,12 @@
 package com.hx.eleven.ftpserver.properties;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.hx.nine.eleven.core.annotations.ConfigurationPropertiesBind;
 
 /**
  * @auth wml
  * @date 2024/10/11
  */
-@ConfigurationProperties(prefix = "eleven.ftp.server.message")
+@ConfigurationPropertiesBind(prefix = "eleven.ftp.server.message")
 public class MessageProperties {
 
 	/**

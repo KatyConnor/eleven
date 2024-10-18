@@ -125,11 +125,11 @@ public class PropertiesUserManager extends AbstractUserManager {
     private final static String PREFIX = "ftpServer.user.";
     // 缓存用户信息
     private BaseProperties userDataProp;
-    // 属性文件地址
+    // 属性文件地址  
     private String userDataFile;
 
     public PropertiesUserManager(PasswordEncryptor passwordEncryptor, String userDataFile, String adminName) {
-        super(adminName, passwordEncryptor);
+        super(passwordEncryptor);
         this.userDataProp = new BaseProperties();
         this.userDataFile = userDataFile;
         loadFromFile();
