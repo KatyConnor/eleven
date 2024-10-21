@@ -39,8 +39,7 @@ public class EncryptUtils {
     /**
      * Encrypt byte array.
      */
-    public final static byte[] encrypt(byte[] source, String algorithm)
-            throws NoSuchAlgorithmException {
+    public final static byte[] encrypt(byte[] source, String algorithm) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(algorithm);
         md.reset();
         md.update(source);
