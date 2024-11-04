@@ -24,7 +24,9 @@ import java.util.Arrays;
 public class SftpServer {
 
 	public static void main(String[] args) {
+
 		System.out.println("启动sftp服务");
+		SftpServer.getInstance().init();
 	}
 
 	private static SftpServer nfmsSftpServer = new SftpServer();
@@ -40,7 +42,7 @@ public class SftpServer {
 	private void init() {
 		SshServer sshd = SshServer.setUpDefaultServer();
 		// 设置sftp绑定端口
-		sshd.setPort(2222);
+		sshd.setPort(21980);
 		//设置默认的签名文件,如果文件不存在会创建
 		sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(Paths.get("D:\\code")));//,"DSA", 1024
 		//设置sftp子系统
@@ -60,7 +62,7 @@ public class SftpServer {
 		sshd.setCommandFactory(new ScpCommandFactory());
 		//设置ssh的shell环境
 		sshd.setShellFactory(new ProcessShellFactory());
-		sshd.setShellFactory(InteractiveProcessShellFactory.INSTANCE);
+//		sshd.setShellFactory(InteractiveProcessShellFactory.INSTANCE);
 		//启动ssh服务
 		try {
 			sshd.start();

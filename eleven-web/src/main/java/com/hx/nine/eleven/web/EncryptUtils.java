@@ -19,7 +19,7 @@
 
 package com.hx.nine.eleven.web;
 
-import org.apache.ftpserver.util.StringUtils;
+//import org.apache.ftpserver.util.StringUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -52,7 +52,7 @@ public class EncryptUtils {
     public final static String encrypt(String source, String algorithm)
             throws NoSuchAlgorithmException {
         byte[] resByteArray = encrypt(source.getBytes(), algorithm);
-        return StringUtils.toHexString(resByteArray);
+        return null;//StringUtils.toHexString(resByteArray);
     }
 
     /**
