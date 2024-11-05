@@ -2,7 +2,6 @@ package com.hx.nine.eleven.bytebuddy.aop.testdemo;
 
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.MethodInterceptor;
 import com.hx.nine.eleven.bytebuddy.aop.invoke.Invocation;
-import com.hx.nine.eleven.bytebuddy.aop.invoke.MethodInvocation;
 
 public class ByteBuddyMethodInterceptor implements MethodInterceptor {
 

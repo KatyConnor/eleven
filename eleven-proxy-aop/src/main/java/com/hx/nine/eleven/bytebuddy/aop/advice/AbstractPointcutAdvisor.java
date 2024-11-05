@@ -5,7 +5,7 @@ import com.hx.nine.eleven.bytebuddy.aop.enums.AopProxyTypeEnums;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.MethodInterceptor;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.jdk.MethodInvocationInterceptor;
 import com.hx.nine.eleven.bytebuddy.aop.util.Assert;
-import com.hx.nine.eleven.core.core.bean.VertxBeanFactory;
+import com.hx.nine.eleven.core.core.bean.ElevenBeanFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -104,7 +104,7 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 		}
 		ProxyTypeAnnotationEntity annotationEntity = new ProxyTypeAnnotationEntity();
 		annotationEntity.setAnnotation(annotation);
-		MethodInterceptor methodInterceptor = VertxBeanFactory.createBean(interceptor);
+		MethodInterceptor methodInterceptor = ElevenBeanFactory.createBean(interceptor);
 		annotationEntity.setMethodInterceptor(methodInterceptor);
 		annotationEntity.setProxyType(AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY);
 		aopProxyAnnotation.add(annotationEntity);
@@ -130,7 +130,7 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 		}
 		ProxyTypeAnnotationEntity annotationEntity = new ProxyTypeAnnotationEntity();
 		annotationEntity.setAnnotation(annotation);
-		MethodInterceptor methodInterceptor = VertxBeanFactory.createBean(interceptor);
+		MethodInterceptor methodInterceptor = ElevenBeanFactory.createBean(interceptor);
 		annotationEntity.setMethodInterceptor(methodInterceptor);
 		annotationEntity.setProxyType(AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY);
 		aopProxyAnnotation.add(annotationEntity);

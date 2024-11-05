@@ -7,12 +7,9 @@ import com.hx.nine.eleven.bytebuddy.aop.enums.AopProxyTypeEnums;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.CglibMethodInterceptor;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.jdk.MethodInvocationInterceptor;
 import com.hx.nine.eleven.bytebuddy.aop.util.ProxyUtil;
-import com.hx.nine.eleven.core.annotations.Order;
-import com.hx.nine.eleven.core.annotations.SubComponent;
-import com.hx.nine.eleven.core.aop.VertxObjectProxy;
+import com.hx.nine.eleven.core.aop.ElevenObjectProxy;
 import com.hx.nine.eleven.core.constant.ConstantType;
-import com.hx.nine.eleven.core.core.VertxApplicationContextAware;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import net.sf.cglib.proxy.Enhancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +18,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
 import java.util.Optional;
 
-public class DynamicObjectProxy extends VertxObjectProxy {
+public class DynamicObjectProxy extends ElevenObjectProxy {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DynamicObjectProxy.class);
 	/**
@@ -35,7 +32,7 @@ public class DynamicObjectProxy extends VertxObjectProxy {
 	 */
 	public static Object invoke(Object object, String methodName, Class[] paramTypes, Object... args) {
 		MethodAccess methodAccess = MethodAccess.get(object.getClass());
-		AopAdvice advice = DefaultVertxApplicationContext.build().getBean(ConstantType.DYNAMIC_PROXY_ADVICE, AopAdvice.class);
+		AopAdvice advice = DefaultElevenApplicationContext.build().getBean(ConstantType.DYNAMIC_PROXY_ADVICE, AopAdvice.class);
 		// 切点，执行前处理
 		advice.adviceBefore(object, methodName, paramTypes, args);
 		Object result = methodAccess.invoke(object, methodName, paramTypes, args);
@@ -54,7 +51,7 @@ public class DynamicObjectProxy extends VertxObjectProxy {
 	 */
 	public static Object invoke(Object object, String methodName, Object... args) {
 		MethodAccess methodAccess = MethodAccess.get(object.getClass());
-		AopAdvice advice = DefaultVertxApplicationContext.build().getBean(ConstantType.DYNAMIC_PROXY_ADVICE, AopAdvice.class);
+		AopAdvice advice = DefaultElevenApplicationContext.build().getBean(ConstantType.DYNAMIC_PROXY_ADVICE, AopAdvice.class);
 		// 切点，执行前处理
 		advice.adviceBefore(object, methodName, null, args);
 		Object result = methodAccess.invoke(object, methodName, args);
@@ -72,7 +69,7 @@ public class DynamicObjectProxy extends VertxObjectProxy {
 	 * @return
 	 */
 	public static <T> T newJdkProxyInstance(Class<T> tClass) {
-		AbstractPointcutAdvisor advisor = DefaultVertxApplicationContext.build()
+		AbstractPointcutAdvisor advisor = DefaultElevenApplicationContext.build()
 				.getBean(ConstantType.DYNAMIC_PROXY_POINTCUT_ADVISOR, AbstractPointcutAdvisor.class);
 		MethodInvocationInterceptor methodInterceptor = advisor.getAdvice();
 		return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), tClass.getInterfaces(), methodInterceptor);
@@ -91,7 +88,7 @@ public class DynamicObjectProxy extends VertxObjectProxy {
 		// 2.设置父类
 		enhancer.setSuperclass(target);
 		// 3.设置回调函数
-		enhancer.setCallback(DefaultVertxApplicationContext.build()
+		enhancer.setCallback(DefaultElevenApplicationContext.build()
 				.getSubTypesOfBean(CglibMethodInterceptor.class));
 		return (T) enhancer.create();
 	}
@@ -104,7 +101,7 @@ public class DynamicObjectProxy extends VertxObjectProxy {
 	 */
 	@Override
 	public <T> boolean checkProxy(Class<T> tClass) {
-		AbstractPointcutAdvisor advisor = DefaultVertxApplicationContext.build()
+		AbstractPointcutAdvisor advisor = DefaultElevenApplicationContext.build()
 				.getSubTypesOfBean(AbstractPointcutAdvisor.class);
 		Annotation annotation = advisor.getMethodMatcher().matches(tClass);
 		return annotation != null;
@@ -120,7 +117,7 @@ public class DynamicObjectProxy extends VertxObjectProxy {
 	@Override
 	public <T> T newByteBuddyProxyInstancesss(Class<T> aClass) {
 		// 获取创建类的
-		AbstractPointcutAdvisor advisor = DefaultVertxApplicationContext.build()
+		AbstractPointcutAdvisor advisor = DefaultElevenApplicationContext.build()
 				.getSubTypesOfBean(AbstractPointcutAdvisor.class);
 		Annotation annotation = advisor.getMethodMatcher().matches(aClass);
 		if (!Optional.ofNullable(annotation).isPresent()) {

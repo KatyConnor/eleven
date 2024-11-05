@@ -3,8 +3,8 @@ package com.hx.nine.eleven.bytebuddy.aop;
 import com.hx.nine.eleven.bytebuddy.aop.advice.AbstractPointcutAdvisor;
 import com.hx.nine.eleven.bytebuddy.aop.exception.ProxyAdviceRunException;
 import com.hx.nine.eleven.core.annotations.Order;
-import com.hx.nine.eleven.core.core.bean.VertxBeanFactory;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
+import com.hx.nine.eleven.core.core.bean.ElevenBeanFactory;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.factory.ApplicationAnnotationFactory;
 import org.reflections.Reflections;
 
@@ -21,8 +21,8 @@ public class ProxyAdvicePointFactory implements ApplicationAnnotationFactory {
 	@Override
 	public void loadAnnotations(Reflections reflections) throws Exception {
 		//
-		DynamicObjectProxy objectProxy = VertxBeanFactory.createBean(DynamicObjectProxy.class);
-		DefaultVertxApplicationContext.build().addSubTypesOfBean(objectProxy);
+		DynamicObjectProxy objectProxy = ElevenBeanFactory.createBean(DynamicObjectProxy.class);
+		DefaultElevenApplicationContext.build().addSubTypesOfBean(objectProxy);
 		// 添加AOP切点,初始化AOP代理拦截器
 		Set<Class<? extends AbstractPointcutAdvisor>> advisores = reflections.getSubTypesOf(AbstractPointcutAdvisor.class);
 		if (Optional.ofNullable(advisores).isPresent()) {
@@ -30,9 +30,9 @@ public class ProxyAdvicePointFactory implements ApplicationAnnotationFactory {
 				throw new ProxyAdviceRunException("advisor 不唯一 ");
 			}
 			Class<? extends AbstractPointcutAdvisor> advisorClass = advisores.stream().findFirst().get();
-			AbstractPointcutAdvisor advisor = VertxBeanFactory.createBean(advisorClass);
+			AbstractPointcutAdvisor advisor = ElevenBeanFactory.createBean(advisorClass);
 			advisor.init();
-			DefaultVertxApplicationContext.build().addSubTypesOfBean(advisor);
+			DefaultElevenApplicationContext.build().addSubTypesOfBean(advisor);
 		}
 	}
 }
