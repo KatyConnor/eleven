@@ -1,0 +1,53 @@
+package com.hx.nine.eleven.vertx.web;
+
+import com.hx.nine.eleven.commons.utils.StringUtils;
+import com.hx.nine.eleven.core.constant.DefualtProperType;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.core.context.ClassPathBeanDefinitionScanner;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
+import com.hx.nine.eleven.core.env.ElevenYamlReadUtils;
+import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
+import com.hx.nine.eleven.core.web.WebApplicationMain;
+import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
+import io.vertx.core.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 应用启动类
+ * @author wml
+ * @date 2023-03-06
+ */
+public class VertxWebApplicationRun extends WebApplicationMain {
+
+  private final static Logger LOGGER = LoggerFactory.getLogger(VertxWebApplicationRun.class);
+
+  /**
+   * 启动服务
+   * @param strings
+   */
+  @Override
+  public void start(String[] strings) {
+    LOGGER.info("启动 vertx 服务");
+    VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
+    DeploymentOptions deploymentOptions = new DeploymentOptions();
+    deploymentOptions.setWorkerPoolSize(properties.getWorkerPoolSize());  // 默认线程
+    deploymentOptions.setWorker(true);
+    deploymentOptions.setMaxWorkerExecuteTime(properties.getMaxWorkerExecuteTime());
+    deploymentOptions.setMaxWorkerExecuteTimeUnit(properties.getMaxWorkerExecuteTimeUnit());
+    Vertx.vertx().deployVerticle(VertxWebApplicationVerticle.class, deploymentOptions);
+    LOGGER.info("启动 vertx 服务成功");
+  }
+
+  @Override
+  public void stop(String[] strings) {
+
+  }
+
+  @Override
+  public void restart(String[] strings) {
+
+  }
+}

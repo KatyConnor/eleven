@@ -19,7 +19,7 @@ import java.util.Set;
  * @auth wml
  * @date 2024/9/29
  */
-public class WebRouteHandlerInitializer implements WebRouteHandler {
+public class VertxWebRouteHandlerInitializer implements WebRouteHandler {
 
 	@Override
 	public void loadWebRouteHandler(Reflections reflections) throws Throwable{

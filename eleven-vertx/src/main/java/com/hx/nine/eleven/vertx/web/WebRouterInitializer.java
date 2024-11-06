@@ -11,6 +11,7 @@ import com.hx.nine.eleven.vertx.handler.FileBodyHandlerImpl;
 import com.hx.nine.eleven.vertx.handler.GetHttpRequestServletRouterHandler;
 import com.hx.nine.eleven.vertx.handler.GlobalDefaultExceptionHandler;
 import com.hx.nine.eleven.vertx.handler.HttpRequestServletRouterHandler;
+import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -37,20 +38,22 @@ public class WebRouterInitializer {
 	private Router router;
 	private JWTAuth authProvider;
 	private ElevenBootApplicationProperties elevenBootApplicationProperties;
+	private VertxApplicationProperties vertxApplicationProperties;
 
 	public WebRouterInitializer(){
-		elevenBootApplicationProperties = DefaultElevenApplicationContext.build().getProperties(ElevenBootApplicationProperties.class);
+		elevenBootApplicationProperties = ElevenApplicationContextAware.getProperties(ElevenBootApplicationProperties.class);
+		vertxApplicationProperties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
 	}
 
 	public void webInit(Vertx vertx, JWTAuthOptions config) {
 		// 所有请求都要验证权限,权限通过才进行下一个router
-		router.route(elevenBootApplicationProperties.getAuthInterceptPath())
+		router.route(vertxApplicationProperties.getAuthInterceptPath())
 				.handler(this.createBodyHandler())
 				.handler(HXJWTAuthHandler.create(vertx,authProvider,config));
 		//配置Router路由,POST请求
 		router.route(HttpMethod.POST, elevenBootApplicationProperties.getServletPath())
 				.handler(this.createRouteHandler());
-		router.route(HttpMethod.GET, elevenBootApplicationProperties.getServletPath()+"/"+ elevenBootApplicationProperties.getDoGetUrlPath())
+		router.route(HttpMethod.GET, elevenBootApplicationProperties.getServletPath()+"/"+ vertxApplicationProperties.getDoGetUrlPath())
 				.handler(this.createGetRouteHandler());
 		router.route().handler(this.createCorsHandler());
 		router.route(elevenBootApplicationProperties.getStaticPath()).handler(this.createStaticHandler());
@@ -81,12 +84,12 @@ public class WebRouterInitializer {
 
 	private BodyHandler createBodyHandler(){
 		return FileBodyHandlerImpl.createBodyHandler()
-				.setHandleFileUploads(elevenBootApplicationProperties.getHandleFileUploads())
-				.setBodyLimit(elevenBootApplicationProperties.getBodyLimit()) //设置body接受数据大小，如果要控制网络传输速度可以控制大小
-				.setPreallocateBodyBuffer(elevenBootApplicationProperties.getPreallocateBodyBuffer())
-				.setUploadsDirectory(elevenBootApplicationProperties.getUploadsDirectory())  //自定义文件上传到哪
-				.setMergeFormAttributes(elevenBootApplicationProperties.getMergeFormAttributes())
-				.setDeleteUploadedFilesOnEnd(elevenBootApplicationProperties.getDeleteUploadedFilesOnEnd()); //请求结束后是否删除上传文件
+				.setHandleFileUploads(vertxApplicationProperties.getHandleFileUploads())
+				.setBodyLimit(vertxApplicationProperties.getBodyLimit()) //设置body接受数据大小，如果要控制网络传输速度可以控制大小
+				.setPreallocateBodyBuffer(vertxApplicationProperties.getPreallocateBodyBuffer())
+				.setUploadsDirectory(vertxApplicationProperties.getUploadsDirectory())  //自定义文件上传到哪
+				.setMergeFormAttributes(vertxApplicationProperties.getMergeFormAttributes())
+				.setDeleteUploadedFilesOnEnd(vertxApplicationProperties.getDeleteUploadedFilesOnEnd()); //请求结束后是否删除上传文件
 	}
 
 	private Handler<RoutingContext> createRouteHandler(){

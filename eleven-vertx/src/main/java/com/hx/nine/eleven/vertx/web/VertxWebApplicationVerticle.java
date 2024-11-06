@@ -5,6 +5,7 @@ import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
 import com.hx.nine.eleven.core.task.ElevenScheduledTask;
 import com.hx.nine.eleven.core.task.ElevenThreadTask;
+import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import com.hx.nine.eleven.vertx.utils.ElevenHttpclient;
 import com.hx.nine.eleven.core.utils.MDCThreadUtil;
 import com.hx.nine.eleven.vertx.utils.ElevenObjectUtils;
@@ -26,9 +27,9 @@ import io.vertx.ext.web.Router;
  * @author wml
  * @date 2023-03-24
  */
-public class WebApplicationVerticle extends AbstractVerticle {
+public class VertxWebApplicationVerticle extends AbstractVerticle {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WebApplicationVerticle.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VertxWebApplicationVerticle.class);
 
 	//声明Router路由
 	Router router;
@@ -41,12 +42,11 @@ public class WebApplicationVerticle extends AbstractVerticle {
 	public void start(Promise<Void> startPromise) throws Exception {
 		//初始化Router
 		// 配置静态文件
-		ElevenBootApplicationProperties elevenBootApplicationProperties = ElevenApplicationContextAware.getVertxApplicationProperties();
+		VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
+		ElevenBootApplicationProperties elevenBootApplicationProperties = ElevenApplicationContextAware.getElevenApplicationProperties();
 		router = Router.router(vertx);
-		JWTAuthOptions config = new JWTAuthOptions()
-				.addPubSecKey(new PubSecKeyOptions()
-						.setAlgorithm(elevenBootApplicationProperties.getAlgorithm())
-						.setBuffer(elevenBootApplicationProperties.getJwtSecretKey()));
+		JWTAuthOptions config = new JWTAuthOptions().addPubSecKey(new PubSecKeyOptions().setAlgorithm(properties.getAlgorithm())
+						.setBuffer(properties.getJwtSecretKey()));
 		JWTAuth authProvider = JWTAuth.create(vertx, config);
 		WebRouterInitializer.build().setAuthProvider(authProvider).setRouter(router).webInit(vertx,config);
 		//将Router与vertx HttpServer 绑定

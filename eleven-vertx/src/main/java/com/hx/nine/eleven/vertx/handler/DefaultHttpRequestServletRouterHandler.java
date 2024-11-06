@@ -11,14 +11,19 @@ public class DefaultHttpRequestServletRouterHandler implements HttpRequestServle
 
 	private Set<HttpRequestServletRouterHandler> routerHandlers;
 
+	public DefaultHttpRequestServletRouterHandler(){
+		routerHandlers = ElevenApplicationContextAware.getSubTypesOfBeans(HttpRequestServletRouterHandler.class);
+	}
+
 	@Override
 	public void preRouter(RoutingContext context) {
-		routerHandlers = ElevenApplicationContextAware.getSubTypesOfBeans(HttpRequestServletRouterHandler.class);
-		routerHandlers.forEach(handler -> {
-			if (!(handler instanceof DefaultHttpRequestServletRouterHandler)){
-				handler.preRouter(context);
-			}
-		});
+		if (Optional.ofNullable(routerHandlers).isPresent()){
+			routerHandlers.forEach(handler -> {
+				if (!(handler instanceof DefaultHttpRequestServletRouterHandler)){
+					handler.preRouter(context);
+				}
+			});
+		}
 	}
 
 	@Override

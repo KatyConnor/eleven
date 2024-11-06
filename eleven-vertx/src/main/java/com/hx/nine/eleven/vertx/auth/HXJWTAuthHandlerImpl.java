@@ -5,8 +5,8 @@ import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
-import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
+import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.file.FileSystemException;
@@ -52,13 +52,18 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
     private final JWT jwt = new JWT();
     private final String permissionsClaimKey;
     private final JWTOptions jwtOptions;
+    /**
+     * 会话过期时长
+     */
+    private int expires;
 
     public HXJWTAuthHandlerImpl(Vertx vertx, JWTAuth authProvider, String realm, JWTAuthOptions config) {
         super(authProvider, realm);
-        ElevenBootApplicationProperties properties = ElevenApplicationContextAware.getVertxApplicationProperties();
+        VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
         this.authProvider = authProvider;
         this.authentication = properties.getAuthentication();
         String[] ignoreAuthentications = properties.getIgnoreAuthentication();
+        this.expires = properties.getExpires();
         this.ignoreAuthentication = ObjectUtils.isNotEmpty(ignoreAuthentications) ? Arrays.asList(ignoreAuthentications) : new ArrayList<>();
 
         this.permissionsClaimKey = config.getPermissionsClaimKey();
@@ -147,8 +152,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                             .getJsonObject(ConstantType.RESPONSE_BODY_ENTITY)
                             .getJsonObject(ConstantType.DATA)
                             .getJsonObject(ConstantType.USER);
-                    String token = this.authProvider.generateToken(user, new JWTOptions()
-                            .setExpiresInMinutes(ElevenApplicationContextAware.getVertxApplicationProperties().getExpires()));
+                    String token = this.authProvider.generateToken(user, new JWTOptions().setExpiresInMinutes(this.expires));
                     ElevenLoggerFactory.build(this).info("登录认证成功");
                     data.getJsonObject(ConstantType.HTTP_RESPONSE_BODY).getJsonObject(ConstantType.RESPONSE_HEADER_ENTITY).put(ConstantType.AUTH_TOKEN, token);
                     // 登录验证成功，设置token和权限菜单

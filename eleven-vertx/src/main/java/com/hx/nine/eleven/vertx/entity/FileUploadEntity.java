@@ -5,6 +5,7 @@ import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
+import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import com.hx.nine.eleven.vertx.utils.ElevenObjectUtils;
 import com.hx.nine.eleven.core.utils.SystemUtils;
 import com.hx.nine.eleven.core.utils.UUIDGenerator;
@@ -104,7 +105,7 @@ public class FileUploadEntity {
 			//检查文件是否存在,如果重复上传,方案一:直接覆盖,方案二：不覆盖重命名保存
 			Path targetFilePath = Paths.get(targetFile);
 			if (Files.exists(targetFilePath)) {
-				ElevenBootApplicationProperties properties = ElevenApplicationContextAware.getProperties(ElevenBootApplicationProperties.class);
+				VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
 				// 不直接覆盖源文件
 				if (!properties.getWhetherToOverwriteOrReplace()) {
 					analysisTargetFile(targetFile);
