@@ -105,7 +105,7 @@ public class HttpServletRequest implements ServletRequest {
 	}
 
 	@Override
-	public Map<String, Object> getBody(String var1) {
+	public Map<String, Object> getBody() {
 		return this.jsonObject;
 	}
 

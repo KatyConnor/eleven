@@ -1,14 +1,9 @@
 package com.hx.nine.eleven.core.web;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -26,10 +21,9 @@ public interface ServletRequest {
 
 	/**
 	 *  获取post请求整个body数据
-	 * @param var1
 	 * @return
 	 */
-	Map<String,Object> getBody(String var1);
+	Map<String,Object> getBody();
 
 	/**
 	 * 字符集
