@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.domain.web;
 
+import com.hx.nine.eleven.core.web.http.HttpServletResponse;
 import com.hx.nine.eleven.domain.BeanFactoryLocator;
 import com.hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import com.hx.nine.eleven.domain.conver.BeanConvert;
@@ -44,7 +45,7 @@ public class WebServletRoutor {
 	 * @param webHttpRequest
 	 * @return
 	 */
-	public ResponseEntity doService(RoutingContext context, WebHttpRequest webHttpRequest) {
+	public ResponseEntity doService(HttpServletResponse httpServletResponse, WebHttpRequest webHttpRequest) {
 		ResponseEntity res = null;
 		try {
 			// 初始化上下文
@@ -84,12 +85,12 @@ public class WebServletRoutor {
 			}
 		} catch (Throwable ex) {
 			// 设置返回报文头参数
-			if (!ObjectUtils.isEmpty(context)){
+			if (!ObjectUtils.isEmpty(httpServletResponse)){
 				HeaderDTO requestHeaderDTO = DomainContextAware.build().getDomainContext().getRequestHeaderDTO();
 				Object resHeader = BeanConvert.convert(requestHeaderDTO, StringUtils.append(requestHeaderDTO.getTradeCode(),
 						requestHeaderDTO.getSubTradeCode()), requestHeaderDTO.getHeaderCode(), WebRouteParamsEnums.HEADER_VO.getName());
 				ResponseEntity response = ResponseEntity.build().failure().setResponseHeader(resHeader);
-				context.put(ConstantType.RESPONSE_BODY,response);
+				httpServletResponse.send(response)
 			}
 			throw ex;
 		} finally {

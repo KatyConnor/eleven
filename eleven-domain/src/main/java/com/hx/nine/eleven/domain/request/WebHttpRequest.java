@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.domain.request;
 
+import com.hx.nine.eleven.core.entity.FileUploadEntity;
 import com.hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import com.hx.nine.eleven.domain.enums.WebRouteParamsEnums;
 import com.hx.nine.eleven.commons.utils.JSONObjectMapper;
@@ -7,8 +8,6 @@ import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.domain.conver.BeanConvert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
-import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,18 +31,17 @@ public class WebHttpRequest implements Serializable {
 	/**
 	 * 请求报文头（header）
 	 */
-	@NotNull(message = "请求头[header]不能为空")
+	@NotNull(message = "请求报文头 [header] 不能为空")
 	private Object requestHeader;
 	/**
-	 * 请求报文体（body）
+	 * 请求报文体[body]
 	 */
-//	@NotNull(message = "报文体[body]不能为空")
 	private Object requestBody;
 
 	/**
 	 * 上传文件列表
 	 */
-//	private List<FileUploadEntity> fileUploadEntities;
+	private List<FileUploadEntity> fileUploadEntities;
 	/**
 	 * 数据流
 	 */
