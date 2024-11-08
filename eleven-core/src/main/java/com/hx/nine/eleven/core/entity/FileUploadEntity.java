@@ -1,15 +1,11 @@
-package com.hx.nine.eleven.vertx.entity;
+package com.hx.nine.eleven.core.entity;
 
 import com.hx.nine.eleven.commons.utils.DateUtils;
+import com.hx.nine.eleven.commons.utils.FileUtil;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
-import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
-import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
-import com.hx.nine.eleven.vertx.utils.ElevenObjectUtils;
 import com.hx.nine.eleven.core.utils.SystemUtils;
 import com.hx.nine.eleven.core.utils.UUIDGenerator;
-import io.vertx.ext.web.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +65,10 @@ public class FileUploadEntity {
 	 * 文件是否处理完毕
 	 */
 	private boolean fileComplete;
+	/**
+	 * 重复上传文件是否覆盖或者替换，默认为false，不覆盖不替换重命名保存
+	 */
+	private Boolean whetherToOverwriteOrReplace = false;
 
 	public static FileUploadEntity build() {
 		return new FileUploadEntity();
@@ -77,17 +77,17 @@ public class FileUploadEntity {
 	/**
 	 * 将临时文件转为目标文件
 	 *
-	 * @param fileUpload 上传的文件
 	 * @param targetFile 目标文件
 	 * @return
 	 */
-	public FileUploadEntity setFileUploads(FileUpload fileUpload, String targetFile){
-		this.name = fileUpload.name();
-		this.fileName = fileUpload.fileName();
-		this.fileFormat = fileUpload.fileName().substring(fileUpload.fileName().lastIndexOf("."));
-		this.uploadedFileName = fileUpload.uploadedFileName();
-		this.contentType = fileUpload.contentType();
-		this.contentTransferEncoding = fileUpload.contentTransferEncoding();
+	public FileUploadEntity setFileUploads(String name,String fileName,String fileFormat,String uploadedFileName,
+										   String contentType,String contentTransferEncoding,String targetFile){
+		this.name = name;
+		this.fileName = fileName;
+		this.fileFormat = fileFormat;
+		this.uploadedFileName = uploadedFileName;
+		this.contentType = contentType;
+		this.contentTransferEncoding = contentTransferEncoding;
 		this.targetFile = targetFile;
 		try {
 			this.fileSize = Files.size(Paths.get(uploadedFileName));
@@ -105,18 +105,17 @@ public class FileUploadEntity {
 			//检查文件是否存在,如果重复上传,方案一:直接覆盖,方案二：不覆盖重命名保存
 			Path targetFilePath = Paths.get(targetFile);
 			if (Files.exists(targetFilePath)) {
-				VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
 				// 不直接覆盖源文件
-				if (!properties.getWhetherToOverwriteOrReplace()) {
+				if (!this.whetherToOverwriteOrReplace) {
 					analysisTargetFile(targetFile);
-					ElevenObjectUtils.build().move(uploadedFileName,this.targetFile);
+					FileUtil.move(uploadedFileName,this.targetFile);
 					LOGGER.info(StringUtils.format("[{}]文件已经存在, 文件重命名为[{}]保存 ",targetFile,this.targetFile));
 					return true;
 				}
 				// 同步删掉文件
-				ElevenObjectUtils.build().delete(targetFilePath);
+				FileUtil.delete(targetFilePath);
 			}
-			ElevenObjectUtils.build().move(uploadedFileName,targetFile, ElevenObjectUtils.DEFAULT_OPTIONS);
+			FileUtil.move(uploadedFileName,targetFile, FileUtil.DEFAULT_OPTIONS);
 			LOGGER.info(StringUtils.format("文件保存成功,保存地址 [{}]",targetFile));
 		} catch (Exception e) {
 			LOGGER.error("文件上传失败,[]: ",e.getMessage(),e);
@@ -129,86 +128,106 @@ public class FileUploadEntity {
 		return uploadedFileName;
 	}
 
-	public void setUploadedFileName(String uploadedFileName) {
+	public FileUploadEntity setUploadedFileName(String uploadedFileName) {
 		this.uploadedFileName = uploadedFileName;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public FileUploadEntity setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getFileName() {
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
+	public FileUploadEntity setFileName(String fileName) {
 		this.fileName = fileName;
 		this.fileFormat = this.fileName.split(".")[1];
+		return this;
 	}
 
 	public String getContentType() {
 		return contentType;
 	}
 
-	public void setContentType(String contentType) {
+	public FileUploadEntity setContentType(String contentType) {
 		this.contentType = contentType;
+		return this;
 	}
 
 	public String getContentTransferEncoding() {
 		return contentTransferEncoding;
 	}
 
-	public void setContentTransferEncoding(String contentTransferEncoding) {
+	public FileUploadEntity setContentTransferEncoding(String contentTransferEncoding) {
 		this.contentTransferEncoding = contentTransferEncoding;
+		return this;
 	}
 
 	public String getTargetFile() {
 		return targetFile;
 	}
 
-	public void setTargetFile(String targetFile) {
+	public FileUploadEntity setTargetFile(String targetFile) {
 		this.targetFile = targetFile;
+		return this;
 	}
 
 	public String getUploadTime() {
 		return uploadTime;
 	}
 
-	public void setUploadTime(String uploadTime) {
+	public FileUploadEntity setUploadTime(String uploadTime) {
 		this.uploadTime = uploadTime;
+		return this;
 	}
 
 	public String getFileFormat() {
 		return fileFormat;
 	}
 
-	public void setFileFormat(String fileFormat) {
+	public FileUploadEntity setFileFormat(String fileFormat) {
 		this.fileFormat = fileFormat;
+		return this;
 	}
 
-	private void analysisTargetFile(String targetFile){
+	private FileUploadEntity analysisTargetFile(String targetFile){
 		int lastSpile = targetFile.lastIndexOf(SystemUtils.osName() == 1 ? "\\" : "/");
 		this.targetFile = targetFile.substring(0, lastSpile) + (SystemUtils.osName() == 1 ? "\\" : "/") +
 				UUIDGenerator.getUUID() +"-"+ targetFile.substring(lastSpile + 1);
+		return this;
 	}
 
 	public long getFileSize() {
 		return fileSize;
 	}
 
-	public void setFileSize(long fileSize) {
+	public FileUploadEntity setFileSize(long fileSize) {
 		this.fileSize = fileSize;
+		return this;
 	}
 
 	public boolean isFileComplete() {
 		return fileComplete;
 	}
 
-	public void setFileComplete(boolean fileComplete) {
+	public FileUploadEntity setFileComplete(boolean fileComplete) {
 		this.fileComplete = fileComplete;
+		return this;
+	}
+
+	public Boolean getWhetherToOverwriteOrReplace() {
+		return whetherToOverwriteOrReplace;
+	}
+
+	public FileUploadEntity setWhetherToOverwriteOrReplace(Boolean whetherToOverwriteOrReplace) {
+		this.whetherToOverwriteOrReplace = whetherToOverwriteOrReplace;
+		return this;
 	}
 }

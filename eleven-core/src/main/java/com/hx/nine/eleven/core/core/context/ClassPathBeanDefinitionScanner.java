@@ -2,6 +2,7 @@ package com.hx.nine.eleven.core.core.context;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.MethodAccess;
+import com.hx.nine.eleven.commons.utils.JSONObjectMapper;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.core.annotations.Order;
 import com.hx.nine.eleven.core.constant.ConstantType;
@@ -10,9 +11,11 @@ import com.hx.nine.eleven.core.core.ElevenWebApplicationInitializer;
 import com.hx.nine.eleven.core.core.bean.ApplicationBeanRegister;
 import com.hx.nine.eleven.core.core.bean.ElevenBeanFactory;
 import com.hx.nine.eleven.core.env.ElevenYamlReadUtils;
+import com.hx.nine.eleven.core.exception.ApplicationInitialzerException;
 import com.hx.nine.eleven.core.factory.ApplicationAnnotationFactory;
 import com.hx.nine.eleven.core.factory.ApplicationSubTypesInitFactory;
 import com.hx.nine.eleven.core.factory.WebRouteHandler;
+import com.hx.nine.eleven.core.WebApplicationMain;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
 
@@ -56,10 +59,12 @@ public class ClassPathBeanDefinitionScanner {
 		initApplicationAnnotationFactory(reflections);
 		//4、加载服务
 		initHXVertxWebApplicationInitializer(reflections);
-		//5、注册servlet
-		initWebRequestServletHandler(reflections);
+		//5、注册servlet,初始化 domain 路由拦截处理
+		initWebRouterAndServletHandler(reflections);
 		//6、httpRequest拦截
 //		initHttpRequestRouterHandler(reflections);
+		//7、 启动web服务
+		initWebApplicationMain(reflections);
 	}
 
 	/**
@@ -133,7 +138,7 @@ public class ClassPathBeanDefinitionScanner {
 	 *
 	 * @param reflections
 	 */
-	private void initWebRequestServletHandler(Reflections reflections) {
+	private void initWebRouterAndServletHandler(Reflections reflections) {
 
 		Set<Class<? extends WebRouteHandler>> subTypesOf = reflections.getSubTypesOf(WebRouteHandler.class);
 		Optional.ofNullable(subTypesOf).ifPresent(an -> {
@@ -146,6 +151,27 @@ public class ClassPathBeanDefinitionScanner {
 			MethodAccess methodAccess = MethodAccess.get(an);
 			methodAccess.invoke(obj, ConstantType.loadWebRouteHandler, reflections);
 		});
+	}
+
+	/**
+	 * 初始化web启动类
+	 * @param reflections
+	 */
+	private void initWebApplicationMain(Reflections reflections) {
+		Set<Class<? extends WebApplicationMain>> subTypesOf = reflections.getSubTypesOf(WebApplicationMain.class);
+		if(Optional.ofNullable(subTypesOf).isPresent()){
+			if (subTypesOf.size() > 1){
+				throw new ApplicationInitialzerException(String.format("应用配置了多个WEB容器启动类[%s]",
+						JSONObjectMapper.toJsonString(subTypesOf)));
+			}
+			subTypesOf.forEach(s -> {
+				ConstructorAccess constructorAccess = ConstructorAccess.get(s);
+				Object obj = constructorAccess.newInstance();
+				DefaultElevenApplicationContext.build().addSubTypesOfBean(obj);
+			});
+			return;
+		}
+		throw new ApplicationInitialzerException("应用没有配置web容器启动类");
 	}
 
 	public String[] stringToArrays(Object value){

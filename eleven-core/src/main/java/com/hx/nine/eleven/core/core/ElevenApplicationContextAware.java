@@ -45,7 +45,7 @@ public class ElevenApplicationContextAware {
 		return DefaultElevenApplicationContext.build().getProperties(properties);
 	}
 
-	public static ElevenBootApplicationProperties getVertxApplicationProperties(){
+	public static ElevenBootApplicationProperties getElevenApplicationProperties(){
 		return DefaultElevenApplicationContext.build().getBean(ElevenBootApplicationProperties.class);
 	}
 
