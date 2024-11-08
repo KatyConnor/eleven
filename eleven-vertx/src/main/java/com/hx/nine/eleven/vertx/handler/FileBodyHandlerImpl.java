@@ -21,6 +21,7 @@ public class FileBodyHandlerImpl extends BodyHandlerImpl {
 
 	@Override
 	public void handle(RoutingContext context) {
+		MDCThreadUtil.wrap();
 		final boolean isMultipart;
 		final boolean isUrlEncoded;
 		String contentType = context.request().getHeader(HttpHeaders.CONTENT_TYPE);
@@ -31,7 +32,6 @@ public class FileBodyHandlerImpl extends BodyHandlerImpl {
 		String lowerCaseContentType = contentType.toLowerCase();
 		isMultipart = lowerCaseContentType.startsWith(HttpHeaderValues.MULTIPART_FORM_DATA.toString());
 		isUrlEncoded = lowerCaseContentType.startsWith(HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString());
-		MDCThreadUtil.wrap();
 		if (isMultipart || isUrlEncoded) {
 			super.handle(context);
 		}else {

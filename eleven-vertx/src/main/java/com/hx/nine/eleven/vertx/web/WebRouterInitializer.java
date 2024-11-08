@@ -1,21 +1,15 @@
 package com.hx.nine.eleven.vertx.web;
 
 import com.hx.nine.eleven.vertx.auth.HXJWTAuthHandler;
-import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
-import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
-import com.hx.nine.eleven.core.utils.MDCThreadUtil;
-import com.hx.nine.eleven.vertx.handler.DefaultHttpRequestServletRouterHandler;
 import com.hx.nine.eleven.vertx.handler.FileBodyHandlerImpl;
-import com.hx.nine.eleven.vertx.handler.GetHttpRequestServletRouterHandler;
 import com.hx.nine.eleven.vertx.handler.GlobalDefaultExceptionHandler;
-import com.hx.nine.eleven.vertx.handler.HttpRequestServletRouterHandler;
+import com.hx.nine.eleven.vertx.handler.HttpRequestBodyHandler;
 import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.Router;
@@ -24,7 +18,6 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -52,9 +45,9 @@ public class WebRouterInitializer {
 				.handler(HXJWTAuthHandler.create(vertx,authProvider,config));
 		//配置Router路由,POST请求
 		router.route(HttpMethod.POST, elevenBootApplicationProperties.getServletPath())
-				.handler(this.createRouteHandler());
+				.handler(HttpRequestBodyHandler.build());
 		router.route(HttpMethod.GET, elevenBootApplicationProperties.getServletPath()+"/"+ vertxApplicationProperties.getDoGetUrlPath())
-				.handler(this.createGetRouteHandler());
+				.handler(HttpRequestBodyHandler.build());
 		router.route().handler(this.createCorsHandler());
 		router.route(elevenBootApplicationProperties.getStaticPath()).handler(this.createStaticHandler());
 		router.route().last().failureHandler(this.createGlobalDefaultExceptionHandler());
@@ -92,68 +85,17 @@ public class WebRouterInitializer {
 				.setDeleteUploadedFilesOnEnd(vertxApplicationProperties.getDeleteUploadedFilesOnEnd()); //请求结束后是否删除上传文件
 	}
 
-	private Handler<RoutingContext> createRouteHandler(){
+	private Handler<RoutingContext> createPostRouteHandler(){
 		return ctx->{
-			HttpRequestServletRouterHandler servletRouterHandler = ElevenApplicationContextAware.
-					getBean(DefaultHttpRequestServletRouterHandler.class);
-			Object res = null;
-			try {
-				MDCThreadUtil.wrap();
-				if (Optional.of(servletRouterHandler).isPresent()){
-					servletRouterHandler.preRouter(ctx);
-					res = servletRouterHandler.doRouter(ctx);
-					servletRouterHandler.afterRouter(ctx, res);
-				}else {
-					res = servletRouterHandler.doRouter(ctx);
-				}
-				if(res == null){
-					ctx.response().send("返回body为null");
-					return;
-				}
-				// 判断是否有文件流返回,如果有则直接返回下载的文件流
-				JsonObject jsonObject = JsonObject.mapFrom(res);
-				Boolean fileDownload = jsonObject.getBoolean(ConstantType.FILE_STREAM);
-				Object  fileDownloadPath = jsonObject.getValue(ConstantType.FILE_DOWNLOAD_PATH);
-				if (fileDownload){
-					ctx.response().sendFile(String.valueOf(fileDownloadPath));
-				}else {
-					ctx.response().send(jsonObject.toString());
-				}
-				MDCThreadUtil.clear();
-			} catch (Throwable ex) {
-				if (res != null){
-					ctx.put(ConstantType.RESPONSE_BODY,res);
-				}
-				throw ex;
-			}
+
 		};
 	}
 
+	//
+	@Deprecated
 	private Handler<RoutingContext> createGetRouteHandler(){
 		return ctx->{
-			HttpRequestServletRouterHandler servletRouterHandler = ElevenApplicationContextAware.
-					getBean(GetHttpRequestServletRouterHandler.class);
-			Object res = null;
-			try {
-				servletRouterHandler.preRouter(ctx);
-				res = servletRouterHandler.doRouter(ctx);
-				servletRouterHandler.afterRouter(ctx, res);
-				if(res == null){
-					ctx.response().send("返回body为null");
-					return;
-				}
-				JsonObject jsonObject = JsonObject.mapFrom(res);
-				Boolean fileDownload = jsonObject.getBoolean(ConstantType.FILE_STREAM);
-				Object  fileDownloadPath = jsonObject.getValue(ConstantType.FILE_DOWNLOAD_PATH);
-				if (fileDownload){
-					ctx.response().sendFile(String.valueOf(fileDownloadPath));
-				}else {
-					ctx.response().send(jsonObject.toString());
-				}
-			} catch (Throwable ex) {
-				ctx.put(ConstantType.RESPONSE_BODY,res);
-				throw ex;
-			}
+
 		};
 	}
 

@@ -6,6 +6,7 @@ import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
+import com.hx.nine.eleven.core.utils.MDCThreadUtil;
 import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -59,6 +60,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
     public HXJWTAuthHandlerImpl(Vertx vertx, JWTAuth authProvider, String realm, JWTAuthOptions config) {
         super(authProvider, realm);
+        MDCThreadUtil.wrap();
         VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
         this.authProvider = authProvider;
         this.authentication = properties.getAuthentication();
@@ -141,7 +143,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
         final HttpServerRequest request = ctx.request();
         String authToken = request.getHeader(ConstantType.AUTH_TOKEN);
-        // 如果token为空，则判断是否登录，如果是
+        // 如果token为空，则判断是否登录，如果没有登录需要进行登录操作
         if (StringUtils.isEmpty(authToken)) {
             UserNameAndPasswordProvider nameAndPasswordProvider = Builder.of(UserNameAndPasswordProvider::new).build();
             nameAndPasswordProvider.authenticate(ctx, auth -> {
@@ -170,6 +172,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                     ctx.response().send(JsonObject.mapFrom(response).toString());
                 }
             });
+            MDCThreadUtil.clear();
             return;
         }
 
@@ -192,6 +195,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
             String token = this.authProvider.generateToken(payload, new JWTOptions().setExpiresInMinutes(30));
             ctx.response().putHeader(ConstantType.AUTH_TOKEN, token);
             ctx.next();
+            MDCThreadUtil.clear();
             return;
         }
         // 认证失败，返回信息
@@ -199,6 +203,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                 .with(AuthenticateResponse::setCode, "B0000000001")
                 .with(AuthenticateResponse::setMessage, "权限认证失败，请登录").build();
         ctx.response().send(JsonObject.mapFrom(response).toString());
+        MDCThreadUtil.clear();
     }
 
     /**

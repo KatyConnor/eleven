@@ -3,10 +3,12 @@ package com.hx.nine.eleven.vertx.auth;
 import com.hx.nine.eleven.commons.utils.Builder;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
-import com.hx.nine.eleven.vertx.handler.DefaultHttpRequestServletRouterHandler;
-import com.hx.nine.eleven.vertx.handler.HttpRequestServletRouterHandler;
+import com.hx.nine.eleven.core.web.http.HttpResponse;
+import com.hx.nine.eleven.core.web.http.HttpServlet;
+import com.hx.nine.eleven.core.web.http.HttpServletRequest;
+import com.hx.nine.eleven.core.web.http.HttpServletResponse;
+import com.hx.nine.eleven.vertx.constant.DefualtProperType;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
-import com.hx.nine.eleven.core.utils.MDCThreadUtil;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -25,24 +27,20 @@ import java.util.Optional;
 public class UserNameAndPasswordProvider{
 
     private Future<Object> authenticate(RoutingContext ctx){
-        MDCThreadUtil.wrap();
-        HttpRequestServletRouterHandler servletRouterHandler = ElevenApplicationContextAware.
-                getBean(DefaultHttpRequestServletRouterHandler.class);
-        Object res = null;
+        HttpServlet httpServlet = ElevenApplicationContextAware.getBean(HttpServlet.class);
+        HttpResponse res = null;
         try {
-            if (Optional.of(servletRouterHandler).isPresent()){
-                servletRouterHandler.preRouter(ctx);
-                res = servletRouterHandler.doRouter(ctx);
-                servletRouterHandler.afterRouter(ctx, res);
-            }else {
-                res = servletRouterHandler.doRouter(ctx);
-            }
-            JsonObject responseBody = JsonObject.mapFrom(res).getJsonObject(ConstantType.HTTP_RESPONSE_BODY)
+            HttpServletRequest req = HttpServletRequest.build();
+            HttpServletResponse resp = HttpServletResponse.build();
+            req.setAttribute(DefualtProperType.VERTX_CONTEXT,ctx);
+            httpServlet.service(req, resp);
+            res = resp.httpResponse();
+
+            JsonObject responseBody = JsonObject.mapFrom(res.getBody()).getJsonObject(ConstantType.HTTP_RESPONSE_BODY)
                     .getJsonObject(ConstantType.RESPONSE_BODY_ENTITY);
             if (ConstantType.SUCCESS.equals(responseBody.getString(ConstantType.STATUS_CODE))){
                 return Future.succeededFuture(res);
             }
-            MDCThreadUtil.clear();
             return Future.failedFuture(JsonObject.mapFrom(res).toString());
         } catch (Throwable ex) {
             if (res != null){

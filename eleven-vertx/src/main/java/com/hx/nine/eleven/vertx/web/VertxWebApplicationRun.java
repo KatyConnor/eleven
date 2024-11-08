@@ -1,19 +1,11 @@
 package com.hx.nine.eleven.vertx.web;
 
-import com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.core.constant.DefualtProperType;
+import com.hx.nine.eleven.core.WebApplicationMain;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
-import com.hx.nine.eleven.core.core.context.ClassPathBeanDefinitionScanner;
-import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
-import com.hx.nine.eleven.core.env.ElevenYamlReadUtils;
-import com.hx.nine.eleven.core.properties.ElevenBootApplicationProperties;
-import com.hx.nine.eleven.core.web.WebApplicationMain;
 import com.hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * 应用启动类
