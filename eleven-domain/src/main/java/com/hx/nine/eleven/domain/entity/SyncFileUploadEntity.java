@@ -1,6 +1,6 @@
 package com.hx.nine.eleven.domain.entity;
 
-import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
+import com.hx.nine.eleven.core.entity.FileUploadEntity;
 
 import java.util.List;
 

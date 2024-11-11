@@ -21,7 +21,7 @@ public interface DomainApplicationSysCode extends ApplicationSysMessageCode {
     MessageCode A0200000002 = new MessageCode(MessageCodeType.APPLICAION,"A0200000002", "[{}]输入流为null");
     MessageCode A0200000003 = new MessageCode(MessageCodeType.APPLICAION,"A0200000003", "[{}]输出流为null");
     MessageCode A0300000001 = new MessageCode(MessageCodeType.APPLICAION,"A0300000001", "[{}]领域上下文为null");
-    MessageCode A0300000002 = new MessageCode(MessageCodeType.APPLICAION,"A0300000002", "[{}]领域上线文传递参数为null");
+    MessageCode A0300000002 = new MessageCode(MessageCodeType.APPLICAION,"A0300000002", "[{}]领域上下文传递参数为null");
     MessageCode A0300000003 = new MessageCode(MessageCodeType.APPLICAION,"A0300000003", "[{}]请求报文报文头[requestHeaderDTO]不能为null");
     MessageCode A0300000004 = new MessageCode(MessageCodeType.APPLICAION,"A0300000004", "[{}]请求报文报文[WebHttpRequest]不能为null");// @TODO 需要重新定义错误码
     MessageCode A0300000005 = new MessageCode(MessageCodeType.APPLICAION,"A0300000005", "不支持 [{}] 交易");// @TODO 需要重新定义错误码

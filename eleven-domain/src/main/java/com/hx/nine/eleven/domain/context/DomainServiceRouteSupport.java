@@ -15,18 +15,35 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 自动切换
+ * domain service facade 执行方法自动切换
+ * domain db mapper factory 执行方法自动切换
+ * @author wml
+ * @date 2022-10-28
  */
 public class DomainServiceRouteSupport {
 
 	private static final String DOMAIN_SUPPORT = "DOMAIN_SUPPORT";
 	private static final String MAPPER_METHOD = "MAPPER_METHOD";
 
+	/**
+	 * 按照子交易码自动匹配 domain service facade接口中定义的交易码方法
+	 * @param subTradeCode  子交易码
+	 * @param obj           mapper factory 实例对象
+	 * @param args          执行方法传递参数
+	 * @return
+	 */
 	public static Object invokDomainService(String subTradeCode, Object obj, Object... args) {
 		String domainServiceMethod = DomainContextAware.build().getDomainContext().getDomainServiceMethod();
 		return invoke(subTradeCode, obj, false,domainServiceMethod, args);
 	}
 
+	/**
+	 * 按照子交易码自动匹配 domain mapper factory 数据操作接口中定义的交易码方法
+	 * @param subTradeCode  子交易码
+	 * @param obj           mapper factory 实例对象
+	 * @param args          执行方法传递参数
+	 * @return
+	 */
 	public static Object invokMapperFactory(String subTradeCode, Object obj, Object... args) {
 		String mapperFactoryMethod = DomainContextAware.build().getDomainContext().getMapperFactoryMethod();
 		return invoke(subTradeCode, obj, true,mapperFactoryMethod,args);

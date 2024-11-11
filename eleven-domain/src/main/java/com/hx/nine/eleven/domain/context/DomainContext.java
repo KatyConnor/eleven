@@ -45,7 +45,7 @@ public class DomainContext {
     private BaseDTO requestBody;
 
     /**
-     * 上下文传输数据对象
+     * domain 与 domain 之间通信时，上下文传输数据对象临时存储
      */
     private Map<String, Object> domainContext;
 

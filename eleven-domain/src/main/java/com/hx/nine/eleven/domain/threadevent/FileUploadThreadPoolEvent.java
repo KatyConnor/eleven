@@ -1,13 +1,13 @@
 package com.hx.nine.eleven.domain.threadevent;
 
 import co.paralleluniverse.fibers.SuspendExecution;
+import com.hx.nine.eleven.core.entity.FileUploadEntity;
 import com.hx.nine.eleven.domain.context.FileUploadExecuteProcess;
 import com.hx.nine.eleven.domain.entity.SyncFileUploadEntity;
 import com.hx.nine.eleven.domain.properties.DomainEventListenerHandlerProperties;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
-import com.hx.nine.eleven.thread.pool.executor.event.ThreadPoolEvent;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
-import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
+import com.hx.nine.eleven.thread.pool.executor.event.ThreadPoolEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -172,8 +172,10 @@ public class DomainUtils {
 		String tradeCode = context.getRequestHeaderDTO().getTradeCode();
 		String subTradeCode = context.getRequestHeaderDTO().getSubTradeCode();
 		String headerCode = context.getRequestHeaderDTO().getHeaderCode();
-		Object headerParam = BeanConvert.convert(context.getRequestHeaderDTO(), StringUtils.append(tradeCode, subTradeCode), headerCode, WebRouteParamsEnums.HEADER_PARAM.getName());
-		Object bodyParam = BeanConvert.convert(context.getRequestBody(), StringUtils.append(tradeCode, subTradeCode), headerCode, WebRouteParamsEnums.BODY_PARAM.getName());
+		Object headerParam = BeanConvert.convert(context.getRequestHeaderDTO(),null, headerCode,
+				WebRouteParamsEnums.HEADER_PARAM.getName());
+		Object bodyParam = BeanConvert.convert(context.getRequestBody(), StringUtils.append(tradeCode, subTradeCode),
+				null, WebRouteParamsEnums.BODY_PARAM.getName());
 		paramsEntity.pushParam((BaseParam) bodyParam);
 		paramsEntity.pushParam((BaseParam) headerParam);
 	}

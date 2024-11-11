@@ -146,8 +146,8 @@ public class DomainExecuteService {
             // 设置返回报文头参数
             if (ResponseEntity.class.isInstance(obj)){
                 HeaderDTO requestHeaderDTO = DomainContextAware.build().getDomainContext().getRequestHeaderDTO();
-                Object resHeader = BeanConvert.convert(requestHeaderDTO,StringUtils.append(requestHeaderDTO.getTradeCode(),
-                        requestHeaderDTO.getSubTradeCode()),requestHeaderDTO.getHeaderCode(), WebRouteParamsEnums.HEADER_VO.getName());
+                Object resHeader = BeanConvert.convert(requestHeaderDTO,null,requestHeaderDTO.getHeaderCode(),
+                        WebRouteParamsEnums.HEADER_VO.getName());
                 ((ResponseEntity)obj).setResponseHeader(resHeader);
             }
         } catch (Exception e) {

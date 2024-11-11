@@ -4,6 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * domain领域内部执行
+ * @TODO 暂未实现功能
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

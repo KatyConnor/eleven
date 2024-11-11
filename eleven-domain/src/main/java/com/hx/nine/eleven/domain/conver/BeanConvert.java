@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.domain.conver;
 
+import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import com.hx.nine.eleven.domain.obj.dto.PageHeaderDTO;
 import com.hx.nine.eleven.domain.obj.form.PageHeaderForm;
@@ -18,13 +19,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+/**
+ * 对象转换
+ * @author wml
+ * @date 2022-10-28
+ */
 public class BeanConvert {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanConvert.class);
 
     /**
      * @param obj
-     * @param tradeCode
+     * @param tradeCode    主交易码+子交易码
      * @param headerCode
      * @param type
      * @return
@@ -36,42 +42,45 @@ public class BeanConvert {
         }
         Class<?> classzz = null;
         Object instance = null;
-        classzz = DomainApplicationContainer.build().getClass(type + tradeCode);
-        if (Optional.ofNullable(classzz).isPresent()) {
-            instance = BeanUtils.newInstance(classzz);
-            return BeanUtils.copyProperties(obj, instance);
-        }
-        if (WebRouteParamsEnums.HEADER_FORM == WebRouteParamsEnums.getByName(type)) {
-            classzz = DomainApplicationContainer.build().getClass(type + headerCode);
-            classzz = classzz == null?headerCode == null||StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
-                    DefaultHeaderForm.class: PageHeaderForm.class:classzz;
+        if (StringUtils.isNotEmpty(tradeCode)){
+            classzz = DomainApplicationContainer.build().getClass(type + tradeCode);
+            if (ObjectUtils.isEmpty(classzz)){
+                throw new RuntimeException(StringUtils.format("[{}]:主子交易没有找到对应的映射对象",tradeCode));
+            }
             instance = BeanUtils.newInstance(classzz);
             return BeanUtils.copyProperties(obj, instance);
         }
 
-        if (WebRouteParamsEnums.HEADER_DTO == WebRouteParamsEnums.getByName(type)) {
-            classzz = DomainApplicationContainer.build().getClass(type + headerCode);
-            classzz = classzz == null?headerCode == null||StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
-                    DefaultHeaderDTO.class: PageHeaderDTO.class:classzz;
-            instance = BeanUtils.newInstance(classzz);
-            return BeanUtils.copyProperties(obj, instance);
+        classzz = DomainApplicationContainer.build().getClass(type + headerCode);
+        if (ObjectUtils.isEmpty(classzz)){
+            classzz =  getDefaultHeader(type,headerCode);
+        }
+        instance = BeanUtils.newInstance(classzz);
+        return BeanUtils.copyProperties(obj, instance);
+    }
+
+    private static Class<?> getDefaultHeader(String type,String headerCode){
+        WebRouteParamsEnums header = WebRouteParamsEnums.getByName(type);
+        if (WebRouteParamsEnums.HEADER_FORM == header) {
+            return headerCode == null||StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
+                    DefaultHeaderForm.class: PageHeaderForm.class;
         }
 
-        if (WebRouteParamsEnums.HEADER_PARAM == WebRouteParamsEnums.getByName(type)) {
-            classzz = DomainApplicationContainer.build().getClass(type + headerCode);
-            classzz = classzz == null?headerCode == null|| StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
-                    BaseParam.class:HeaderParam.class:classzz;
-            instance = BeanUtils.newInstance(classzz);
-            return BeanUtils.copyProperties(obj, instance);
+        if (WebRouteParamsEnums.HEADER_DTO == header) {
+            return headerCode == null||StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
+                    DefaultHeaderDTO.class: PageHeaderDTO.class;
         }
 
-        if (WebRouteParamsEnums.HEADER_VO == WebRouteParamsEnums.getByName(type)) {
-            classzz = DomainApplicationContainer.build().getClass(type + headerCode);
-            classzz = classzz == null?headerCode == null||StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
-                    ResponseHeaderVO.class: PageResponseHeaderVO.class:classzz;
-            instance = BeanUtils.newInstance(classzz);
-            return BeanUtils.copyProperties(obj, instance);
+        if (WebRouteParamsEnums.HEADER_PARAM == header) {
+            return headerCode == null|| StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
+                    BaseParam.class:HeaderParam.class;
         }
-        return null;
+
+        if (WebRouteParamsEnums.HEADER_VO == header) {
+            return headerCode == null||StringUtils.equals(headerCode,WebHttpBodyConstant.DEFAULT_HEADER)?
+                    ResponseHeaderVO.class: PageResponseHeaderVO.class;
+        }
+
+        throw new RuntimeException(StringUtils.format("没有找到 headerCode: [{}],headerType: [{}] 匹配的 header 类型 ",headerCode,type));
     }
 }

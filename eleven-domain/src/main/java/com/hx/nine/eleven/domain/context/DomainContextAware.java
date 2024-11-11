@@ -1,6 +1,7 @@
 package com.hx.nine.eleven.domain.context;
 
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.entity.FileUploadEntity;
 import com.hx.nine.eleven.domain.BeanFactoryLocator;
 import com.hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import com.hx.nine.eleven.domain.context.thread.DomainContextThreadPoolEvent;
@@ -27,7 +28,6 @@ import com.hx.nine.eleven.commons.utils.Builder;
 import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.thread.pool.executor.pool.ThreadPoolService;
-import com.hx.nine.eleven.core.core.entity.FileUploadEntity;
 import io.vertx.core.Future;
 import net.sf.cglib.beans.BeanMap;
 import org.slf4j.Logger;
@@ -67,12 +67,14 @@ public class DomainContextAware {
 			domainContext.putDomainContext(WebHttpBodyConstant.FILE_UPLOAD, webHttpRequest.getFileUploadEntities());
 		}
 		domainContext.setInputStream(webHttpRequest.getInputStream());
-		HeaderForm headerForm = (HeaderForm) webHttpRequest.getRequestHeader();
+		HeaderForm headerForm = webHttpRequest.getRequestHeader();
 		String tradeCode = headerForm.getTradeCode();
 		String subTradeCode = headerForm.getSubTradeCode();
 		String headerCode = headerForm.getHeaderCode();
-		Object requestHeaderDTO = BeanConvert.convert(webHttpRequest.getRequestHeader(), StringUtils.append(tradeCode, subTradeCode), headerCode, WebRouteParamsEnums.HEADER_DTO.getName());
-		Object requestBodyDTO = BeanConvert.convert(webHttpRequest.getRequestBody(), StringUtils.append(tradeCode, subTradeCode), headerCode, WebRouteParamsEnums.BODY_DTO.getName());
+		Object requestHeaderDTO = BeanConvert.convert(webHttpRequest.getRequestHeader(),null, headerCode,
+				WebRouteParamsEnums.HEADER_DTO.getName());
+		Object requestBodyDTO = BeanConvert.convert(webHttpRequest.getRequestBody(),
+				StringUtils.append(tradeCode, subTradeCode), null, WebRouteParamsEnums.BODY_DTO.getName());
 		domainContext.setRequestHeaderDTO((HeaderDTO) requestHeaderDTO);
 		if (requestBodyDTO!=null){
 			domainContext.setRequestBody((BaseDTO) requestBodyDTO);
@@ -83,9 +85,9 @@ public class DomainContextAware {
 	}
 
 	/**
-	 * 异步处理任务，从service服务层开始处理
+	 * 在一个 domain 生命周期中需要异步处理任务，即从service服务层内部或者domain内部调用其他领域接口处理逻辑
 	 * 提交并刷新上下文异步处理队列，上下文监听器监听到有DomainContextEventEntity对象时，将会从队列拿去任务进行执行
-	 * 防重复刷新提交
+	 * 可优化项：防重复刷新提交，如下，
 	 * @TODO 1、根据领域编号和子编号判断确认，
 	 * @TODO 2、如果编号一致，则判断childDomainContext参数是否调整，如果参数不一致放入队列执行，如果参数一致这提示重复提交，忽略本体提交任务
 	 * @param asyncCall 是否获取处理结果
@@ -152,15 +154,19 @@ public class DomainContextAware {
 	public ResponseEntity commitDomainContextService() {
 		LOGGER.info("--------------提交领域处理任务---------------");
 		DomainContext domainContext = this.getDomainContext();
+		// 1、上下文非空判断
+		if (domainContext == null) {
+			throw new DomainOperatorException(DomainApplicationSysCode.A0300000001);
+		}
+
+		// 2、上下文传递参数非空验证
+		Map<String, Object> childDomainContextMap = domainContext.getDomainContext();
+		if (childDomainContextMap == null || childDomainContextMap.size() <= 0) {
+			throw new DomainOperatorException(DomainApplicationSysCode.A0300000002);
+		}
 		ResponseEntity responseEntity = null;
 		try{
-			// 2、上下文传递参数非空验证
-			Map<String, Object> childDomainContextMap = domainContext.getDomainContext();
-			if (childDomainContextMap == null || childDomainContextMap.size() <= 0) {
-				throw new DomainOperatorException(DomainApplicationSysCode.A0300000002);
-			}
 			DomainContext childDomainContext = setDomainContext(childDomainContextMap);
-
 			String tradeCode = childDomainContext.getRequestHeaderDTO().getTradeCode();
 			String subTradeCode = childDomainContext.getRequestHeaderDTO().getSubTradeCode();
 			WebServiceFacade serviceFacade = BeanFactoryLocator.getBean(tradeCode);
@@ -170,6 +176,7 @@ public class DomainContextAware {
 						with(ErrorVO::setErrorMessageCode, MessageCodeUtils.format(DomainApplicationSysCode.A0300000005,tradeCode)).build();
 				return ResponseEntity.build().addData(errorVO).failure();
 			}
+
 			this.refreshContext(childDomainContext);
 			if (DomainContextAware.build().getDomainContextEvent().getEnableDomainSupport()
 					&& StringUtils.isNotBlank(subTradeCode)){
@@ -348,11 +355,16 @@ public class DomainContextAware {
 		public final static DomainContextAware NEW_INSTANCE = new DomainContextAware();
 	}
 
+	/**
+	 * 生成一个domain内部访问domain通信的上下文对象 @like{DomainContext}
+	 * @param childDomainContextMap 内部通信上下文参数
+	 * @return
+	 */
 	private DomainContext setDomainContext(Map<String, Object> childDomainContextMap) {
 		// 需要根据交易码获取header和body
 		Object requestHeaderDTO = childDomainContextMap.get(WebHttpBodyConstant.ASYN_HEADER_DTO);
 		if (ObjectUtils.isEmpty(requestHeaderDTO)) {
-			throw new RuntimeException("");
+			throw new RuntimeException("报文头不能为空!");
 		}
 
 		Map<String, Object> requestHeaderDTOMap = requestHeaderDTO instanceof Map ?
@@ -361,10 +373,10 @@ public class DomainContextAware {
 		String tradeCode = StringUtils.valueOf(requestHeaderDTOMap.get(WebHttpBodyConstant.TRADE_CODE));
 		String subTradeCode = StringUtils.valueOf(requestHeaderDTOMap.get(WebHttpBodyConstant.SUB_TRADE_CODE));
 		String headerCode = StringUtils.valueOf(requestHeaderDTOMap.get(WebHttpBodyConstant.HEADER_CODE));
-		Object requestHeader = BeanConvert.convert(childDomainContextMap.get(WebHttpBodyConstant.ASYN_HEADER_DTO), StringUtils.append(tradeCode,
-				subTradeCode), headerCode, WebRouteParamsEnums.HEADER_DTO.getName());
-		Object requestBody = BeanConvert.convert(childDomainContextMap.get(WebHttpBodyConstant.ASYN_BODY_DTO), StringUtils.append(tradeCode,
-				subTradeCode), headerCode, WebRouteParamsEnums.BODY_DTO.getName());
+		Object requestHeader = BeanConvert.convert(requestHeaderDTO, null, headerCode,
+				WebRouteParamsEnums.HEADER_DTO.getName());
+		Object requestBody = BeanConvert.convert(childDomainContextMap.get(WebHttpBodyConstant.ASYN_BODY_DTO),
+				StringUtils.append(tradeCode, subTradeCode), null, WebRouteParamsEnums.BODY_DTO.getName());
 		DomainContext childDomainContext = BeanUtils.copyProperties(childDomainContextMap, DomainContext.class);
 		// 3、报文头非空验证
 		if (childDomainContext.getRequestHeaderDTO() == null) {

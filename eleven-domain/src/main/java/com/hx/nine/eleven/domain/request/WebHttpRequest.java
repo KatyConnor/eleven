@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.domain.request;
 
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.core.entity.FileUploadEntity;
 import com.hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import com.hx.nine.eleven.domain.enums.WebRouteParamsEnums;
@@ -8,6 +9,7 @@ import com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.domain.conver.BeanConvert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hx.nine.eleven.commons.utils.StringUtils;
+import com.hx.nine.eleven.domain.obj.form.HeaderForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +34,7 @@ public class WebHttpRequest implements Serializable {
 	 * 请求报文头（header）
 	 */
 	@NotNull(message = "请求报文头 [header] 不能为空")
-	private Object requestHeader;
+	private HeaderForm requestHeader;
 	/**
 	 * 请求报文体[body]
 	 */
@@ -47,78 +49,74 @@ public class WebHttpRequest implements Serializable {
 	 */
 	private InputStream inputStream;
 
+	/**
+	 * 是否开启协程处理
+	 */
 	private Boolean openFiber = false;
 
-	public Object getRequestHeader() {
+	public HeaderForm getRequestHeader() {
 		return requestHeader;
 	}
 
+	/**
+	 * 赋值时，初始化 header 数据，映射到headerForm 头表单对象中，
+	 * header 必传数据，包含了必要的交易码
+	 *
+	 * @param requestHeader
+	 */
 	public void setRequestHeader(Object requestHeader) {
 		if (!Optional.ofNullable(requestHeader).isPresent()) {
-            LOGGER.warn("[{}] is null",requestHeader);
-            return;
+			LOGGER.warn("[{}] is null", requestHeader);
+			return;
 		}
 		Map<String, Object> headerMap = null;
 		if (requestHeader instanceof Map) {
 			headerMap = (Map<String, Object>) requestHeader;
-		} else {
+		} else if (requestHeader instanceof String) {
 			try {
-				String headerStr = requestHeader instanceof String ? requestHeader.toString() : JSONObjectMapper.build().toJsonString(requestHeader);
-				headerMap = JSONObjectMapper.build().readValue(headerStr, Map.class);
+				headerMap = JSONObjectMapper.build().readValue(requestHeader.toString(), Map.class);
 			} catch (JsonProcessingException e) {
 				LOGGER.error("requestHeader json 转换异常: {}", e);
 			}
+		} else {
+			headerMap = BeanMapUtil.beanToMap(requestHeader);
 		}
-		String tradeCode = String.valueOf(headerMap.get(WebHttpBodyConstant.TRADE_CODE));
-		String subTradeCode = String.valueOf(headerMap.get(WebHttpBodyConstant.SUB_TRADE_CODE));
 		String headerCode = String.valueOf(headerMap.get(WebHttpBodyConstant.HEADER_CODE));
-		this.requestHeader = BeanConvert.convert(headerMap, StringUtils.append(tradeCode,subTradeCode), headerCode, WebRouteParamsEnums.HEADER_FORM.getName());
+		this.requestHeader = (HeaderForm) BeanConvert.convert(headerMap, null, headerCode,
+				WebRouteParamsEnums.HEADER_FORM.getName());
 	}
 
 	public Object getRequestBody() {
 		return requestBody;
 	}
 
+	/**
+	 * 赋值时，初始化 body 对象，body数据直接映射成 form表单对象中
+	 *
+	 * @param requestBody
+	 */
 	public void setRequestBody(Object requestBody) {
-        if (!Optional.ofNullable(requestBody).isPresent()) {
-            LOGGER.warn("[{}] is null",requestBody);
-            return;
-        }
-		Map<String, Object> bodyMap = requestBody instanceof Map?(Map<String, Object>) requestBody:null;
-		if (!Optional.ofNullable(bodyMap).isPresent()) {
-			try {
-				String bodyStr = requestBody instanceof String?requestBody.toString():JSONObjectMapper.build().
-						toJsonString(requestBody);
-				bodyMap = JSONObjectMapper.build().readValue(bodyStr, Map.class);
-			} catch (JsonProcessingException e) {
-				LOGGER.error("requestBody json 转换异常：{}", e);
-			}
+		if (!Optional.ofNullable(requestBody).isPresent()) {
+			LOGGER.warn("[{}] is null", requestBody);
+			return;
 		}
-
-		Object tradeCode = bodyMap.get(WebHttpBodyConstant.TRADE_CODE);
-		if (!Optional.ofNullable(tradeCode).isPresent()){
-			tradeCode = JSONObjectMapper.build().convertValue(this.requestHeader,Map.class).get(WebHttpBodyConstant.TRADE_CODE);
-//		JsonObject.mapFrom(this.requestHeader).getString(WebHttpBodyConstant.TRADE_CODE);
-		}
-		tradeCode = Optional.ofNullable(tradeCode).isPresent()?tradeCode:"";
-		Object subTradeCode = bodyMap.get(WebHttpBodyConstant.SUB_TRADE_CODE);
-		if (!Optional.ofNullable(subTradeCode).isPresent()){
-			subTradeCode = JSONObjectMapper.build().convertValue(this.requestHeader,Map.class).get(WebHttpBodyConstant.SUB_TRADE_CODE);
-			//JsonObject.mapFrom(this.requestHeader).getString(WebHttpBodyConstant.SUB_TRADE_CODE);
-		}
-		subTradeCode = Optional.ofNullable(subTradeCode).isPresent()?subTradeCode:"";
-		this.requestBody = BeanConvert.convert(bodyMap, StringUtils.append(tradeCode.toString(),subTradeCode.toString()), null, WebRouteParamsEnums.BODY_FORM.getName());
+		Object tradeCode = this.requestHeader.getTradeCode();
+		Object subTradeCode = this.requestHeader.getSubTradeCode();
+		tradeCode = Optional.ofNullable(tradeCode).isPresent() ? tradeCode : "";
+		subTradeCode = Optional.ofNullable(subTradeCode).isPresent() ? subTradeCode : "";
+		this.requestBody = BeanConvert.convert(requestBody, StringUtils.append(tradeCode.toString(), subTradeCode.toString()),
+				null, WebRouteParamsEnums.BODY_FORM.getName());
 	}
 
-//	public List<FileUploadEntity> getFileUploadEntities() {
-//		return fileUploadEntities;
-//	}
-//
+	public List<FileUploadEntity> getFileUploadEntities() {
+		return fileUploadEntities;
+	}
+
 	public void setFileUploadEntities(List<FileUploadEntity> fileUploadEntities) {
 		this.fileUploadEntities = fileUploadEntities;
 		if (!Optional.ofNullable(this.requestBody).isPresent() &&
 				Optional.ofNullable(this.fileUploadEntities).isPresent() &&
-				this.fileUploadEntities.size() > 0){
+				this.fileUploadEntities.size() > 0) {
 			this.requestBody = Optional.empty();
 		}
 	}
