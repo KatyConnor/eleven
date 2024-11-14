@@ -14,6 +14,8 @@ import java.util.*;
 
 
 /**
+ * Object 对象处理常用工具类
+ *
  * @Author wml
  * @Date 2017-08-30 17:57
  */
@@ -33,7 +35,7 @@ public class ObjectUtils {
 	}
 
 	/**
-	 * 循环bean 转换成循环的map
+	 * 循环 bean 转换成循环的 map
 	 *
 	 * @param listBeans
 	 * @return
@@ -48,8 +50,8 @@ public class ObjectUtils {
 			return null;
 		}
 
-		for (Object listBean : listBeans) {
-			Map<String, Object> map = convertBean(listBean);
+		for (Object bean : listBeans) {
+			Map<String, Object> map = convertBean(bean);
 			listMap.add(map);
 		}
 		return listMap;
@@ -71,7 +73,6 @@ public class ObjectUtils {
 		Class type = bean.getClass();
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		BeanInfo beanInfo = Introspector.getBeanInfo(type);
-
 		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 		for (int i = 0; i < propertyDescriptors.length; i++) {
 			PropertyDescriptor descriptor = propertyDescriptors[i];
@@ -135,8 +136,7 @@ public class ObjectUtils {
 	 * @throws InvocationTargetException 如果调用属性的 setter 方法失败
 	 */
 	@SuppressWarnings("rawtypes")
-	public static Object convertMap(Class type, Map map)
-			throws IntrospectionException, IllegalAccessException,
+	public static Object convertMap(Class type, Map map) throws IntrospectionException, IllegalAccessException,
 			InstantiationException, InvocationTargetException {
 		BeanInfo beanInfo = Introspector.getBeanInfo(type); // 获取类属性
 		Object obj = type.newInstance(); // 创建 JavaBean 对象
@@ -250,6 +250,11 @@ public class ObjectUtils {
 		}
 	}
 
+	/**
+	 * 计算对象的 HashCode
+	 * @param obj
+	 * @return
+	 */
 	public static int nullSafeHashCode(Object obj) {
 		if (obj == null) {
 			return 0;
@@ -471,6 +476,18 @@ public class ObjectUtils {
 		}
 	}
 
+	/**
+	 * 对象非空判断，如果是空对象则给一个默认值
+	 * @param object
+	 * @param defaultValue
+	 * @param <T>
+	 * @param <S>
+	 * @return
+	 */
+	public static <T, S extends T> T defaultIfNull(T object, S defaultValue) {
+		return isEmpty(object)? defaultValue : object;
+	}
+
 	public static boolean isArray(Object obj) {
 		return obj != null && obj.getClass().isArray();
 	}
@@ -491,7 +508,7 @@ public class ObjectUtils {
 		if (obj == null) {
 			return true;
 		} else if (obj instanceof String) {
-            return StringUtils.isEmpty(obj);
+			return StringUtils.isEmpty(obj);
 		} else if (obj instanceof Optional) {
 			return !((Optional) obj).isPresent();
 		} else if (obj instanceof CharSequence) {
