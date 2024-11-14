@@ -2,6 +2,7 @@ package com.hx.nine.eleven.jooq.jdbc.tx;
 
 import  com.hx.nine.eleven.commons.utils.ObjectUtils;
 import com.hx.nine.eleven.jdbc.AbstractRoutingDataSource;
+import com.hx.nine.eleven.jdbc.ElevenJdbcTransactionManager;
 import com.hx.nine.eleven.jooq.jdbc.utils.TransactionUtils;
 import org.jooq.TransactionContext;
 import org.jooq.impl.HXJooqTransactionContext;
@@ -13,7 +14,7 @@ import org.jooq.tools.JooqLogger;
  * @author wml
  * @date 2023-04-21
  */
-public class JooqTransactionManager {
+public class JooqTransactionManager implements ElevenJdbcTransactionManager {
 	private final static JooqLogger LOGGER = JooqLogger.getLogger(HXJooqTransactionContext.class);
 
 	/** 自动提交事务 */
@@ -37,6 +38,7 @@ public class JooqTransactionManager {
 	/**
 	 * 开启事务
 	 */
+	@Override
 	public void begin() {
 		TransactionContext ctx = HXJooqTransactionContext.newTransactionContext(this.dataSource.currentDataSourceName());
 		if (!ObjectUtils.isEmpty(ctx)){
@@ -53,6 +55,7 @@ public class JooqTransactionManager {
 	/**
 	 * 提交事务
 	 */
+	@Override
 	public void commit() {
 		JooqTransactionManagerEntity transactionManagerEntity = JooqTransactionManagerHolder.getTransactionManager(this.dataSource.currentDataSourceName());
 		if (ObjectUtils.isEmpty(transactionManagerEntity) || ObjectUtils.isEmpty(transactionManagerEntity.getTransactionContext())){
@@ -73,6 +76,7 @@ public class JooqTransactionManager {
 	/**
 	 * 回滚事务
 	 */
+	@Override
 	public void rollback() {
 		JooqTransactionManagerEntity transactionManagerEntity = JooqTransactionManagerHolder.getTransactionManager(this.dataSource.currentDataSourceName());
 		if (ObjectUtils.isEmpty(transactionManagerEntity) || ObjectUtils.isEmpty(transactionManagerEntity.getTransactionContext())){
