@@ -3,6 +3,8 @@ package com.hx.nine.eleven.mybatisflex;
 import com.hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import com.hx.nine.eleven.mybatisflex.mapper.ElevenBaseMapper;
 import com.hx.nine.eleven.mybatisflex.mapper.ElevenFlexBaseMapper;
+import com.hx.nine.eleven.mybatisflex.tx.ElevenFlexTransactionFactory;
+
 import java.util.Set;
 
 /**
@@ -16,6 +18,7 @@ public class ElevenMybatisFlexBootStarter {
 		ElevenMybatisFlexBootstrap.getInstance()
 				.initDataSource()
 				.addMappers(type)
+				.setTransactionFactory(new ElevenFlexTransactionFactory())
 				.addMapper(ElevenFlexBaseMapper.class)
 				.start();
 	}
