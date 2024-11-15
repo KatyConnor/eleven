@@ -21,8 +21,7 @@ import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.datasources.support.DataSourceClassResolver;
 import com.hx.nine.eleven.datasources.DynamicDataSourceContextHolder;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManager;
-
+import com.hx.nine.eleven.jdbc.ElevenJdbcTransactionManager;
 import java.lang.reflect.Method;
 
 /**
@@ -52,13 +51,14 @@ public class DynamicDataSourceAnnotationInterceptor implements MethodInterceptor
     public Object intercept(Invocation invocation) throws Throwable {
         Method method = invocation.getMethod();
         Object target = invocation.getTarget();
-        String dsKey = determineDatasourceKey(method,target);
+        Object[] arguments = invocation.getArguments();
+        String dsKey = determineDatasourceKey(method,target,arguments);
         DynamicDataSourceContextHolder.push(dsKey);
         try {
             return invocation.proceed();
         } finally {
             // 清除数据源信息时，需要同时提交当前数据源未提交事务
-            JooqTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(JooqTransactionManager.class);
+            ElevenJdbcTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(ElevenJdbcTransactionManager.class);
             jooqTransactionManager.commit();
             DynamicDataSourceContextHolder.poll();
         }
@@ -69,8 +69,8 @@ public class DynamicDataSourceAnnotationInterceptor implements MethodInterceptor
      * @param method
      * @return
      */
-    private String determineDatasourceKey(Method method,Object obj) {
-        String dataSource = dataSourceClassResolver.findKey(method,obj);
+    private String determineDatasourceKey(Method method,Object obj, Object[] arguments) {
+        String dataSource = dataSourceClassResolver.findKey(method,obj,arguments);
         // 获取默认数据源
         return StringUtils.isEmpty(dataSource)?null:dataSource;
     }
