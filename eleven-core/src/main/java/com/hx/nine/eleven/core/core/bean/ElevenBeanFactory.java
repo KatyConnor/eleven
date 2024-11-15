@@ -27,9 +27,9 @@ public class ElevenBeanFactory {
 	 *
 	 * @param tClass
 	 * @param <T>
-	 * @return
+	 * @return       创建成功返回创建的对象，创建失败或者异常返回null
 	 */
-	public static <T> T initBean(Class<T> tClass) {
+	public static <T> T initBean(Class<T> tClass) throws Exception{
 		ConstructorAccess<T> constructorAccess = ConstructorAccess.get(tClass);
 		// 获取bean创建之前处理类
 		Set<Class<? extends ApplicationBeanRegister>> beanRegisters = DefaultElevenApplicationContext.build()
@@ -63,12 +63,12 @@ public class ElevenBeanFactory {
 		ElevenObjectProxy elevenObjectProxy = ElevenApplicationContextAware.getSubTypesOfBean(ElevenObjectProxy.class);
 		if (beanRegister != null) {
 			beanRegister.before(DefaultElevenApplicationContext.build());
-			bean = elevenObjectProxy.checkProxy(tClass) ? elevenObjectProxy.newByteBuddyProxyInstancesss(tClass) : constructorAccess.newInstance();
+			bean = elevenObjectProxy.checkProxy(tClass) ? elevenObjectProxy.creatProxy(tClass) : constructorAccess.newInstance();
 			beanRegister.setBean(bean);
 			beanRegister.after(DefaultElevenApplicationContext.build());
 			return (T) beanRegister.getBean();
 		} else {
-			bean = elevenObjectProxy.checkProxy(tClass) ? elevenObjectProxy.newByteBuddyProxyInstancesss(tClass) : constructorAccess.newInstance();
+			bean = elevenObjectProxy.checkProxy(tClass) ? elevenObjectProxy.creatProxy(tClass) : constructorAccess.newInstance();
 		}
 		Optional.ofNullable(beanRegisterClass).ifPresent(br -> {
 			beanRegisters.remove(br); // 删除处理之后的class

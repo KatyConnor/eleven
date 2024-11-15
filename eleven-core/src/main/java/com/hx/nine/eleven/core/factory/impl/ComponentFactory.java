@@ -50,7 +50,7 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 	}
 
 	@Override
-	public void loadAnnotations(Reflections reflections) {
+	public void loadAnnotations(Reflections reflections) throws Exception {
 		Set<Class<?>> annotationSet = reflections.getTypesAnnotatedWith(Component.class);
 		Set<Class<?>> subComponentSet = reflections.getTypesAnnotatedWith(SubComponent.class);
 		initBean(subComponentSet, true);  // 初始化子类，存储主键为父类
@@ -96,10 +96,10 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 	/**
 	 * 所有bean创建完之后，扫描依赖条件的class进行初始化
 	 */
-	private void afterBeanCreate() {
+	private void afterBeanCreate() throws Exception{
 		ConcurrentLinkedQueue<Class<?>> afterBeansQueue = ElevenApplicationContextAware.
 				getBean(ConstantType.CONDITIONAL_ON_AFTER_BEAN);
-		Optional.ofNullable(afterBeansQueue).ifPresent(beans -> {
+		if (Optional.ofNullable(afterBeansQueue).isPresent()){
 			Class<?> bean = afterBeansQueue.peek();
 			while (bean != null) {
 				SubComponent subComponent = bean.getAnnotation(SubComponent.class);
@@ -107,28 +107,25 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 				afterBeansQueue.remove(bean);
 				bean = afterBeansQueue.peek();
 			}
-		});
+		}
 
 		ConcurrentLinkedQueue<BeanResourceEntity> resourceBeansQueue = ElevenApplicationContextAware.
 				getBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN);
-		Optional.ofNullable(resourceBeansQueue).ifPresent(beans -> {
+
+		if (Optional.ofNullable(resourceBeansQueue).isPresent()){
 			BeanResourceEntity bean = resourceBeansQueue.peek();
 			while (bean != null) {
 				Field field = bean.getField();
 				Object obj = ElevenApplicationContextAware.getBean(bean.getObj());
 				field.setAccessible(true);
-				try {
-					field.set(obj, ElevenApplicationContextAware.getBean(field.getType()));
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
+				field.set(obj, ElevenApplicationContextAware.getBean(field.getType()));
 				resourceBeansQueue.remove(bean);
 				bean = resourceBeansQueue.peek();
 			}
-		});
+		}
 	}
 
-	private void createBean(Class<?> bean, boolean isSub) {
+	private void createBean(Class<?> bean, boolean isSub) throws Exception{
 		Component component = bean.getAnnotation(Component.class);
 		MethodAccess methodAccess = null;
 		Annotation an = null;
@@ -174,6 +171,8 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 				}
 				LOGGER.info("注册bean=[{}]", bean.getSimpleName());
 			}
+			// 如果null 则给出日志输出提示，应用正常使用时可能会报错
+			LOGGER.error("创建 bean=[{}]失败，注册失败", bean.getSimpleName());
 		};
 	}
 
@@ -217,12 +216,11 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 	 * 1、检查容器中是否存在，如果存在直接取出赋值
 	 * 2、容器中不存在，需要创建bean，并放入容器（按照创建bean检查）
 	 */
-	private void setField(Class<?> bean, Object obj, boolean isSub) {
-		FieldAccess fieldAccess = FieldAccess.get(bean);
+	private void setField(Class<?> bean, Object obj, boolean isSub) throws Exception{
 		Field[] fields = bean.getDeclaredFields();
 		for (Field field : fields) {
 			Resource resource = field.getAnnotation(Resource.class);
-			Optional.ofNullable(resource).ifPresent(f -> {
+			if (Optional.ofNullable(resource).isPresent()){
 				Class<?> fieldTypeClass = field.getType();
 				Object fieldObj = ElevenApplicationContextAware.getBean(fieldTypeClass);
 				if (fieldObj == null && checkProperty(fieldTypeClass)) {
@@ -244,12 +242,8 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 					return;
 				}
 				field.setAccessible(true);
-				try {
-					field.set(obj,fieldObj);
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
-			});
+				field.set(obj,fieldObj);
+			}
 		}
 	}
 

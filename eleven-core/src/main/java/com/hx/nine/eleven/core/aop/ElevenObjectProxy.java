@@ -15,10 +15,10 @@ public abstract class ElevenObjectProxy {
 	public abstract <T> boolean checkProxy(Class<T> tClass);
 
 	/**
-	 * 创建代理对象
+	 * 创建代理对象，代理创建失败则返回 null
 	 * @param target 目标类class
 	 * @param <T>    目标类类型
 	 * @return       返回创建的目标代理对象
 	 */
-	public abstract <T> T newByteBuddyProxyInstancesss(Class<T> target);
+	public abstract <T> T creatProxy(Class<T> target) throws Exception;
 }
