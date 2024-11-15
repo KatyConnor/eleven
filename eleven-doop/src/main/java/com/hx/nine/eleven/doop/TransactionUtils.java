@@ -4,7 +4,7 @@ package com.hx.nine.eleven.doop;
 import com.hx.nine.eleven.doop.jdbc.AbstractRoutingDataSource;
 import com.hx.nine.eleven.doop.jdbc.provider.ConnectionProvider;
 import com.hx.nine.eleven.doop.jdbc.provider.DataSourceConnectionProvider;
-import com.hx.nine.eleven.doop.tx.ThreadLocalTransactionProvider;
+import com.hx.nine.eleven.doop.jdbc.provider.ThreadLocalTransactionProvider;
 
 /**
  *

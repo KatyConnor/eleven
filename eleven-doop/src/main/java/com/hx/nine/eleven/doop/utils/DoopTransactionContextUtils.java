@@ -1,6 +1,5 @@
 package com.hx.nine.eleven.doop.utils;
 
-import com.hx.nine.eleven.doop.tx.DefaultTransactionContext;
 import com.hx.nine.eleven.doop.tx.TransactionContext;
 import com.hx.nine.eleven.doop.tx.TransactionManagerEntity;
 import com.hx.nine.eleven.doop.tx.TransactionManagerHolder;
@@ -35,8 +34,8 @@ public class DoopTransactionContextUtils {
 			managerEntity.setTransaction(true);
 			return null;
 		} else {
-			DefaultTransactionContext ctx = new DefaultTransactionContext();
-			managerEntity.addTransactionContext(ctx);
+//			DefaultTransactionContext ctx = new DefaultTransactionContext();
+//			managerEntity.addTransactionContext(ctx);
 			managerEntity.setTransaction(true);
 			return ctx;
 		}

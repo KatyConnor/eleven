@@ -1,7 +1,8 @@
-package com.hx.nine.eleven.doop.tx;
+package com.hx.nine.eleven.doop.jdbc.provider;
 
 
 import com.hx.nine.eleven.doop.exception.DataAccessException;
+import com.hx.nine.eleven.doop.tx.TransactionContext;
 
 /**
  * 自定义事务管理接口
