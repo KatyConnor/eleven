@@ -1,10 +1,9 @@
 package com.hx.nine.eleven.bytebuddy.aop.creator;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
-import com.hx.nine.eleven.bytebuddy.aop.ObjectProxyCreator;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.advice.AdvisorMethodInterceptor;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.MethodInterceptor;
-import com.hx.nine.eleven.bytebuddy.aop.interceptor.ProxyMethodDelegationInterceptor;
+import com.hx.nine.eleven.bytebuddy.aop.interceptor.ByteBuddyMethodDelegationInterceptor;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -13,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 使用<tt>ByteBuddy</tt>来做动态代理的{@link com.hx.nine.eleven.bytebuddy.aop.ObjectProxyCreator}
+ * 使用<tt>ByteBuddy</tt>来做动态代理的{@link ObjectProxyCreator}
  *
  * @author wml
  * @date 2023-04-06
@@ -43,7 +42,7 @@ public class ByteBuddyCreator implements ObjectProxyCreator{
     }
 
     /**
-     * 类拦截器模式
+     * ByteBuddy 代理， 类拦截器模式
      * @param classLoader   类加载器
      * @param target        目标类
      * @param interceptor   拦截器实现
@@ -56,7 +55,7 @@ public class ByteBuddyCreator implements ObjectProxyCreator{
             return new ByteBuddy()
                     .subclass(target)
                     .method(ElementMatchers.isDeclaredBy(target))
-                    .intercept(MethodDelegation.to(new ProxyMethodDelegationInterceptor(interceptor,constructorAccess.newInstance())))
+                    .intercept(MethodDelegation.to(new ByteBuddyMethodDelegationInterceptor(interceptor,constructorAccess.newInstance())))
                     .make()
                     .load(classLoader)
                     .getLoaded().newInstance();

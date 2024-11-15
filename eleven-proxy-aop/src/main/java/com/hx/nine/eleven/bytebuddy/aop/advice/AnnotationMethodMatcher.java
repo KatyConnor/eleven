@@ -19,7 +19,11 @@ public class AnnotationMethodMatcher implements MethodMatcher {
 	}
 
 	/**
-	 * 目标类查找切点
+	 * 目标类查找切点,如果目标类有多个切点注解，此处可能只会随机创建一个切点代理类
+	 * @TODO issue： 如果目标类有多个切点注解，此处可能只会随机创建一个切点代理类
+	 * <p>
+	 *     此issue后续计划进行修复，满足多切点类型实现
+	 * </p>
 	 * @param targetClass
 	 * @return
 	 */

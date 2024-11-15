@@ -7,14 +7,19 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
-public class ProxyMethodDelegationInterceptor {
+/**
+ * bytebuddy 代理对象创建是，绑定的跟拦截，实现对用户实现的拦截调用逻辑处理
+ * @author wml
+ * @date 2023-04-06
+ */
+public class ByteBuddyMethodDelegationInterceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProxyMethodDelegationInterceptor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ByteBuddyMethodDelegationInterceptor.class);
 
 	private final MethodInterceptor methodInterceptor;
 	private final Object target;
 
-	public ProxyMethodDelegationInterceptor(MethodInterceptor methodInterceptor,Object target) {
+	public ByteBuddyMethodDelegationInterceptor(MethodInterceptor methodInterceptor, Object target) {
 		this.methodInterceptor = methodInterceptor;
 		this.target = target;
 	}
@@ -28,13 +33,17 @@ public class ProxyMethodDelegationInterceptor {
 	 * @throws Throwable 抛出异常
 	 */
 	@RuntimeType
-	public Object invoke(@This Object proxy, @Origin Method method,
-						 @AllArguments Object[] arguments) throws Throwable {
-		LOGGER.info("进入[{}]:[{}]方法",this.target.getClass().getName(),method.getName());
-		// 开启事务
+	public Object invoke(@This Object proxy, @Origin Method method, @AllArguments Object[] arguments) throws Throwable {
+		if (LOGGER.isDebugEnabled()){
+			LOGGER.debug("---------进入 [{}:{}]方法开始执行逻辑---------",this.target.getClass().getName(),method.getName());
+		}
+		// @TODO 开启事务
 		MethodInvocation invocation = new MethodInvocation(method,arguments,proxy,this.target);
 		Object result = methodInterceptor.intercept(invocation);
-		// 提交事务
+		// @TODO 提交事务
+		if (LOGGER.isDebugEnabled()){
+			LOGGER.debug("---------方法 [{}:{}] 执行完毕---------",this.target.getClass().getName(),method.getName());
+		}
 		return result;
 	}
 }

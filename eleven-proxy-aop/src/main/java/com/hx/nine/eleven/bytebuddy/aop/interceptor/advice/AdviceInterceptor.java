@@ -3,7 +3,7 @@ package com.hx.nine.eleven.bytebuddy.aop.interceptor.advice;
 import java.lang.reflect.Method;
 
 /**
- * advice拦截器
+ * bytebuddy代理； advice 拦截器
  * @author wml
  * @date 2023-04-12
  */

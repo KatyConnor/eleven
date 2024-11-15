@@ -3,12 +3,15 @@ package com.hx.nine.eleven.bytebuddy.aop.advice;
 import com.hx.nine.eleven.bytebuddy.aop.ProxyTypeAnnotationEntity;
 import com.hx.nine.eleven.bytebuddy.aop.enums.AopProxyTypeEnums;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.MethodInterceptor;
-import com.hx.nine.eleven.bytebuddy.aop.interceptor.jdk.MethodInvocationInterceptor;
 import com.hx.nine.eleven.bytebuddy.aop.util.Assert;
 import com.hx.nine.eleven.core.core.bean.ElevenBeanFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -17,14 +20,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author wml
  * @date 2023-04-02
  */
-public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
+public class AbstractPointcutAdvisor implements PointcutAdvisor {
 
 	/**
-	 * advice拦截实现
-	 */
-	private MethodInvocationInterceptor advice;
-	/**
-	 * 切点注入注解
+	 * 注解切点
 	 */
 	private final List<Class<? extends Annotation>> annotations;
 	/**
@@ -36,11 +35,6 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 		annotations = new ArrayList<>();
 		aopProxyType = new LinkedHashMap<>();
 	}
-
-	/**
-	 * 添加切点，将切点注解加入annotations集合中
-	 */
-	public abstract void init();
 
 	/**
 	 * 根据切点注解查找代理模式
@@ -62,24 +56,14 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 	}
 
 	/**
-	 * 设置拦截切点
-	 *
-	 * @param advice
+	 * 注入注解切点，使用默认的代理模式创建代理对象
+	 * 默认使用 {AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY} 代理模式
+	 * @param annotation           注解切点
+	 * @param methodInterceptor    切点拦截逻辑实现的拦截器
 	 * @return
 	 */
-	public AbstractPointcutAdvisor setAdvice(MethodInvocationInterceptor advice) {
-		Assert.notNull(advice, "MethodInterceptor advice must not be null");
-		this.advice = advice;
-		return this;
-	}
-
-	/**
-	 * 添加切点，代理模式为默认bytebuddy代理模式
-	 *
-	 * @param annotation
-	 * @return
-	 */
-	public AbstractPointcutAdvisor addAnnotation(Class<? extends Annotation> annotation, MethodInterceptor methodInterceptor) {
+	public AbstractPointcutAdvisor addAnnotation(Class<? extends Annotation> annotation,
+												 MethodInterceptor methodInterceptor) {
 		Assert.notNull(annotation, "advice pointcut Annotation type must not be null");
 		this.annotations.add(annotation);
 		List<ProxyTypeAnnotationEntity> aopProxyAnnotation = aopProxyType.get(AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY);
@@ -95,7 +79,16 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 		return this;
 	}
 
-	public AbstractPointcutAdvisor addAnnotation(Class<? extends Annotation> annotation,Class<? extends MethodInterceptor> interceptor) {
+	/**
+	 * 注入注解切点，使用默认的代理模式创建代理对象
+	 * 默认使用 {AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY} 代理模式
+	 *
+	 * @param annotation     注解切点
+	 * @param interceptor    切点拦截逻辑实现的拦截器
+	 * @return
+	 */
+	public AbstractPointcutAdvisor addAnnotation(Class<? extends Annotation> annotation,
+												 Class<? extends MethodInterceptor> interceptor) {
 		Assert.notNull(annotation, "advice pointcut Annotation type must not be null");
 		this.annotations.add(annotation);
 		List<ProxyTypeAnnotationEntity> aopProxyAnnotation = aopProxyType.get(AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY);
@@ -113,10 +106,11 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 	}
 
 	/**
-	 * 添加切点，指定代理模式
+	 * 注入注解切点，指定代理模式
 	 *
-	 * @param annotation        切点
-	 * @param aopProxyTypeEnums 代理模式
+	 * @param annotation        注解切点
+	 * @param interceptor       切点拦截逻辑实现的拦截器
+	 * @param aopProxyTypeEnums 创建代理对象的代理模式
 	 * @return
 	 */
 	public AbstractPointcutAdvisor addAnnotation(Class<? extends Annotation> annotation,
@@ -132,12 +126,20 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 		annotationEntity.setAnnotation(annotation);
 		MethodInterceptor methodInterceptor = ElevenBeanFactory.createBean(interceptor);
 		annotationEntity.setMethodInterceptor(methodInterceptor);
-		annotationEntity.setProxyType(AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY);
+		annotationEntity.setProxyType(aopProxyTypeEnums);
 		aopProxyAnnotation.add(annotationEntity);
 		aopProxyType.put(aopProxyTypeEnums,aopProxyAnnotation);
 		return this;
 	}
 
+	/**
+	 * 注入注解切点
+	 *
+	 * @param annotation          注解切点
+	 * @param methodInterceptor   切点拦截逻辑实现的拦截器
+	 * @param aopProxyTypeEnums   创建代理对象的代理模式
+	 * @return
+	 */
 	public AbstractPointcutAdvisor addAnnotation(Class<? extends Annotation> annotation,
 												 MethodInterceptor methodInterceptor,
 												 AopProxyTypeEnums aopProxyTypeEnums) {
@@ -150,15 +152,10 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor {
 		ProxyTypeAnnotationEntity annotationEntity = new ProxyTypeAnnotationEntity();
 		annotationEntity.setAnnotation(annotation);
 		annotationEntity.setMethodInterceptor(methodInterceptor);
-		annotationEntity.setProxyType(AopProxyTypeEnums.BYTEBUDDY_INTERCEPTOR_PROXY);
+		annotationEntity.setProxyType(aopProxyTypeEnums);
 		aopProxyAnnotation.add(annotationEntity);
 		aopProxyType.put(aopProxyTypeEnums,aopProxyAnnotation);
 		return this;
-	}
-
-	@Override
-	public MethodInvocationInterceptor getAdvice() {
-		return this.advice;
 	}
 
 	@Override

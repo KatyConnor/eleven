@@ -1,7 +1,10 @@
 package com.hx.nine.eleven.bytebuddy.aop.enums;
-import com.hx.nine.eleven.bytebuddy.aop.ObjectProxyCreator;
+import com.hx.nine.eleven.bytebuddy.aop.creator.ObjectProxyCreator;
 import com.hx.nine.eleven.bytebuddy.aop.creator.ByteBuddyCreator;
+import com.hx.nine.eleven.bytebuddy.aop.creator.CglibProxyCreator;
+import com.hx.nine.eleven.bytebuddy.aop.creator.JdkProxyCreator;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.MethodInterceptor;
+import com.hx.nine.eleven.bytebuddy.aop.interceptor.advice.AdvisorMethodInterceptor;
 
 import java.util.Arrays;
 
@@ -10,7 +13,11 @@ public enum AopProxyTypeEnums {
 	BYTEBUDDY_INTERCEPTOR_PROXY("BYTEBUDDY_PROXY",ByteBuddyCreator.class,
 			"createInterceptorProxy", MethodInterceptor.class),
 	BYTEBUDDY_ADVICE_PROXY("BYTEBUDDY_ADVICE_PROXY",ByteBuddyCreator.class,
-			"createAdviceInterceptorProxy",null);
+			"createAdviceInterceptorProxy", AdvisorMethodInterceptor.class),
+	JDK_INTERCEPTOR_PROXY("JDK_PROXY", JdkProxyCreator.class,
+			"createInterceptorProxy", MethodInterceptor.class),
+	CGLIB_INTERCEPTOR_PROXY("CGLIB_PROXY", CglibProxyCreator.class,
+			"createInterceptorProxy", MethodInterceptor.class);
 
 	private String code;
 	private Class<? extends ObjectProxyCreator> proxyClass;

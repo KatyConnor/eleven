@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.google.common.collect.Maps;
-import com.hx.nine.eleven.bytebuddy.aop.ObjectProxyCreator;
+import com.hx.nine.eleven.bytebuddy.aop.creator.ObjectProxyCreator;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.CglibMethodInterceptor;
 import net.sf.cglib.proxy.Enhancer;
 
