@@ -19,7 +19,7 @@ import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.hx.nine.eleven.core.annotations.Component;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
-import com.hx.nine.eleven.jooq.jdbc.tx.JooqTransactionManager;
+import com.hx.nine.eleven.jdbc.ElevenJdbcTransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
@@ -52,17 +52,17 @@ public class DomainExecuteService {
      * @return 返回泛型T
      */
     public <T> T excuteTransaction(Class<T> response, DomainExecutor<T> executor) {
-        JooqTransactionManager jooqTransactionManager = ElevenApplicationContextAware.getBean(JooqTransactionManager.class);
+        ElevenJdbcTransactionManager transactionManager = ElevenApplicationContextAware.getBean(ElevenJdbcTransactionManager.class);
         boolean rollback = false;
         try{
-            jooqTransactionManager.begin();
+            transactionManager.begin();
             DomainContext context = DomainContextAware.build().getDomainContext();
             validation(context.getRequestHeaderDTO());
             validation(context.getRequestBody());
             return exec(response, executor);
         }catch (Throwable ex){
             try{
-                jooqTransactionManager.rollback();
+                transactionManager.rollback();
             }catch (Exception exception){
                 LOGGER.error("业务处理失败,",exception);
             }
@@ -70,7 +70,7 @@ public class DomainExecuteService {
             throw new DomainOperatorException(DomainApplicationSysCode.B0100000004,ex);
         }finally {
             if (!rollback){
-                jooqTransactionManager.commit();
+                transactionManager.commit();
             }
         }
     }
