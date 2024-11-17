@@ -2,7 +2,7 @@ package com.hx.nine.eleven.bytebuddy.aop.testdemo;
 
 import com.hx.nine.eleven.bytebuddy.aop.annotation.HXDataSource;
 
-public class DataProducer {
+public class DataProducer{
 
 
 	@HXDataSource("ds")

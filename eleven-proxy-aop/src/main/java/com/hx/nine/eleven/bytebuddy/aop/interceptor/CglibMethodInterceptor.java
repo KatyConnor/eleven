@@ -29,7 +29,8 @@ public class CglibMethodInterceptor implements MethodInterceptor {
 		if (LOGGER.isDebugEnabled()){
 			LOGGER.debug("---------进入 [{}:{}]方法开始执行逻辑---------",obj.getClass().getName(),method.getName());
 		}
-		MethodInvocation invocation = new MethodInvocation(method,objects,null,obj);
+		MethodInvocation invocation = new MethodInvocation(methodProxy,objects,null,obj);
+		invocation.setMethod(method);
 		Object result = this.methodInterceptor.intercept(invocation);
 		if (LOGGER.isDebugEnabled()){
 			LOGGER.debug("---------方法 [{}:{}] 执行完毕---------",obj.getClass().getName(),method.getName());

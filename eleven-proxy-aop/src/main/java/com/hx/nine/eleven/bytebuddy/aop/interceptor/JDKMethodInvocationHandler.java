@@ -12,13 +12,16 @@ import java.lang.reflect.Method;
  * @author wml
  * @date 2023-04-12
  */
-public class JDKMethodInvocationInterceptor implements InvocationHandler {
-	private static final Logger LOGGER = LoggerFactory.getLogger(JDKMethodInvocationInterceptor.class);
+public class JDKMethodInvocationHandler implements InvocationHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(JDKMethodInvocationHandler.class);
 
 	private final MethodInterceptor methodInterceptor;
 
-	public JDKMethodInvocationInterceptor(MethodInterceptor methodInterceptor){
+	private Object target;
+
+	public JDKMethodInvocationHandler(MethodInterceptor methodInterceptor, Object target){
 		this.methodInterceptor = methodInterceptor;
+		this.target = target;
 	}
 
 	/**
@@ -34,7 +37,7 @@ public class JDKMethodInvocationInterceptor implements InvocationHandler {
 		if (LOGGER.isDebugEnabled()){
 			LOGGER.debug("---------进入 [{}:{}]方法开始执行逻辑---------",proxy.getClass().getSuperclass().getName(),method.getName());
 		}
-		MethodInvocation invocation = new MethodInvocation(method,args,proxy,proxy.getClass().getSuperclass());
+		MethodInvocation invocation = new MethodInvocation(method,args,proxy,this.target);
 		Object result = this.methodInterceptor.intercept(invocation);
 		if (LOGGER.isDebugEnabled()){
 			LOGGER.debug("---------方法 [{}:{}] 执行完毕---------",proxy.getClass().getSuperclass().getName(),method.getName());

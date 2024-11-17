@@ -1,12 +1,13 @@
 package com.hx.nine.eleven.thread.pool.executor.autoconfig;
 
 import com.hx.nine.eleven.commons.utils.StringUtils;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.thread.pool.executor.ThreadPoolProperties;
 import com.hx.nine.eleven.thread.pool.executor.enums.TimeUnitEnums;
 import com.hx.nine.eleven.thread.pool.executor.factory.ThreadPoolFactory;
 import com.hx.nine.eleven.thread.pool.executor.pool.ThreadPoolManageEntity;
 import com.hx.nine.eleven.core.annotations.Component;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class ThreadPoolAutoConfigure {
 
     public void initThreadPoolService() {
         LOGGER.info("初始化线程池");
-        List<ThreadPoolProperties> list = DefaultVertxApplicationContext.build().getProperties().getProperties(ThreadPoolProperties.class);
+        List<ThreadPoolProperties> list = DefaultElevenApplicationContext.build().getProperties().getProperties(ThreadPoolProperties.class);
         for (int i = 0; i < list.size(); ++i) {
             ThreadPoolProperties properties = list.get(i);
             if (StringUtils.isBlank(properties.getUnit())) {

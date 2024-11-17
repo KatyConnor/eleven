@@ -1,7 +1,7 @@
 package com.hx.nine.eleven.thread.pool.executor.pool;
 
+import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.thread.pool.executor.factory.LogTraceFactory;
-import com.hx.nine.eleven.core.core.context.DefaultVertxApplicationContext;
 import org.slf4j.MDC;
 
 import java.util.concurrent.Callable;
@@ -20,7 +20,7 @@ public class HXFutureTask<V> extends FutureTask<V> {
 
     @Override
     public void run() {
-        LogTraceFactory logTraceFactory = DefaultVertxApplicationContext.build().getBean(LogTraceFactory.class);
+        LogTraceFactory logTraceFactory = DefaultElevenApplicationContext.build().getBean(LogTraceFactory.class);
         if (logTraceFactory != null){
             logTraceFactory.wrapTraceId();
         }

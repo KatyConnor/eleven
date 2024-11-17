@@ -1,5 +1,7 @@
 package com.hx.nine.eleven.bytebuddy.aop.invoke;
 
+import net.sf.cglib.proxy.MethodProxy;
+
 import java.lang.reflect.Method;
 
 /**
@@ -37,6 +39,18 @@ public interface Invocation {
 	 * @return 目标对象
 	 */
 	Object getTarget();
+
+	/**
+	 * Cglib 代理
+	 * @return
+	 */
+	MethodProxy getMethodProxy();
+
+	/**
+	 * Cglib 代理
+	 * @return
+	 */
+	boolean isCglibProxy();
 
 	/**
 	 * 触发拦截器调用链

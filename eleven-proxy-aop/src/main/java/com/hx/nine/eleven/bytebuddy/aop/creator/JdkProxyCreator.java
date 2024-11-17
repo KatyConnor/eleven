@@ -1,10 +1,12 @@
 package com.hx.nine.eleven.bytebuddy.aop.creator;
 
+import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.hx.nine.eleven.bytebuddy.aop.interceptor.MethodInterceptor;
-import com.hx.nine.eleven.bytebuddy.aop.interceptor.JDKMethodInvocationInterceptor;
+import com.hx.nine.eleven.bytebuddy.aop.interceptor.JDKMethodInvocationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 /**
@@ -51,15 +53,17 @@ public class JdkProxyCreator implements ObjectProxyCreator {
 	 * </p>
 	 *
 	 * @param classLoader   类加载器
-	 * @param target        目标类
+	 * @param tClass        目标类
 	 * @param interceptor   拦截器实现
 	 * @param <T>           目标类类型
 	 * @return              返回创建的代理类
 	 */
-	private <T> T createProxy(ClassLoader classLoader,Class<T> target,MethodInterceptor interceptor) {
+	private <T> T createProxy(ClassLoader classLoader, Class<T> tClass, MethodInterceptor interceptor) {
 		try {
-			JDKMethodInvocationInterceptor methodInterceptor = new JDKMethodInvocationInterceptor(interceptor);
-			return (T) Proxy.newProxyInstance(classLoader, target.getInterfaces(), methodInterceptor);
+			ConstructorAccess constructorAccess = ConstructorAccess.get(tClass);
+			Object target = constructorAccess.newInstance();
+			InvocationHandler handler = new JDKMethodInvocationHandler(interceptor,target);
+			return (T) Proxy.newProxyInstance(classLoader, target.getClass().getInterfaces(), handler);
 		} catch (Exception e) {
 			LOGGER.error("创建代理类对象失败: {}",e);
 			return null;
