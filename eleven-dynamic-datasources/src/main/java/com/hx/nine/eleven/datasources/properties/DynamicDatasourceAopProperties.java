@@ -16,8 +16,8 @@
 package com.hx.nine.eleven.datasources.properties;
 
 import com.hx.nine.eleven.core.annotations.ConfigurationPropertiesBind;
+import com.hx.nine.eleven.datasources.Ordered;
 import lombok.Data;
-import org.springframework.core.Ordered;
 
 /**
  * 多数据源aop相关配置

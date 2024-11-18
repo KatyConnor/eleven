@@ -150,7 +150,7 @@ public abstract class ClassUtils {
 		}
 		if (cl == null) {
 			// No thread context class loader -> use class loader of this class.
-			cl = org.springframework.util.ClassUtils.class.getClassLoader();
+			cl = ClassUtils.class.getClassLoader();
 			if (cl == null) {
 				// getClassLoader() returning null indicates the bootstrap ClassLoader
 				try {
@@ -546,7 +546,7 @@ public abstract class ClassUtils {
 	 * if necessary, and concatenating the specified resource name to this.
 	 * <br/>As such, this function may be used to build a path suitable for
 	 * loading a resource file that is in the same package as a class file,
-	 * although {@link org.springframework.core.io.ClassPathResource} is usually
+	 * although is usually
 	 * even more convenient.
 	 * @param clazz the Class whose package will be used as the base
 	 * @param resourceName the resource name to append. A leading slash is optional.
@@ -1202,7 +1202,7 @@ public abstract class ClassUtils {
 	 * 例如，方法可以是{@code IFoo.bar()}，目标类可以是{@code DefaultFoo}。
 	 * 在这种情况下，方法可以是{@code DefaultFoo.bar()}。这样就可以找到该方法的属性。此方法将自动解析而不是桥方法。
 	 *
-	 * Call {@link org.springframework.core.BridgeMethodResolver#findBridgedMethod}
+	 * Call
 	 * if bridge method resolution is desirable (e.g. for obtaining metadata from
 	 * the original method definition).
 	 *

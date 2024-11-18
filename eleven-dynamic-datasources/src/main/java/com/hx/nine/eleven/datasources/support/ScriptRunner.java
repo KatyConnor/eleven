@@ -17,13 +17,6 @@ package com.hx.nine.eleven.datasources.support;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
-//import org.springframework.dao.DataAccessException;
-//import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
-//import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.util.StringUtils;
-
 import javax.sql.DataSource;
 
 /**
