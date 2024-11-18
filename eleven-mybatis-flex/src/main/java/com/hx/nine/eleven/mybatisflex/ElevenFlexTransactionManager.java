@@ -7,6 +7,7 @@ import com.mybatisflex.core.transaction.TransactionalManager;
 import com.mybatisflex.core.util.StringUtil;
 
 /**
+ * 事务管理
  * @auth wml
  * @date 2024/11/12
  */
@@ -14,7 +15,7 @@ public class ElevenFlexTransactionManager implements ElevenJdbcTransactionManage
 
 	@Override
 	public void begin() {
-		// 获取数据源
+		// 获取事务ID
 		String currentXID = TransactionContext.getXID();
 		// 已经开启事务,则不做处理，未开启事务,开启事务生成一个currentXID放入 TransactionContext 中，标志当前线程处理逻辑已经开启事务
 		if (!StringUtil.hasText(currentXID)){
@@ -25,11 +26,23 @@ public class ElevenFlexTransactionManager implements ElevenJdbcTransactionManage
 
 	@Override
 	public void commit() {
-
+		// 获取事务ID
+		String currentXID = TransactionContext.getXID();
+		// 已经开启事务,则不做处理，未开启事务,开启事务生成一个currentXID放入 TransactionContext 中，标志当前线程处理逻辑已经开启事务
+		if (!StringUtil.hasText(currentXID)){
+			throw new RuntimeException("没开启事务, 提交失败");
+		}
+		TransactionalManager.commit(currentXID);
 	}
 
 	@Override
 	public void rollback() {
-
+// 获取事务ID
+		String currentXID = TransactionContext.getXID();
+		// 已经开启事务,则不做处理，未开启事务,开启事务生成一个currentXID放入 TransactionContext 中，标志当前线程处理逻辑已经开启事务
+		if (!StringUtil.hasText(currentXID)){
+			throw new RuntimeException("没开启事务, 事务回滚失败");
+		}
+		TransactionalManager.rollback(currentXID);
 	}
 }
