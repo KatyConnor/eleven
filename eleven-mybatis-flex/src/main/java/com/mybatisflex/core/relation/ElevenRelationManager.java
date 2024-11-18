@@ -43,12 +43,12 @@ public class ElevenRelationManager {
 							if (ignoreRelations == null || !ignoreRelations.contains(relation.getSimpleName()) && !ignoreRelations.contains(relation.getName())) {
 								if (queryRelations == null || queryRelations.isEmpty() || queryRelations.contains(relation.getSimpleName()) || queryRelations.contains(relation.getName())) {
 									String configDsKey = relation.getDataSource();
-									if (StringUtil.isBlank(configDsKey) && currentDsKey != null) {
+									if (StringUtil.noText(configDsKey) && currentDsKey != null) {
 										configDsKey = currentDsKey;
 									}
 
 									try {
-										if (StringUtil.isNotBlank(configDsKey)) {
+										if (StringUtil.hasText(configDsKey)) {
 											DataSourceKey.use(configDsKey);
 										}
 
@@ -97,7 +97,7 @@ public class ElevenRelationManager {
 											return;
 										}
 									} finally {
-										if (StringUtil.isNotBlank(configDsKey)) {
+										if (StringUtil.hasText(configDsKey)) {
 											DataSourceKey.clear();
 										}
 
