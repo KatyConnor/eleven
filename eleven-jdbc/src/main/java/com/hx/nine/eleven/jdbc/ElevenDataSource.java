@@ -8,6 +8,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
+ * 用于事务管理中根据事务上下文获取数据源，再获取数据库连接
  * @auth wml
  * @date 2024/9/26
  */
