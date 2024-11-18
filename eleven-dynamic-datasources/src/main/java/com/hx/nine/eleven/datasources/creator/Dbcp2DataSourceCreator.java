@@ -15,13 +15,11 @@
  */
 package com.hx.nine.eleven.datasources.creator;
 
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.datasources.properties.dbcp2.Dbcp2DataSourceProperties;
 import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.ConfigMergeCreator;
-import com.hx.lang.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.jdbc.spi.DataSourceProvider;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.sql.DataSource;
@@ -34,9 +32,9 @@ import java.util.Map;
  * @author wml
  * @since 2021/5/18
  */
-public class Dbcp2DataSourceCreator extends AbstractDataSourceCreator implements DataSourceCreator, DataSourceProvider {
+public class Dbcp2DataSourceCreator extends AbstractDataSourceCreator{
 
-    private static final ConfigMergeCreator<Dbcp2DataSourceProperties, BasicDataSource> MERGE_CREATOR = new ConfigMergeCreator<>("Dbcp2", Dbcp2DataSourceProperties.class, BasicDataSource.class);
+//    private static final ConfigMergeCreator<Dbcp2DataSourceProperties, BasicDataSource> MERGE_CREATOR = new ConfigMergeCreator<>("Dbcp2", Dbcp2DataSourceProperties.class, BasicDataSource.class);
 
     @Override
     public String support() {
@@ -44,15 +42,14 @@ public class Dbcp2DataSourceCreator extends AbstractDataSourceCreator implements
     }
 
     @Override
-    public int maximumPoolSize(DataSource dataSource, JsonObject jsonObject) throws SQLException {
+    public int maximumPoolSize(DataSource dataSource, Map<String,Object> config) throws SQLException {
         return 0;
     }
 
     @Override
-    public DataSource getDataSource(JsonObject jsonObject) throws SQLException {
-        Dbcp2DataSourceProperties dbcp2DataSourceProperties = jsonObject.mapTo(Dbcp2DataSourceProperties.class);
-        Map<String, Object> propertiesMap = BeanMapUtil.beanToMap(dbcp2DataSourceProperties);
-        BasicDataSource dataSource = BeanMapUtil.mapToBean(propertiesMap, BasicDataSource.class);
+    public DataSource getDataSource(Map<String,Object> config) throws SQLException {
+        Dbcp2DataSourceProperties dbcp2DataSourceProperties =  BeanMapUtil.mapToBean(config,Dbcp2DataSourceProperties.class);
+        BasicDataSource dataSource = BeanMapUtil.mapToBean(config, BasicDataSource.class);
         dataSource.setUsername(dbcp2DataSourceProperties.getUsername());
         dataSource.setPassword(dbcp2DataSourceProperties.getPassword());
         dataSource.setUrl(dbcp2DataSourceProperties.getUrl());
@@ -64,7 +61,6 @@ public class Dbcp2DataSourceCreator extends AbstractDataSourceCreator implements
             dataSource.start();
         }
         return dataSource;
-//        HXLogger.build(this).warn("数据源类型不匹配，需要创建 DBCP2 BasicDataSource 的 config 参数");
     }
 
     @Override

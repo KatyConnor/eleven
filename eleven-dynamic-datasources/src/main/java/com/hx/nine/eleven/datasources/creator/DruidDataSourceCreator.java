@@ -23,6 +23,7 @@ import com.alibaba.druid.filter.logging.Slf4jLogFilter;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.wall.WallConfig;
 import com.alibaba.druid.wall.WallFilter;
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.datasources.exception.ErrorCreateDataSourceException;
 import com.hx.nine.eleven.datasources.properties.druid.DruidDataSourceProperties;
 import com.hx.nine.eleven.datasources.properties.druid.DruidLogConfigUtil;
@@ -32,14 +33,13 @@ import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.jdbc.spi.DataSourceProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -49,7 +49,7 @@ import java.util.Properties;
  * @since 2020/1/21
  */
 @Slf4j
-public class DruidDataSourceCreator extends AbstractDataSourceCreator implements DataSourceCreator, DataSourceProvider {
+public class DruidDataSourceCreator extends AbstractDataSourceCreator {
 
     @Override
     public String support() {
@@ -57,13 +57,13 @@ public class DruidDataSourceCreator extends AbstractDataSourceCreator implements
     }
 
     @Override
-    public int maximumPoolSize(DataSource dataSource, JsonObject jsonObject) throws SQLException {
+    public int maximumPoolSize(DataSource dataSource,  Map<String,Object> config) throws SQLException {
         return 0;
     }
 
     @Override
-    public DataSource getDataSource(JsonObject jsonObject) throws SQLException {
-        DruidDataSourceProperties dataSourceProperties = jsonObject.mapTo(DruidDataSourceProperties.class);
+    public DataSource getDataSource( Map<String,Object> config) throws SQLException {
+        DruidDataSourceProperties dataSourceProperties = BeanMapUtil.mapToBean(config,DruidDataSourceProperties.class);
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setUsername(dataSourceProperties.getUsername());
         dataSource.setPassword(dataSourceProperties.getPassword());
@@ -92,7 +92,6 @@ public class DruidDataSourceCreator extends AbstractDataSourceCreator implements
             }
         }
         return dataSource;
-//        HXLogger.build(this).warn("数据源类型不匹配，需要创建 DruidDataSource 的 config 参数");
     }
 
     @Override

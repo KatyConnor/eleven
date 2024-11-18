@@ -15,17 +15,17 @@
  */
 package com.hx.nine.eleven.datasources.creator;
 
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.datasources.enums.SeataMode;
 import com.hx.nine.eleven.datasources.event.DataSourceInitEvent;
 import com.hx.nine.eleven.datasources.properties.DataSourceProperties;
 import com.hx.nine.eleven.datasources.support.ScriptRunner;
-import com.hx.lang.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.commons.utils.StringUtils;
+import com.hx.nine.eleven.datasources.utils.HXLogger;
+import com.hx.nine.eleven.jdbc.DataSourceProvider;
 import com.p6spy.engine.spy.P6DataSource;
 import io.seata.rm.datasource.DataSourceProxy;
 import io.seata.rm.datasource.xa.DataSourceProxyXA;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.jdbc.spi.DataSourceProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -70,13 +70,13 @@ public abstract class AbstractDataSourceCreator implements DataSourceCreator, Da
     public <T> DataSource createDataSource(T dataSourceProperty) {
         Map<String, Object> propertiesMap =  BeanMapUtil.beanToMap(dataSourceProperty);
         dataSourceInitEvent.beforeCreate(propertiesMap);
-        JsonObject jsonObjectProperty = JsonObject.mapFrom(dataSourceProperty);
+//        JsonObject jsonObjectProperty = JsonObject.mapFrom(dataSourceProperty);
         DataSource dataSource = null;
         try {
-            dataSource = getDataSource(jsonObjectProperty);
+            dataSource = getDataSource(propertiesMap);
         } catch (SQLException e) {
             // @TODO 创建数据源失败
-            e.printStackTrace();
+            HXLogger.build(this).error("创建数据源失败！",e);
         }
         dataSourceInitEvent.afterCreate(dataSource);
         // 判断是否执行脚本

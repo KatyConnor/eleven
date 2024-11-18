@@ -15,14 +15,13 @@
  */
 package com.hx.nine.eleven.datasources.creator;
 
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.datasources.properties.hikari.HikariCpDataSourceProperties;
 import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
-import com.hx.lang.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.vertx.core.json.JsonObject;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -81,31 +80,31 @@ public class HikariDataSourceCreator extends AbstractDataSourceCreator{
     }
 
     @Override
-    public int maximumPoolSize(DataSource dataSource, JsonObject jsonObject) throws SQLException {
-        HikariCpDataSourceProperties properties = jsonObject.mapTo(HikariCpDataSourceProperties.class);
+    public int maximumPoolSize(DataSource dataSource,  Map<String,Object> config) throws SQLException {
+        HikariCpDataSourceProperties properties = BeanMapUtil.mapToBean(config,HikariCpDataSourceProperties.class);
         return properties.getMaximumPoolSize() == null?0:properties.getMaximumPoolSize();
     }
 
     @Override
-    public DataSource getDataSource(JsonObject jsonObject) throws SQLException {
-        HikariCpDataSourceProperties properties = jsonObject.mapTo(HikariCpDataSourceProperties.class);
+    public DataSource getDataSource( Map<String,Object> config) throws SQLException {
+        HikariCpDataSourceProperties properties = BeanMapUtil.mapToBean(config,HikariCpDataSourceProperties.class);
         Map<String, Object> propertiesMap = BeanMapUtil.beanToMap(properties);
-        HikariConfig config = BeanMapUtil.mapToBean(propertiesMap, HikariConfig.class);
-        config.setUsername(properties.getUsername());
-        config.setPassword(properties.getPassword());
-        config.setJdbcUrl(properties.getUrl());
-        config.setPoolName(properties.getDataSourcePoolName());
+        HikariConfig hikariConfig = BeanMapUtil.mapToBean(propertiesMap, HikariConfig.class);
+        hikariConfig.setUsername(properties.getUsername());
+        hikariConfig.setPassword(properties.getPassword());
+        hikariConfig.setJdbcUrl(properties.getUrl());
+        hikariConfig.setPoolName(properties.getDataSourcePoolName());
         String driverClassName = properties.getDriverClassName();
         if (!StringUtils.isEmpty(driverClassName)) {
-            config.setDriverClassName(driverClassName);
+            hikariConfig.setDriverClassName(driverClassName);
         }
         if (Boolean.FALSE.equals(properties.getLazy())) {
-            return new HikariDataSource(config);
+            return new HikariDataSource(hikariConfig);
         }
-        config.validate();
+        hikariConfig.validate();
         HikariDataSource dataSource = new HikariDataSource();
         try {
-            configCopyMethod.invoke(config, dataSource);
+            configCopyMethod.invoke(hikariConfig, dataSource);
         } catch (IllegalAccessException | InvocationTargetException e) {
             HXLogger.build(this).warn("HikariConfig failed to copy to HikariDataSource");
             throw new RuntimeException("HikariConfig failed to copy to HikariDataSource", e);

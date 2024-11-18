@@ -17,12 +17,11 @@ package com.hx.nine.eleven.datasources.creator;
 
 import cn.beecp.BeeDataSource;
 import cn.beecp.BeeDataSourceConfig;
+import com.hx.nine.eleven.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.datasources.properties.beecp.BeeCpDataSourceProperties;
 import com.hx.nine.eleven.datasources.support.DdConstants;
 import com.hx.nine.eleven.datasources.utils.ConfigMergeCreator;
-import com.hx.lang.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -58,15 +57,14 @@ public class BeeCpDataSourceCreator extends AbstractDataSourceCreator {
     }
 
     @Override
-    public int maximumPoolSize(DataSource dataSource, JsonObject jsonObject) throws SQLException {
+    public int maximumPoolSize(DataSource dataSource, Map<String,Object> config) throws SQLException {
         return 0;
     }
 
     @Override
-    public DataSource getDataSource(JsonObject jsonObject) throws SQLException {
-        BeeCpDataSourceProperties properties = jsonObject.mapTo(BeeCpDataSourceProperties.class);
-        Map<String, Object> propertiesMap = BeanMapUtil.beanToMap(properties);
-        BeeDataSourceConfig config = BeanMapUtil.mapToBean(propertiesMap, BeeDataSourceConfig.class);
+    public DataSource getDataSource(Map<String, Object> dataSourceProperties) throws SQLException {
+        BeeCpDataSourceProperties properties = BeanMapUtil.mapToBean(dataSourceProperties,BeeCpDataSourceProperties.class);
+        BeeDataSourceConfig config = BeanMapUtil.mapToBean(dataSourceProperties, BeeDataSourceConfig.class);
         config.setUsername(properties.getUsername());
         config.setPassword(properties.getPassword());
         config.setJdbcUrl(properties.getUrl());
@@ -85,7 +83,6 @@ public class BeeCpDataSourceCreator extends AbstractDataSourceCreator {
             e.printStackTrace();
         }
         return beeDataSource;
-//        HXLogger.build(this).warn("数据源类型不匹配，需要创建 BeeDataSource 的 config 参数");
     }
 
     @Override
