@@ -16,11 +16,13 @@ public class Main1 {
 
 	public static void main(String args[]) throws ProxyCreatorException {
 		//1、测试
-//		byteBuddyProxy();
+		byteBuddyProxy();
+		System.out.println("-------------------------------------------");
 		//2、jdk代理
 		jdkProxy();
+		System.out.println("-------------------------------------------");
 		//3、cglib代理
-//		cglibProxy();
+		cglibProxy();
 
 	}
 

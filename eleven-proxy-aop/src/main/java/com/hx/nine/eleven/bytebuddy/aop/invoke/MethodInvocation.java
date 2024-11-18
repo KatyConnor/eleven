@@ -25,6 +25,9 @@ public class MethodInvocation implements Invocation{
      */
     private MethodProxy methodProxy;
 
+    /**
+     * 是否是Cglib代理
+     */
     private boolean isCglibProxy;
 
     /**
@@ -99,7 +102,7 @@ public class MethodInvocation implements Invocation{
         if (!this.isCglibProxy){
             return this.method.invoke(this.target, this.arguments);
         }
-        return this.methodProxy.invokeSuper(this.proxy, this.arguments);
+        return this.methodProxy.invokeSuper(this.target, this.arguments);
     }
 
 
