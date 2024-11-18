@@ -1,28 +1,10 @@
-/*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.hx.nine.eleven.datasources.support;
 
-import com.esotericsoftware.reflectasm.ConstructorAccess;
-import com.esotericsoftware.reflectasm.MethodAccess;
 import com.hx.nine.eleven.datasources.annotation.HXDataSource;
 import com.hx.nine.eleven.datasources.aop.MethodClassKey;
 import com.hx.nine.eleven.datasources.utils.ClassUtils;
 import com.hx.nine.eleven.datasources.utils.HXLogger;
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import org.springframework.core.BridgeMethodResolver;
 import java.lang.reflect.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -147,7 +129,7 @@ public class DataSourceClassResolver {
 //        }
 
         // 如果都没找到就获取默认数据源
-        return getDefaultDataSourceAttr(targetObject);
+//        return getDefaultDataSourceAttr(targetObject);
     }
 
     /**
@@ -156,15 +138,14 @@ public class DataSourceClassResolver {
      * @param targetObject 目标对象
      * @return ds
      */
-    private String getDefaultDataSourceAttr(Object targetObject) {
+    private String getDefaultDataSourceAttr(Method method,Object targetObject) {
         Class<?> targetClass = targetObject.getClass();
         // 如果不是代理类, 从当前类开始, 不断的找父类的声明
         if (!Proxy.isProxyClass(targetClass)) {
             Class<?> currentClass = targetClass;
             while (currentClass != Object.class) {
-                MethodAccess methodAccess = MethodAccess.get(currentClass);
-                methodAccess.getMethodNames();
-                String datasourceAttr = findDataSourceAttribute(currentClass);
+                Method specificMethod = ClassUtils.getMostSpecificMethod(method, currentClass);
+                String datasourceAttr = findDataSourceAttribute(specificMethod);
                 if (datasourceAttr != null) {
                     return datasourceAttr;
                 }

@@ -15,8 +15,13 @@
  */
 package com.hx.nine.eleven.datasources.config;
 
+import com.hx.nine.eleven.bytebuddy.aop.PointcutMethodInterceptorFactory;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import com.hx.nine.eleven.datasources.annotation.HXDataSource;
 import com.hx.nine.eleven.datasources.creator.DefaultDynamicDataSourceCreator;
+import com.hx.nine.eleven.datasources.interceptor.DynamicDataSourceAnnotationInterceptor;
 import com.hx.nine.eleven.datasources.properties.DynamicDataSourceProperties;
+import com.hx.nine.eleven.datasources.properties.DynamicDatasourceAopProperties;
 import com.hx.nine.eleven.datasources.strategy.DynamicDataSourceStrategy;
 import com.hx.nine.eleven.datasources.HXDynamicRoutingDataSource;
 import com.hx.nine.eleven.datasources.utils.DataSourcePermissionCheck;
@@ -64,5 +69,11 @@ public class DynamicDataSourceAutoConfiguration {
         DataSourcePermissionCheck.setDefaultDataSource(properties.getPrimary()); // 默认数据源名称
         dataSource.setMasterDataSource(properties.getPrimary());
         DefaultElevenApplicationContext.build().addBean("dataSource",dataSource);
+        // 添加 HXDataSource 切点
+        HXLogger.build(this).info("初始化[HXDataSource]数据源拦截器");
+        DynamicDatasourceAopProperties aopProperties = DefaultElevenApplicationContext.build()
+                .getProperties().getProperty(DynamicDatasourceAopProperties.class);
+        DynamicDataSourceAnnotationInterceptor interceptor = new DynamicDataSourceAnnotationInterceptor(aopProperties.getAllowedPublicOnly());
+        PointcutMethodInterceptorFactory.addAnnotation(HXDataSource.class,interceptor);
     }
 }
