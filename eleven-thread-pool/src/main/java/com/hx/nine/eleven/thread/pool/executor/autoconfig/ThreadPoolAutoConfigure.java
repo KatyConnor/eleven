@@ -1,5 +1,6 @@
 package com.hx.nine.eleven.thread.pool.executor.autoconfig;
 
+import com.hx.nine.eleven.commons.utils.CollectionUtils;
 import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.thread.pool.executor.ThreadPoolProperties;
@@ -31,6 +32,9 @@ public class ThreadPoolAutoConfigure {
     public void initThreadPoolService() {
         LOGGER.info("初始化线程池");
         List<ThreadPoolProperties> list = DefaultElevenApplicationContext.build().getProperties().getProperties(ThreadPoolProperties.class);
+        if (!CollectionUtils.isNotEmpty(list)){
+            LOGGER.warn("没有配置线程池相关参数，跳过初始化线程池，请检查，否则无法正常使用线程池功能!");
+        }
         for (int i = 0; i < list.size(); ++i) {
             ThreadPoolProperties properties = list.get(i);
             if (StringUtils.isBlank(properties.getUnit())) {
