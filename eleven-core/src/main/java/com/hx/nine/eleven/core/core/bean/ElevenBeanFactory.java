@@ -3,6 +3,7 @@ package com.hx.nine.eleven.core.core.bean;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.MethodAccess;
 import com.hx.nine.eleven.commons.utils.CollectionUtils;
+import com.hx.nine.eleven.commons.utils.StringUtils;
 import com.hx.nine.eleven.core.annotations.BeanRegister;
 import com.hx.nine.eleven.core.annotations.ConditionalOnBean;
 import com.hx.nine.eleven.core.annotations.ConditionalOnClass;
@@ -10,6 +11,9 @@ import com.hx.nine.eleven.core.aop.ElevenObjectProxy;
 import com.hx.nine.eleven.core.constant.ConstantType;
 import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
+import com.hx.nine.eleven.core.exception.ApplicationInitialzerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +25,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * 初始化bean
  */
 public class ElevenBeanFactory {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(ElevenBeanFactory.class);
 
 	/**
 	 * 创建 bean
@@ -53,11 +59,13 @@ public class ElevenBeanFactory {
 
 		//检查onClass
 		if (!checkOnClass(tClass)) {
-			return null;
+			throw new ApplicationInitialzerException(StringUtils.format("Class=[{}] 注解[ConditionalOnClass]中依赖class在当前运行环境有遗漏，请检查!",tClass.getSimpleName()));
 		}
 
 		// 初始化之前检查时候有其他类依赖
 		if (!checkAfterBean(tClass)) {
+			LOGGER.info("Class=[{}] 有依赖类在容器Z红没有找到实例对象，[{}]放入缓存待依赖对象实例完成后再实例化"
+					, tClass.getSimpleName(), tClass.getSimpleName());
 			return null;
 		}
 		ElevenObjectProxy elevenObjectProxy = ElevenApplicationContextAware.getSubTypesOfBean(ElevenObjectProxy.class);
@@ -113,11 +121,13 @@ public class ElevenBeanFactory {
 				for (String beanName : beans) {
 					if (DefaultElevenApplicationContext.build().getBean(beanName) == null) {
 						next = false;
+						LOGGER.info("bean=[{}] 还没有初始化到当前容器", beanName);
+						break;
 					}
 				}
 			}
 
-			if (next) {
+			if (beans != null && beans.length > 0 && next) {
 				return true;
 			}
 
@@ -126,6 +136,8 @@ public class ElevenBeanFactory {
 				for (Class<?> beanClass : classes) {
 					if (ElevenApplicationContextAware.getBean(beanClass) == null) {
 						next = false;
+						LOGGER.info("bean=[{}] 还没有初始化到当前容器", beanClass.getSimpleName());
+						break;
 					}
 				}
 			}
@@ -159,6 +171,7 @@ public class ElevenBeanFactory {
 			Thread.currentThread().getContextClassLoader().loadClass(name);
 			return true;
 		} catch (ClassNotFoundException e) {
+			LOGGER.error("Class=[{}] 不存在，请检查", name);
 			return false;
 		}
 	}

@@ -169,9 +169,10 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 					}
 				}
 				LOGGER.info("注册bean=[{}]", bean.getSimpleName());
+				return;
 			}
 			// 如果null 则给出日志输出提示，应用正常使用时可能会报错
-			LOGGER.error("创建 bean=[{}]失败，注册失败", bean.getSimpleName());
+			LOGGER.error("创建 bean=[{}]失败，实例结果为[null],注册失败", bean.getSimpleName());
 		};
 	}
 

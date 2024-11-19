@@ -67,7 +67,8 @@ public class ElevenYamlReadUtils {
 				LOGGER.warn("获取默认active profile 为空");
 			}
 			Optional.ofNullable(activeProfile).ifPresent(act -> {
-				// 加载其他配置
+				// 加载指定环境的配置
+				LOGGER.info("获取 active profile 为：[{}] 环境配置文件",act);
 				try (InputStream activeProfiles = Thread.currentThread().getContextClassLoader()
 						.getResourceAsStream(DefualtProperType.DEFAULT_FILE_NAME + "-" + act + DefualtProperType.SUFFIX)) {
 					if (Optional.ofNullable(activeProfiles).isPresent()){
