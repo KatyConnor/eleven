@@ -27,7 +27,7 @@ public class ProxyAdvicePointFactory implements ApplicationAnnotationFactory {
 
 		// 添加AOP切点,初始化AOP代理拦截器
 		AbstractPointcutAdvisor pointcutAdvisor = ElevenApplicationContextAware.getBean(AbstractPointcutAdvisor.class);
-		if (Optional.ofNullable(pointcutAdvisor).isPresent()){
+		if (!Optional.ofNullable(pointcutAdvisor).isPresent()){
 			// 添加AOP切点,初始化AOP代理拦截器
 			pointcutAdvisor =  ElevenBeanFactory.createBean(AbstractPointcutAdvisor.class);
 			DefaultElevenApplicationContext.build().addSubTypesOfBean(pointcutAdvisor);
