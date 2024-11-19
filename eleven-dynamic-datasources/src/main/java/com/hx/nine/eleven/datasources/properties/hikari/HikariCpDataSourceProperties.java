@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Data
 @Slf4j
-@ConfigurationPropertiesBind(prefix = "vertx.hx.datasource.dynamic.hikari")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.datasource.dynamic.hikari")
 public class HikariCpDataSourceProperties{
 
     /**

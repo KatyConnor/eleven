@@ -26,7 +26,7 @@ import lombok.Data;
  *
  */
 @Data
-@ConfigurationPropertiesBind(prefix = "vertx.hx.datasource.dynamic.aop")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.datasource.dynamic.aop")
 public class DynamicDatasourceAopProperties {
 
     /**

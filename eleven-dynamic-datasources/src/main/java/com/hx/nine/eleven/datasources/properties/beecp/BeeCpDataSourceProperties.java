@@ -28,7 +28,7 @@ import java.util.Properties;
  * @since 3.3.4
  */
 @Data
-@ConfigurationPropertiesBind(prefix = "vertx.hx.datasource.dynamic.beecp")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.datasource.dynamic.beecp")
 public class BeeCpDataSourceProperties{
     /**
      * 连接池名称(只是一个名称标识)</br> 默认是配置文件上的名称

@@ -32,7 +32,7 @@ import static com.alibaba.druid.pool.DruidAbstractDataSource.*;
  */
 @Data
 @Slf4j
-@ConfigurationPropertiesBind(prefix = "vertx.hx.datasource.dynamic.druid")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.datasource.dynamic.druid")
 public class DruidDataSourceProperties {
 
     /**

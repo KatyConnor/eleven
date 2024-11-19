@@ -43,7 +43,7 @@ import java.util.List;
 @Slf4j
 @Getter
 @Setter
-@ConfigurationPropertiesBind(prefix = "vertx.hx.datasource.dynamic")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.datasource.dynamic")
 public class DynamicDataSourceProperties{
 
 

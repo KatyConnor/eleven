@@ -29,7 +29,7 @@ import java.util.Set;
  * @author TaoYu
  */
 @Data
-@ConfigurationPropertiesBind(prefix = "vertx.hx.datasource.dynamic.dbcp2")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.datasource.dynamic.dbcp2")
 public class Dbcp2DataSourceProperties {
 
     /**
