@@ -9,6 +9,7 @@ import com.hx.nine.eleven.bytebuddy.aop.exception.ProxyCreatorException;
 import com.hx.nine.eleven.bytebuddy.aop.util.ProxyUtil;
 import com.hx.nine.eleven.core.aop.ElevenObjectProxy;
 import com.hx.nine.eleven.core.constant.ConstantType;
+import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +71,7 @@ public class DynamicObjectProxy extends ElevenObjectProxy {
 	 */
 	@Override
 	public <T> boolean checkProxy(Class<T> tClass) {
-		AbstractPointcutAdvisor advisor = DefaultElevenApplicationContext.build()
-				.getSubTypesOfBean(AbstractPointcutAdvisor.class);
+		AbstractPointcutAdvisor advisor = ElevenApplicationContextAware.getBean(AbstractPointcutAdvisor.class);
 		Annotation annotation = advisor.getMethodMatcher().matches(tClass);
 		return annotation != null;
 	}
