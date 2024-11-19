@@ -2,7 +2,7 @@ package com.hx.logchain.toolkit;
 
 import com.hx.vertx.boot.annotations.ConfigurationPropertiesBind;
 
-@ConfigurationPropertiesBind(prefix = "vertx.hx.log")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.log")
 public class LogTraceProperties {
 
     private String[] includePath;
