@@ -9,7 +9,7 @@ import com.hx.nine.eleven.core.annotations.ConfigurationPropertiesBind;
  * @author wangml
  * @Date 2019-09-27
  */
-@ConfigurationPropertiesBind(prefix = "vertx.hx.thread.pool")
+@ConfigurationPropertiesBind(prefix = "eleven.boot.thread.pool")
 public class ThreadPoolProperties {
     //线程组名称
     private String threadGroupName;
