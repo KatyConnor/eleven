@@ -1,6 +1,5 @@
 package com.hx.nine.eleven.core.factory.impl;
 
-import com.esotericsoftware.reflectasm.FieldAccess;
 import com.esotericsoftware.reflectasm.MethodAccess;
 import com.hx.nine.eleven.commons.utils.BeanMapUtil;
 import com.hx.nine.eleven.commons.utils.CollectionUtils;

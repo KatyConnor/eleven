@@ -4,6 +4,7 @@ import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 
 /**
  * bean 初始化之前、初始化之后处理，这里可以指定
+ * @TODO 切入处理可能需要考虑多框架集成，目前只支持单个使用，多个使用将抛出异常
  * @param <T>
  */
 public abstract class ApplicationBeanRegister<T> {

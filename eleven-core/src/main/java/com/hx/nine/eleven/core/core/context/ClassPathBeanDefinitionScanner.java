@@ -53,10 +53,10 @@ public class ClassPathBeanDefinitionScanner {
 	private void doComponentReflections(Reflections reflections) {
 		//1、注册bean
 		initApplicationBeanRegister(reflections);
-		//2、加载指定类的所有子类，并自定义实现
-		initApplicationSubTypes(reflections);
-		//3、 查找ApplicationAnnotationFactory子类,初始化注解类
+		//2、 查找ApplicationAnnotationFactory子类,初始化注解相关类
 		initApplicationAnnotationFactory(reflections);
+		//3、加载指定类的所有子类，并自定义实现
+		initApplicationSubTypes(reflections);
 		//4、加载服务
 		initHXVertxWebApplicationInitializer(reflections);
 		//5、注册servlet,初始化 domain 路由拦截处理

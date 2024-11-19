@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.Optional;
 
 /**
+ * facade 接口调用入口
  * @author wangml
  * @Date 2019-08-29
  */
@@ -41,14 +42,12 @@ public class DomainExecuteService {
     }
 
     /**
-     * 执行Service，不生成domain对象，适用于普通service类型，包含事务
+     * 执行 Service，不生成domain对象，适用于普通service类型，包含事务
      * 适用于做增、删、改，操作
      * 捕获Exception异常，回滚事务
      *
-//     * @param dto    接口入参对象 进行validation验证
-     * @param executor 执行器
+     * @param executor Domain 执行器
      * @param <T>      方法返回实体（泛型）
-//     * @param <O>      接口入参实体 (泛型）
      * @return 返回泛型T
      */
     public <T> T excuteTransaction(Class<T> response, DomainExecutor<T> executor) {
@@ -64,7 +63,7 @@ public class DomainExecuteService {
             try{
                 transactionManager.rollback();
             }catch (Exception exception){
-                LOGGER.error("业务处理失败,",exception);
+                LOGGER.error("业务处理失败,事务已经回滚",exception);
             }
             rollback = true;
             throw new DomainOperatorException(DomainApplicationSysCode.B0100000004,ex);
@@ -76,13 +75,11 @@ public class DomainExecuteService {
     }
 
     /**
-     * 执行Service，不生成domain对象，适用于普通service类型，不包含事务
-     * 适用于做增、删、改，操作
+     * 执行 Service，不生成domain对象，适用于普通service类型，不包含事务
+     * 适用于做 查询操作，如果是增、删、改 操作需要自己控制事务。
      *
-//     * @param dto    接口入参对象 进行validation验证
      * @param executor 执行器
      * @param <T>      方法返回实体（泛型）
-//     * @param <O>      接口入参实体 (泛型）
      * @return 返回泛型T
      */
     public <T> T excute(Class<T> response, DomainExecutor<T> executor) {
@@ -96,10 +93,8 @@ public class DomainExecuteService {
      * 执行Service，生成domain对象，不包含事务
      * 适用于插叙操作
      *
-//     * @param dto    接口入参实体 进行validation验证
      * @param executor 执行器
      * @param <T>      方法返回实体（泛型）
-//     * @param <O>      接口入参实体 (泛型）
      * @return 返回泛型T
      */
     public <T> T query(Class<T> response, DomainExecutor<T> executor) {
