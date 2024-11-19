@@ -4,6 +4,7 @@ public interface ConstantType {
 
   String annotationMethod = "loadAnnotations";
   String loadApplication = "loadApplication";
+  String loadSubTypesObject = "loadSubTypesObject";
   String loadWebRouteHandler = "loadWebRouteHandler";
   String CONTENT_TYPE = "content-type";
   String CONDITIONAL_ON_AFTER_BEAN = "CONDITIONAL_ON_AFTER_BEAN";

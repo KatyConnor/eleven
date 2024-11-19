@@ -129,7 +129,7 @@ public class ClassPathBeanDefinitionScanner {
 			ConstructorAccess constructorAccess = ConstructorAccess.get(an);
 			Object obj = constructorAccess.newInstance();
 			MethodAccess methodAccess = MethodAccess.get(an);
-			methodAccess.invoke(obj, ConstantType.loadApplication, reflections);
+			methodAccess.invoke(obj, ConstantType.loadSubTypesObject, reflections);
 		});
 	}
 
