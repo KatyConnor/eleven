@@ -1,7 +1,6 @@
 package com.hx.nine.eleven.thread.pool.executor.autoconfig;
 
 import com.hx.nine.eleven.commons.utils.StringUtils;
-import com.hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import com.hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import com.hx.nine.eleven.thread.pool.executor.ThreadPoolProperties;
 import com.hx.nine.eleven.thread.pool.executor.enums.TimeUnitEnums;
