@@ -4,10 +4,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.hx.nine.eleven.messagecode</groupId>
+  <groupId>hx.nine.eleven.messagecode</groupId>
   <artifactId>eleven-messagecode</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-
   <name>eleven-messagecode</name>
 
   <properties>
@@ -19,7 +18,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.hx.nine.eleven.dependencies</groupId>
+        <groupId>hx.nine.eleven.dependencies</groupId>
         <artifactId>eleven-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <type>pom</type>
@@ -29,17 +28,11 @@
   </dependencyManagement>
 
   <dependencies>
-
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
+      <groupId>com.hx.nine.eleven.commons</groupId>
+      <artifactId>eleven-common-toolkit</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
-
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>fastjson</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -61,10 +54,6 @@
   <build>
     <finalName>eleven-messagecode</finalName>
     <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>

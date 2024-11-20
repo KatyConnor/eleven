@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.hx.nine.eleven.dependencies</groupId>
+        <groupId>hx.nine.eleven.dependencies</groupId>
         <artifactId>eleven-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath></relativePath>
     </parent>
 
-    <groupId>com.hx.nine.eleven.parent</groupId>
+    <groupId>hx.nine.eleven.parent</groupId>
     <artifactId>eleven-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>

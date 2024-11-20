@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.hx.nine.eleven.datasources.config.DynamicDataSourceAutoConfiguration
+  hx.nine.eleven.datasources.config.DynamicDataSourceAutoConfiguration

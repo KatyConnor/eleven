@@ -1,6 +1,6 @@
 package com.mybatisflex.core.relation;
 
-import com.hx.nine.eleven.mybatisflex.mapper.ElevenFlexBaseMapper;
+import hx.nine.eleven.mybatisflex.mapper.ElevenFlexBaseMapper;
 import com.mybatisflex.core.datasource.DataSourceKey;
 import com.mybatisflex.core.query.QueryMethods;
 import com.mybatisflex.core.query.QueryWrapper;

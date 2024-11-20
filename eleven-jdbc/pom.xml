@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.hx.nine.eleven.jdbc</groupId>
+  <groupId>hx.nine.eleven.jdbc</groupId>
   <artifactId>eleven-jdbc</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>eleven-jdbc</name>
@@ -17,12 +17,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.hx.nine.eleven.commons</groupId>
+      <groupId>hx.nine.eleven.commons</groupId>
       <artifactId>eleven-common-toolkit</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.core</groupId>
+      <groupId>hx.nine.eleven.core</groupId>
       <artifactId>eleven-core</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>

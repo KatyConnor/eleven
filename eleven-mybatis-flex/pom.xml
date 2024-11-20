@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.hx.nine.eleven.parent</groupId>
+    <groupId>hx.nine.eleven.parent</groupId>
     <artifactId>eleven-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath></relativePath>
   </parent>
 
-  <groupId>com.hx.nine.eleven.mybatisflex</groupId>
+  <groupId>hx.nine.eleven.mybatisflex</groupId>
   <artifactId>eleven-mybatis-flex</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>eleven-mybatis-flex</name>
@@ -25,7 +25,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.hx.nine.eleven.dependencies</groupId>
+        <groupId>hx.nine.eleven.dependencies</groupId>
         <artifactId>eleven-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <type>pom</type>
@@ -47,17 +47,17 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.datasources</groupId>
+      <groupId>hx.nine.eleven.datasources</groupId>
       <artifactId>eleven-dynamic-datasources</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.core</groupId>
+      <groupId>hx.nine.eleven.core</groupId>
       <artifactId>eleven-core</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.jdbc</groupId>
+      <groupId>hx.nine.eleven.jdbc</groupId>
       <artifactId>eleven-jdbc</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>

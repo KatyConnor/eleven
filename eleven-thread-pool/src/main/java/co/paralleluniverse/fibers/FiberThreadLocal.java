@@ -1,6 +1,6 @@
 package co.paralleluniverse.fibers;
 
-import com.hx.nine.eleven.core.utils.Assert;
+import hx.nine.eleven.core.utils.Assert;
 
 public class FiberThreadLocal<T> extends TrueThreadLocal<T> {
 

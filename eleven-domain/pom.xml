@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.hx.nine.eleven.parent</groupId>
+    <groupId>hx.nine.eleven.parent</groupId>
     <artifactId>eleven-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath></relativePath>
   </parent>
 
-  <groupId>com.hx.nine.eleven.domain</groupId>
+  <groupId>hx.nine.eleven.domain</groupId>
   <artifactId>eleven-domain</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -27,32 +27,32 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.hx.nine.eleven.sync.fiber</groupId>
+      <groupId>hx.nine.eleven.sync.fiber</groupId>
       <artifactId>eleven-sync-fiber</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.core</groupId>
+      <groupId>hx.nine.eleven.core</groupId>
       <artifactId>eleven-core</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.commons</groupId>
+      <groupId>hx.nine.eleven.commons</groupId>
       <artifactId>eleven-common-toolkit</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.thread.pool</groupId>
+      <groupId>hx.nine.eleven.thread.pool</groupId>
       <artifactId>eleven-thread-pool</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.messagecode</groupId>
+      <groupId>hx.nine.eleven.messagecode</groupId>
       <artifactId>eleven-messagecode</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.jdbc</groupId>
+      <groupId>hx.nine.eleven.jdbc</groupId>
       <artifactId>eleven-jdbc</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
