@@ -53,7 +53,7 @@ public class ElevenApplication {
 		WebApplicationMain webApplicationMain = ElevenApplicationContextAware.getSubTypesOfBean(WebApplicationMain.class);
 		webApplicationMain.start(args);
 		stopwatch.stop();
-		LOGGER.info("服务启动成功！耗时：[] 秒",stopwatch.elapsed(TimeUnit.SECONDS));
+		LOGGER.info("服务启动成功！耗时：[{}] 秒",stopwatch.elapsed(TimeUnit.SECONDS));
 	}
 
 	/**
