@@ -1,10 +1,9 @@
-package com.hx.logchain.toolkit;
+package com.hx.nine.eleven.logchain.toolkit;
 
-import com.hx.logchain.toolkit.util.MDCThreadUtil;
+import com.hx.nine.eleven.logchain.toolkit.util.MDCThreadUtil;
+import com.hx.nine.eleven.logchain.toolkit.common.LogTraceCommon;
 import org.slf4j.MDC;
 import java.util.Map;
-
-import static com.hx.logchain.toolkit.common.LogTraceCommon.TRACE_ID;
 
 public abstract class HXLogThread extends Thread implements HXLogRunnable {
 
@@ -62,8 +61,8 @@ public abstract class HXLogThread extends Thread implements HXLogRunnable {
             MDC.setContextMap(context);
         }
 
-        if (MDC.get(TRACE_ID) == null) {
-            MDC.put(TRACE_ID, MDCThreadUtil.generateTraceId());
+        if (MDC.get(LogTraceCommon.TRACE_ID) == null) {
+            MDC.put(LogTraceCommon.TRACE_ID, MDCThreadUtil.generateTraceId());
         }
 
         try {

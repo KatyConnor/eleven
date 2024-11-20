@@ -1,4 +1,4 @@
-package com.hx.logchain.toolkit.util;
+package com.hx.nine.eleven.logchain.toolkit.util;
 
 /**
  * @auth wml

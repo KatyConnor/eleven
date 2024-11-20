@@ -1,6 +1,6 @@
-package com.hx.logchain.toolkit.config;
+package com.hx.nine.eleven.logchain.toolkit.config;
 
-import com.hx.logchain.toolkit.LogTraceProperties;
+import com.hx.nine.eleven.logchain.toolkit.LogTraceProperties;
 import com.hx.vertx.boot.annotations.ConditionalOnProperty;
 
 @ConditionalOnProperty(prefix = "vertx.hx.log", name = {"enable"}, havingValue = "true",propertiesClass = LogTraceProperties.class)

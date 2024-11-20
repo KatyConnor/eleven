@@ -1,4 +1,4 @@
-package com.hx.logchain.toolkit.mapper;
+package com.hx.nine.eleven.logchain.toolkit.mapper;
 
 public class LoggerPO{
 

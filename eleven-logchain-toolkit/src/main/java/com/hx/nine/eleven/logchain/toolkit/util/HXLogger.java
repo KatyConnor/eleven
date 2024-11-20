@@ -1,10 +1,9 @@
-package com.hx.logchain.toolkit.util;
+package com.hx.nine.eleven.logchain.toolkit.util;
 
-import com.hx.logchain.toolkit.Logger;
-import com.hx.logchain.toolkit.mapper.LoggerPO;
+import com.hx.nine.eleven.logchain.toolkit.Logger;
+import com.hx.nine.eleven.logchain.toolkit.mapper.LoggerPO;
 import com.hx.lang.commons.utils.StringUtils;
 import com.hx.vertx.jooq.jdbc.mapper.JooqBaseMapperFactory;
-import org.jooq.Log;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
@@ -292,7 +291,7 @@ public class HXLogger implements Logger {
     }
     private String getMessage(Object message, Object details) {
         StringBuilder sb = new StringBuilder();
-        sb.append(com.hx.logchain.toolkit.util.StringUtils.rightPad("" + message, 25));
+        sb.append(com.hx.nine.eleven.logchain.toolkit.util.StringUtils.rightPad("" + message, 25));
         if (details != null) {
             sb.append(": ");
             sb.append(details);

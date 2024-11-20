@@ -1,12 +1,11 @@
-package com.hx.logchain.toolkit.util;
+package com.hx.nine.eleven.logchain.toolkit.util;
 
-import com.hx.logchain.toolkit.HXLogRunnable;
+import com.hx.nine.eleven.logchain.toolkit.HXLogRunnable;
 import com.github.f4b6a3.ulid.UlidCreator;
+import com.hx.nine.eleven.logchain.toolkit.common.LogTraceCommon;
 import org.slf4j.MDC;
 
 import java.util.Map;
-
-import static com.hx.logchain.toolkit.common.LogTraceCommon.TRACE_ID;
 
 /**
  * MDC 线程相关处理工具
@@ -34,8 +33,8 @@ public class MDCThreadUtil {
         } else {
             MDC.setContextMap(context);
         }
-        if (MDC.get(TRACE_ID) == null) {
-            MDC.put(TRACE_ID, generateTraceId());
+        if (MDC.get(LogTraceCommon.TRACE_ID) == null) {
+            MDC.put(LogTraceCommon.TRACE_ID, generateTraceId());
         }
     }
 
@@ -54,8 +53,8 @@ public class MDCThreadUtil {
                 MDC.setContextMap(context);
             }
 
-            if (MDC.get(TRACE_ID) == null) {
-                MDC.put(TRACE_ID, generateTraceId());
+            if (MDC.get(LogTraceCommon.TRACE_ID) == null) {
+                MDC.put(LogTraceCommon.TRACE_ID, generateTraceId());
             }
 
             try {
@@ -81,8 +80,8 @@ public class MDCThreadUtil {
                 MDC.setContextMap(context);
             }
 
-            if (MDC.get(TRACE_ID) == null) {
-                MDC.put(TRACE_ID, generateTraceId());
+            if (MDC.get(LogTraceCommon.TRACE_ID) == null) {
+                MDC.put(LogTraceCommon.TRACE_ID, generateTraceId());
             }
 
             try {

@@ -1,4 +1,4 @@
-package com.hx.logchain.toolkit.common;
+package com.hx.nine.eleven.logchain.toolkit.common;
 
 /**
  * 日志常量类
