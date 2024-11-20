@@ -58,7 +58,7 @@ public class HttpServletAndDomainRouterInit implements WebRouteHandler {
 
 			if (d.size() == 1) {
 				DefaultElevenApplicationContext.build().
-						addBean(HttpMethodFacade.class.getName(), ElevenBeanFactory.createBean(d.stream().findFirst().get()));
+						addBean(DomainRouter.class.getName(), ElevenBeanFactory.createBean(d.stream().findFirst().get()));
 			}
 		});
 	}
