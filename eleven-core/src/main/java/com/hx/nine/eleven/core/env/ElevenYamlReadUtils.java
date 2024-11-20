@@ -207,9 +207,7 @@ public class ElevenYamlReadUtils {
 		if (obj instanceof Map){
 			return BeanMapUtil.mapToBean((Map<String, Object>)obj,target);
 		}
-
-		return BeanUtils.copy(obj,target);
-//		return JsonObject.mapFrom(obj).mapTo(target);
+		return obj instanceof Map?BeanMapUtil.mapToBean((Map<String, Object>)obj,target): BeanUtils.copy(obj,target);
 	}
 
 	public <T> List<T> bindList(String prefix,List obj, Class<T> target) {
@@ -219,8 +217,7 @@ public class ElevenYamlReadUtils {
 			((Map) l).forEach((k, v) -> {
 				resultMap.put(k.toString().substring(prefix.length() + 1), v);
 			});
-			T p =  obj instanceof Map?BeanMapUtil.mapToBean((Map<String, Object>)obj,target): BeanUtils.copy(obj,target);
-			//JsonObject.mapFrom(resultMap).mapTo(target);
+			T p = BeanMapUtil.mapToBean(resultMap,target);
 			bindProperties.add(p);
 		});
 		return bindProperties;
