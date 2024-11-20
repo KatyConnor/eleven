@@ -1,4 +1,4 @@
-package com.hx.vertx.jobtask.cron;
+package com.hx.nine.eleven.jobtask.cron;
 
 import com.hx.vertx.boot.utils.Assert;
 
@@ -13,6 +13,21 @@ import java.util.regex.Pattern;
 
 /**
  * cron 表达式解析
+ *
+ * <p>
+ * // Java(Spring)
+ * // * * * * * * *
+ * // - - - - - - - 秒 分 时 天 月 周 年
+ * // | | | | | | +--- year [optional(1970-2099)]
+ * // | | | | | +----- day of week (1 - 7) (Sunday=7) L C #
+ * // | | | | +------- month (1 - 12)
+ * // | | | +--------- day of month (1 - 31) L W C
+ * // | | +----------- hour (0 - 23)
+ * // | +------------- min (0 - 59)
+ * // +--------------- second (0 - 59)
+ * </p>
+ *
+ *
  * @auth wml
  * @date 2023-05-26
  */
@@ -53,17 +68,6 @@ public class CronKit {
 	private Long getP(Bounds bound) {
 		return crop[bound.index];
 	}
-
-// Java(Spring)
-// * * * * * * *
-// - - - - - - - 秒 分 时 天 月 周 年
-// | | | | | | +--- year [optional(1970-2099)]
-// | | | | | +----- day of week (1 - 7) (Sunday=7) L C #
-// | | | | +------- month (1 - 12)
-// | | | +--------- day of month (1 - 31) L W C
-// | | +----------- hour (0 - 23)
-// | +------------- min (0 - 59)
-// +--------------- second (0 - 59)
 
 	private enum Bounds {
 		seconds(0, 0, 59, Calendar.SECOND),

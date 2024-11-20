@@ -1,4 +1,4 @@
-package com.hx.vertx.jobtask.entity;
+package com.hx.nine.eleven.jobtask.entity;
 
 /**
  * 执行任务详细配置实体

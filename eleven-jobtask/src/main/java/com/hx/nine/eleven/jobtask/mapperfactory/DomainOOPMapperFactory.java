@@ -1,9 +1,9 @@
-package com.hx.vertx.jobtask.mapperfactory;
+package com.hx.nine.eleven.jobtask.mapperfactory;
 
 import com.hx.lang.commons.utils.JSONObjectMapper;
 import com.hx.lang.commons.utils.ObjectUtils;
 import com.hx.lang.commons.utils.StringUtils;
-import com.hx.logchain.toolkit.util.HXLogger;
+import com.hx.nine.eleven.logchain.toolkit.util.HXLogger;
 import com.hx.vertx.boot.core.VertxApplicationContextAware;
 import com.hx.vertx.jooq.jdbc.AbstractRoutingDataSource;
 

@@ -1,4 +1,4 @@
-package com.hx.vertx.jobtask.constant;
+package com.hx.nine.eleven.jobtask.constant;
 
 /**
  * SQL中固定参数值

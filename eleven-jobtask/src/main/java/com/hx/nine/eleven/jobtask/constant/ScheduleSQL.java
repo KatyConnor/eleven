@@ -1,4 +1,4 @@
-package com.hx.vertx.jobtask.constant;
+package com.hx.nine.eleven.jobtask.constant;
 
 /**
  * 执行SQL
