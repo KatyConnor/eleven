@@ -23,18 +23,23 @@ public interface UserAuthenticateProvider {
 	<T> String generateToken(T object);
 
 	/**
-	 * 解析 token,返回token 所有信息
-	 * @param token 有效token
-	 * @param <T>
+	 * 生成token，根据原token解析后生成新的token
+	 * @param token 原token数据
 	 * @return
 	 */
-	<T> String decodeToken(String token);
+	String generateToken(String token);
+
+	/**
+	 * 解析 token,返回token 所有信息
+	 * @param token 有效token
+	 * @return
+	 */
+	Object decodeToken(String token);
 
 	/**
 	 * 解析 token,返回用户项管基本信息
 	 * @param token 有效token
-	 * @param <T>
 	 * @return
 	 */
-	<T> String decodeTokenAuth(String token);
+	Object decodeTokenAuth(String token);
 }
