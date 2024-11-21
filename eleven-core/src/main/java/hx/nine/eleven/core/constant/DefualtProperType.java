@@ -15,4 +15,6 @@ public interface DefualtProperType {
      String SYNC_FILE = "SYNC_FILE";
      String SCAN_PACKAGES = "eleven.boot.scanPackages";
      String TARGET_FILE_PATH = "targetFilePath";
+     String AUTHENTICATE = "authenticate"; // 是否放权
+     String IS_LOGIN = "isLogin"; // 是否需要登录
 }
