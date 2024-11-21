@@ -24,6 +24,9 @@ public class HttpServletResponse implements ServletResponse {
 	 * 存储前端参数
 	 */
 	private Map<String,Object> jsonObject;
+	/**
+	 * HTTP 请求头
+	 */
 	private Map<String,String> headerMap;
 	private OutputStream outputStream;
 	private HttpResponse httpResponse;
@@ -163,5 +166,9 @@ public class HttpServletResponse implements ServletResponse {
 	public HttpServletResponse setContentLengthLong(long contentLength) {
 		this.headerMap.put("Content-Length",String.valueOf(contentLength));
 		return this;
+	}
+
+	public Map<String, String> getHeaderMap() {
+		return headerMap;
 	}
 }
