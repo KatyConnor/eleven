@@ -13,6 +13,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
+import java.util.Map;
+
 /**
  *  接受处理POST请求信息
  * @auth wml
@@ -35,6 +37,14 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			req.setAttribute(DefaultVertxProperType.VERTX_CONTEXT,context);
 			httpServlet.service(req, resp);
 			res = resp.httpResponse();
+			//
+			Map<String, String> header = resp.getHeaderMap();
+			if (header != null && header.size() > 0){
+				header.forEach((k,v) ->{
+					context.response().putHeader(k,v);
+				});
+			}
+
 			// 判断是否有文件流返回,如果有则直接返回下载的文件流
 			JsonObject jsonObject = JsonObject.mapFrom(res.getBody());
 			Boolean fileDownload = jsonObject.getBoolean(ConstantType.FILE_STREAM);
