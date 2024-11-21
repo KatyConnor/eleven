@@ -8,7 +8,7 @@ import hx.nine.eleven.core.web.http.HttpResponse;
 import hx.nine.eleven.core.web.http.HttpServlet;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
-import hx.nine.eleven.vertx.constant.DefualtProperType;
+import hx.nine.eleven.vertx.constant.DefaultVertxProperType;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -32,7 +32,7 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			MDCThreadUtil.wrap();
 			HttpServletRequest req = HttpServletRequest.build();
 			HttpServletResponse resp = HttpServletResponse.build();
-			req.setAttribute(DefualtProperType.VERTX_CONTEXT,context);
+			req.setAttribute(DefaultVertxProperType.VERTX_CONTEXT,context);
 			httpServlet.service(req, resp);
 			res = resp.httpResponse();
 			// 判断是否有文件流返回,如果有则直接返回下载的文件流
@@ -47,8 +47,8 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			MDCThreadUtil.clear();
 		} catch (Throwable ex) {
 			res = res != null?res:HttpResponse.build()
-					.setCode(DefualtProperType.RESPONSE_FAIL_CODE)
-					.setMessage(DefualtProperType.RESPONSE_FAIL_MSG);
+					.setCode(DefaultVertxProperType.RESPONSE_FAIL_CODE)
+					.setMessage(DefaultVertxProperType.RESPONSE_FAIL_MSG);
 			context.put(ConstantType.RESPONSE_BODY,res);
 			throw new RuntimeException(ex);
 		}

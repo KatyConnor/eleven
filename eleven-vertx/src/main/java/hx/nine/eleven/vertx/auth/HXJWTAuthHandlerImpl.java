@@ -4,9 +4,12 @@ import hx.nine.eleven.commons.utils.Builder;
 import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.constant.ConstantType;
+import hx.nine.eleven.core.constant.DefaultProperType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import hx.nine.eleven.core.utils.MDCThreadUtil;
+import hx.nine.eleven.vertx.code.VertxApplicationMsgCode;
+import hx.nine.eleven.vertx.constant.DefaultVertxProperType;
 import hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -39,14 +42,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * token验证以及用户自定义验证逻辑
  * @author wml
  * @Discription
  * @Date 2023-08-09
  */
 public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
+    /**
+     * 是否开启权限验证
+     */
     private Boolean authentication;
-
+    /**
+     * 忽略权限验证路径
+     */
     private List<String> ignoreAuthentication;
 
     protected final JWTAuth authProvider;
@@ -62,6 +71,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
         super(authProvider, realm);
         MDCThreadUtil.wrap();
         VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
+        UserAuthenticatePermissionProvider provider = ElevenApplicationContextAware.getBean(UserAuthenticatePermissionProvider.class);
         this.authProvider = authProvider;
         this.authentication = properties.getAuthentication();
         String[] ignoreAuthentications = properties.getIgnoreAuthentication();
@@ -70,6 +80,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
         this.permissionsClaimKey = config.getPermissionsClaimKey();
         this.jwtOptions = config.getJWTOptions();
+        provider.setAuthProvider(authProvider).setJwtOptions(config.getJWTOptions());
         // set the nonce algorithm
         jwt.nonceAlgorithm(jwtOptions.getNonceAlgorithm());
 
@@ -130,106 +141,30 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
     @Override
     public void handle(RoutingContext ctx) {
-        // 检查是否需要鉴权,请求是否跳过鉴权
+        // 检查是否需要鉴权,不需要鉴权则直接执行下一个handler
+        final HttpServerRequest request = ctx.request();
         if (!this.authentication || ignoreAuthentication.contains(ctx.request().getHeader(ConstantType.TRADE_CODE))) {
+            //不需要鉴权，直接放行
+            request.headers().add(DefaultProperType.AUTHENTICATE,"true");
+            request.headers().add(DefaultProperType.IS_LOGIN,"true");
             ctx.next();
             return;
         }
-
-        // pause the request
+        //暂停本次 request 请求
         if (!ctx.request().isEnded()) {
             ctx.request().pause();
         }
 
-        final HttpServerRequest request = ctx.request();
         String authToken = request.getHeader(ConstantType.AUTH_TOKEN);
-        // 如果token为空，则判断是否登录，如果没有登录需要进行登录操作
+        // 如果token为空，则直接设置登录标志，交由下游domain进行登录验证操作；验证通过后才能进入service业务逻辑处理层
         if (StringUtils.isEmpty(authToken)) {
-            UserNameAndPasswordProvider nameAndPasswordProvider = Builder.of(UserNameAndPasswordProvider::new).build();
-            nameAndPasswordProvider.authenticate(ctx, auth -> {
-                if (auth.succeeded()) {
-                    //认证通过之后，再生成token，以后就使用token进行认证
-                    JsonObject data = JsonObject.mapFrom(auth.result());
-                    JsonObject user = data.getJsonObject(ConstantType.HTTP_RESPONSE_BODY)
-                            .getJsonObject(ConstantType.RESPONSE_BODY_ENTITY)
-                            .getJsonObject(ConstantType.DATA)
-                            .getJsonObject(ConstantType.USER);
-                    String token = this.authProvider.generateToken(user, new JWTOptions().setExpiresInMinutes(this.expires));
-                    ElevenLoggerFactory.build(this).info("登录认证成功");
-                    data.getJsonObject(ConstantType.HTTP_RESPONSE_BODY).getJsonObject(ConstantType.RESPONSE_HEADER_ENTITY).put(ConstantType.AUTH_TOKEN, token);
-                    // 登录验证成功，设置token和权限菜单
-                    ctx.response().putHeader(ConstantType.AUTH_TOKEN, token).send(data.toString());
-                } else {
-                    ElevenLoggerFactory.build(this).info("认证失败,请输出正确的用户名和密码");
-                    Throwable result = auth.cause();
-                    if (StringUtils.isNotEmpty(result)){
-                        ctx.response().send(result.getMessage());
-                        return;
-                    }
-                    AuthenticateResponse response = Builder.of(AuthenticateResponse::new)
-                            .with(AuthenticateResponse::setCode, "B0000000001")
-                            .with(AuthenticateResponse::setMessage, "用户认证失败，无访问权限，请登录").build();
-                    ctx.response().send(JsonObject.mapFrom(response).toString());
-                }
-            });
-            MDCThreadUtil.clear();
-            return;
-        }
-
-        // 上传token，则进行token验证
-        if (authtoken(authToken)) {
-            if (!ctx.request().isEnded()) {
-                ctx.request().resume();
-            }
-            JsonObject payload = null;
-            try {
-                payload = this.jwt.decode(authToken);
-            } catch (RuntimeException var5) {
-                // 认证失败，返回信息
-                AuthenticateResponse response = Builder.of(AuthenticateResponse::new)
-                        .with(AuthenticateResponse::setCode, "B0000000001")
-                        .with(AuthenticateResponse::setMessage, "token解析失败").build();
-                ctx.response().send(JsonObject.mapFrom(response).toString());
-                return;
-            }
-            String token = this.authProvider.generateToken(payload, new JWTOptions().setExpiresInMinutes(30));
-            ctx.response().putHeader(ConstantType.AUTH_TOKEN, token);
+            // 默认需要登录，设置状态为无权限，且需要登录标志， 交给下游domain拦截处理登录
+            request.headers().add(DefaultProperType.AUTHENTICATE,"false");
+            request.headers().add(DefaultProperType.IS_LOGIN,"false");
             ctx.next();
-            MDCThreadUtil.clear();
             return;
         }
-        // 认证失败，返回信息
-        AuthenticateResponse response = Builder.of(AuthenticateResponse::new)
-                .with(AuthenticateResponse::setCode, "B0000000001")
-                .with(AuthenticateResponse::setMessage, "权限认证失败，请登录").build();
-        ctx.response().send(JsonObject.mapFrom(response).toString());
-        MDCThreadUtil.clear();
     }
 
-    /**
-     * 首先检查是否带有token
-     *
-     * @param authToken
-     * @return
-     */
-    private boolean authtoken(String authToken) {
-        // 获取token
-        if (StringUtils.isNotBlank(authToken)) {
-            AtomicBoolean authNext = new AtomicBoolean(false);
-            this.authProvider.authenticate(new JsonObject().put(ConstantType.TOKEN, authToken), auth -> {
-                if (auth.succeeded()) {
-                    User user = auth.result();
-                    JsonObject authData = user.principal();
-                    String userId = authData.getString("userCode");
-                    ElevenLoggerFactory.build(this).info("用户 {} token认证成功！", userId);
-                    authNext.set(true);
-                    // 解析token，将解析信息放入请求中
-                } else {
-                    ElevenLoggerFactory.build(this).info("认证失败,token无效");
-                }
-            });
-            return authNext.get();
-        }
-        return false;
-    }
+
 }

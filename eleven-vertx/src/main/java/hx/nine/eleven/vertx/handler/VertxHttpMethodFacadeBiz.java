@@ -18,8 +18,8 @@ import hx.nine.eleven.core.web.http.HttpMethodFacade;
 import hx.nine.eleven.core.web.http.HttpResponse;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
-import hx.nine.eleven.vertx.constant.ConstantType;
-import hx.nine.eleven.vertx.constant.DefualtProperType;
+import hx.nine.eleven.vertx.constant.VertxConstantType;
+import hx.nine.eleven.vertx.constant.DefaultVertxProperType;
 import hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * http 请求具体方法实现
  * @auth wml
  * @date 2024/11/7
  */
@@ -52,8 +53,9 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 		if (this.properties == null){
 			this.properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
 		}
-		RoutingContext context = (RoutingContext)request.getAttribute(DefualtProperType.VERTX_CONTEXT);
-		String contentType = context.request().getHeader(ConstantType.CONTENT_TYPE);
+		// 是否放权，如果是登录，则验证登录地址
+		RoutingContext context = (RoutingContext)request.getAttribute(DefaultVertxProperType.VERTX_CONTEXT);
+		String contentType = context.request().getHeader(VertxConstantType.CONTENT_TYPE);
 		// 如果不带contentType，默认走APPLICATION_JSON
 		if (StringUtils.isEmpty(contentType)) {
 			contentType = ContentTypeEnums.APPLICATION_JSON.getCode();
@@ -73,9 +75,17 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 		}
 	}
 
+	/**
+	 * 只需要处理get请求参数，统一放入 httpServletRequest ，后续路由的调用在
+	 * {@like hx.nine.eleven.core.web.http.HttpServlet.service} 中已经触发
+	 * @param httpServletRequest
+	 * @param httpServletResponse
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	@Override
 	public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-		RoutingContext context = (RoutingContext)httpServletRequest.getAttribute(DefualtProperType.VERTX_CONTEXT);
+		RoutingContext context = (RoutingContext)httpServletRequest.getAttribute(DefaultVertxProperType.VERTX_CONTEXT);
 		JsonObject jsonObject = new JsonObject();
 		MultiMap multiMap = context.request().params();
 		if (Optional.ofNullable(multiMap).isPresent() && multiMap.entries().size() > 0) {
@@ -85,12 +95,6 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 		}
 		// 设置http post 请求报文的body数据
 		httpServletRequest.addBody(jsonObject);
-		// 调用路由
-//		WebRequestServiceHandler servletHandler = DefaultElevenApplicationContext.build().getBean(WebRequestServiceHandler.class);
-//		if(!Optional.of(servletHandler).isPresent()){
-//			throw new RuntimeException("could not find class implement WebRequestServiceHandler");
-//		}
-//		return servletHandler.doService(context, jsonObject);
 	}
 
 	@Override
@@ -98,10 +102,17 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 
 	}
 
+	/**
+	 * 只需要处理get请求参数，统一放入 httpServletRequest ，后续路由的调用在
+	 * {@like hx.nine.eleven.core.web.http.HttpServlet.service} 中已经触发
+	 * @param httpServletRequest
+	 * @param httpServletResponse
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	@Override
 	public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-		RoutingContext context = (RoutingContext)httpServletRequest.getAttribute(DefualtProperType.VERTX_CONTEXT);
-		Object res = null;
+		RoutingContext context = (RoutingContext)httpServletRequest.getAttribute(DefaultVertxProperType.VERTX_CONTEXT);
 		// 读取Body数据
 		Buffer bodyBuffer = context.getBody();
 		JsonObject jsonObject = null;
@@ -148,10 +159,10 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 	@Override
 	public void afterService(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 		// 设置返回信息
-		RoutingContext context = (RoutingContext)servletRequest.getAttribute(DefualtProperType.VERTX_CONTEXT);
+		RoutingContext context = (RoutingContext)servletRequest.getAttribute(DefaultVertxProperType.VERTX_CONTEXT);
 		HttpResponse response = servletResponse.httpResponse();
 		if (StringUtils.isEmpty(response.getCode()) || StringUtils.isEmpty(response.getMessage())){
-			servletResponse.send(DefualtProperType.RESPONSE_CODE,DefualtProperType.RESPONSE_MSG);
+			servletResponse.send(DefaultVertxProperType.RESPONSE_CODE, DefaultVertxProperType.RESPONSE_MSG);
 		}
 		setHeader(context, DefaultHttpHeader.build().setApplicationJsonResHeader().getHeaders());
 	}
@@ -167,7 +178,7 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 
 	private AsyncFileResponse initMultipartHttp(JsonObject jsonObject,HttpServletRequest httpServletRequest,RoutingContext context) {
 		// 判断是否文件同步功能，如果是文件同步，直接将文件进行本地保存即可
-		String asyncFile = context.request().getHeader(DefualtProperType.SYNC_FILE);
+		String asyncFile = context.request().getHeader(DefaultVertxProperType.SYNC_FILE);
 		if (StringUtils.isNotBlank(asyncFile)) {
 			AsyncFileResponse response = asyncFile(context);
 			return response;
@@ -215,7 +226,7 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 		// 请求参数
 		AsyncFileResponse response;
 		MultiMap multiMap = context.request().params();
-		Object targetFileObj = multiMap.get(DefualtProperType.TARGET_FILE_PATH);
+		Object targetFileObj = multiMap.get(DefaultVertxProperType.TARGET_FILE_PATH);
 		Map<String, Object> targetFilePathMap = targetFileObj == null ? null : targetFileObj instanceof Map ? (Map<String, Object>) targetFileObj :
 				targetFileObj instanceof String ? JSONObjectMapper.parseObject(String.valueOf(targetFileObj), Map.class) : BeanMapUtil.beanToMap(targetFileObj);
 		// 文件,默认处理
