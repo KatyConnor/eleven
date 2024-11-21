@@ -50,8 +50,14 @@ public class UserAuthenticatePermissionProvider implements UserAuthenticateProvi
     }
 
     @Override
-    public <T> String generateToken(T token) {
-        Object obj = this.decodeToken(token.toString());
+    public <T> String generateToken(T obj) {
+        return  this.authProvider.generateToken(obj instanceof JsonObject?
+                (JsonObject)obj:JsonObject.mapFrom(obj), jwtOptions.setExpiresInMinutes(30));
+    }
+
+    @Override
+    public String generateToken(String token) {
+        Object obj = this.decodeToken(token);
         return  this.authProvider.generateToken(obj instanceof JsonObject?
                 (JsonObject)obj:JsonObject.mapFrom(obj), jwtOptions.setExpiresInMinutes(30));
     }
