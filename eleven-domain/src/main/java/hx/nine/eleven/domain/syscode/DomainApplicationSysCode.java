@@ -6,6 +6,7 @@ import hx.nine.eleven.msg.code.code.MessageCode;
 import hx.nine.eleven.msg.code.code.SystemCodeType;
 
 /**
+ * 系统消息编码
  * @Author wml
  * @Date 2022-11-22
  */

@@ -57,6 +57,16 @@ public class DomainEventListenerHandlerProperties {
 	 */
 	private Boolean openFiber = true;
 
+	/**
+	 * 登录主交易码
+	 */
+	private String loginTradeCode;
+
+	/**
+	 * 登录子交易码
+	 */
+	private String loginSubTradeCode;
+
 	public Boolean getEnabled() {
 		return enabled;
 	}
@@ -135,5 +145,21 @@ public class DomainEventListenerHandlerProperties {
 
 	public void setOpenFiber(Boolean openFiber) {
 		this.openFiber = openFiber;
+	}
+
+	public String getLoginTradeCode() {
+		return loginTradeCode;
+	}
+
+	public void setLoginTradeCode(String loginTradeCode) {
+		this.loginTradeCode = loginTradeCode;
+	}
+
+	public String getLoginSubTradeCode() {
+		return loginSubTradeCode;
+	}
+
+	public void setLoginSubTradeCode(String loginSubTradeCode) {
+		this.loginSubTradeCode = loginSubTradeCode;
 	}
 }

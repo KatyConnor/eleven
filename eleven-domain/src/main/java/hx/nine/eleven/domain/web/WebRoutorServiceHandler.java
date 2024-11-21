@@ -2,13 +2,19 @@ package hx.nine.eleven.domain.web;
 
 import hx.nine.eleven.commons.utils.BeanMapUtil;
 import hx.nine.eleven.commons.utils.CollectionUtils;
+import hx.nine.eleven.commons.utils.StringUtils;
+import hx.nine.eleven.core.UserAuthenticateProvider;
+import hx.nine.eleven.core.constant.ConstantType;
+import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.entity.FileUploadEntity;
 import hx.nine.eleven.core.web.DomainRouter;
+import hx.nine.eleven.core.web.http.HttpResponse;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
 import hx.nine.eleven.domain.exception.DomainOperatorException;
 import hx.nine.eleven.domain.exception.ParamsValidationExcetion;
 import hx.nine.eleven.domain.obj.vo.ErrorVO;
+import hx.nine.eleven.domain.properties.DomainEventListenerHandlerProperties;
 import hx.nine.eleven.domain.request.WebHttpRequest;
 import hx.nine.eleven.domain.response.ResponseEntity;
 import hx.nine.eleven.domain.syscode.DomainApplicationSysCode;
@@ -38,8 +44,40 @@ public class WebRoutorServiceHandler implements DomainRouter {
 			//文件上传,如果没有指定body,则赋值Optional.empty()给requestBody,跳过NotNull验证
 			webHttpRequest.setFileUploadEntities(list);
 		}
+		DomainEventListenerHandlerProperties properties = ElevenApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
+		boolean isLogin = false;
+		if (!httpServletRequest.getAuthenticate()){
+			String tradeCode = webHttpRequest.getRequestHeader().getTradeCode();
+			String subTradeCode = webHttpRequest.getRequestHeader().getSubTradeCode();
+			if (StringUtils.isEmpty(tradeCode)){
+				ResponseEntity res = ResponseEntity.build().failure().addMessage("主交易码不能为空");
+				httpServletResponse.send(res);
+				return;
+			}
+			if (!tradeCode.equals(StringUtils.valueOf(properties.getLoginTradeCode()))){
+				ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
+				httpServletResponse.send(res);
+				return;
+			}
+
+			if (!StringUtils.isNotEmpty(subTradeCode) &&
+					!subTradeCode.equals(StringUtils.valueOf(properties.getLoginTradeCode()))){
+				ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
+				httpServletResponse.send(res);
+				return;
+			}
+			isLogin = true;
+		}
 		validation(httpServletResponse,webHttpRequest);
 		WebServletRoutor.build().doService(httpServletResponse,webHttpRequest);
+		if (isLogin){
+			HttpResponse response = httpServletResponse.httpResponse();
+			ResponseEntity responseEntity = (ResponseEntity)response.getBody();
+			Object user = responseEntity.getHttpResponseBody().getResponseBody().getData();
+			UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
+			String token = provider.generateToken(user);
+			httpServletResponse.setHeader(ConstantType.AUTH_TOKEN,token);
+		}
 	}
 
 	/**
