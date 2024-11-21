@@ -16,5 +16,5 @@ public interface DefaultProperType {
      String SCAN_PACKAGES = "eleven.boot.scanPackages";
      String TARGET_FILE_PATH = "targetFilePath";
      String AUTHENTICATE = "authenticate"; // 是否放权
-     String IS_LOGIN = "isLogin"; // 是否需要登录
+     String IS_LOGIN = "isLogin"; // 是否登录状态
 }

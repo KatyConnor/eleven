@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *
  * @auth wml
  * @date 2024/11/6
  */
@@ -26,9 +27,29 @@ public class HttpServletRequest implements ServletRequest {
 	private Map<String,Object> jsonObject;
 	private Map<String,String> headerMap;
 	/**
+	 * 输入流
+	 */
+	private InputStream inputStream;
+	/**
 	 * 上传的文件清单
 	 */
 	private List<FileUploadEntity> fileUploadEntities;
+	/**
+	 * 是否有权限
+	 */
+	private Boolean authenticate = false;
+	/**
+	 * 是否登录状态
+	 */
+	private Boolean loginStatus = false;
+	/**
+	 * 授权信息
+	 */
+	private Object authorityPermission;
+	/**
+	 * token信息
+	 */
+	private String token;
 
 	public HttpServletRequest(){
 		this.jsonObject = new LinkedHashMap();
@@ -131,7 +152,7 @@ public class HttpServletRequest implements ServletRequest {
 
 	@Override
 	public InputStream getInputStream() throws IOException {
-		return null;
+		return this.inputStream;
 	}
 
 	@Override
@@ -198,7 +219,48 @@ public class HttpServletRequest implements ServletRequest {
 		return fileUploadEntities;
 	}
 
-	public void setFileUploadEntities(List<FileUploadEntity> fileUploadEntities) {
+	public HttpServletRequest setFileUploadEntities(List<FileUploadEntity> fileUploadEntities) {
 		this.fileUploadEntities = fileUploadEntities;
+		return this;
+	}
+
+	public HttpServletRequest setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+		return this;
+	}
+
+	public Boolean getAuthenticate() {
+		return authenticate;
+	}
+
+	public HttpServletRequest setAuthenticate(Boolean authenticate) {
+		this.authenticate = authenticate;
+		return this;
+	}
+
+	public Boolean getLoginStatus() {
+		return loginStatus;
+	}
+
+	public void setLoginStatus(Boolean loginStatus) {
+		this.loginStatus = loginStatus;
+	}
+
+	public Object getAuthorityPermission() {
+		return authorityPermission;
+	}
+
+	public HttpServletRequest setAuthorityPermission(Object authorityPermission) {
+		this.authorityPermission = authorityPermission;
+		return this;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public HttpServletRequest setToken(String token) {
+		this.token = token;
+		return this;
 	}
 }

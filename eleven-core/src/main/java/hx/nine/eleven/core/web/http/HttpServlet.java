@@ -1,8 +1,11 @@
 package hx.nine.eleven.core.web.http;
 
+import hx.nine.eleven.commons.utils.StringUtils;
+import hx.nine.eleven.core.UserAuthenticateProvider;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.enums.HttpMethodEnum;
 import hx.nine.eleven.core.exception.ServletException;
+import hx.nine.eleven.core.exception.UserAuthenticateException;
 import hx.nine.eleven.core.web.DomainRouter;
 import hx.nine.eleven.core.web.Servlet;
 import hx.nine.eleven.core.web.ServletRequest;
@@ -11,6 +14,7 @@ import hx.nine.eleven.core.web.ServletResponse;
 import java.io.IOException;
 
 /**
+ *
  * @auth wml
  * @date 2024/11/6
  */
@@ -29,6 +33,16 @@ public class HttpServlet implements Servlet {
 		if (servletRequest instanceof HttpServletRequest && servletResponse instanceof HttpServletResponse) {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
 			HttpServletResponse response = (HttpServletResponse) servletResponse;
+			if (StringUtils.isNotEmpty(request.getToken()) && !request.getAuthenticate()){
+				UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
+				if (provider == null){
+					throw new UserAuthenticateException("用户鉴权失败，没有查找到[UserAuthenticateProvider]接口实现实例!");
+				}
+				if (provider.authenticate(request.getToken())){
+					request.setAuthenticate(true);
+					request.setLoginStatus(true);
+				}
+			}
 			this.httpMethodFacade.preService(request);
 			this.service(request, response);
 			domainRouter.route(request, response);
