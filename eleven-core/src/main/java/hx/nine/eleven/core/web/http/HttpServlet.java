@@ -2,6 +2,7 @@ package hx.nine.eleven.core.web.http;
 
 import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.UserAuthenticateProvider;
+import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.enums.HttpMethodEnum;
 import hx.nine.eleven.core.exception.ServletException;
@@ -33,14 +34,20 @@ public class HttpServlet implements Servlet {
 		if (servletRequest instanceof HttpServletRequest && servletResponse instanceof HttpServletResponse) {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
 			HttpServletResponse response = (HttpServletResponse) servletResponse;
-			if (StringUtils.isNotEmpty(request.getToken()) && !request.getAuthenticate()){
+			String token = request.getToken();
+			if (StringUtils.isNotEmpty(token) && !request.getAuthenticate()){
 				UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
 				if (provider == null){
 					throw new UserAuthenticateException("用户鉴权失败，没有查找到[UserAuthenticateProvider]接口实现实例!");
 				}
-				if (provider.authenticate(request.getToken())){
+				if (provider.authenticate(token)){
 					request.setAuthenticate(true);
 					request.setLoginStatus(true);
+					Object tokenReal = provider.decodeTokenAuth(token);
+					token = provider.generateToken(token);
+					request.setToken(token);
+					request.setAuthorityPermission(tokenReal);
+					response.setHeader(ConstantType.AUTH_TOKEN,token);
 				}
 			}
 			this.httpMethodFacade.preService(request);

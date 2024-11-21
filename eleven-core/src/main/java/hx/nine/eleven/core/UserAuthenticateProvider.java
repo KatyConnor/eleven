@@ -21,4 +21,20 @@ public interface UserAuthenticateProvider {
 	 * @return
 	 */
 	<T> String generateToken(T object);
+
+	/**
+	 * 解析 token,返回token 所有信息
+	 * @param token 有效token
+	 * @param <T>
+	 * @return
+	 */
+	<T> String decodeToken(String token);
+
+	/**
+	 * 解析 token,返回用户项管基本信息
+	 * @param token 有效token
+	 * @param <T>
+	 * @return
+	 */
+	<T> String decodeTokenAuth(String token);
 }
