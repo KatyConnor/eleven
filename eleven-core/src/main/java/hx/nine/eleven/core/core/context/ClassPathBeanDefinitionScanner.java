@@ -6,7 +6,7 @@ import hx.nine.eleven.commons.utils.JSONObjectMapper;
 import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.core.annotations.Order;
 import hx.nine.eleven.core.constant.ConstantType;
-import hx.nine.eleven.core.constant.DefualtProperType;
+import hx.nine.eleven.core.constant.DefaultProperType;
 import hx.nine.eleven.core.core.ElevenWebApplicationInitializer;
 import hx.nine.eleven.core.core.bean.ApplicationBeanRegister;
 import hx.nine.eleven.core.core.bean.ElevenBeanFactory;
@@ -38,7 +38,7 @@ public class ClassPathBeanDefinitionScanner {
 	 * 扫描项目所有package包，初始化整个依赖类
 	 */
 	public void initClass() {
-		Object packages = ElevenYamlReadUtils.build().getValueMap().get(DefualtProperType.SCAN_PACKAGES);
+		Object packages = ElevenYamlReadUtils.build().getValueMap().get(DefaultProperType.SCAN_PACKAGES);
 		String[] scanPackages = packages != null ? stringToArrays(packages) : null;
 		Reflections reflections = ObjectUtils.isNotEmpty(scanPackages) ?
 				new Reflections(new ConfigurationBuilder().forPackages(scanPackages)) : new Reflections();

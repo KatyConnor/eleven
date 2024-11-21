@@ -1,7 +1,7 @@
 package hx.nine.eleven.core.env;
 
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.constant.DefualtProperType;
+import hx.nine.eleven.core.constant.DefaultProperType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +74,6 @@ public class ApplicationEnvConfigProperty extends HashMap implements Environment
 
   @Override
   public String getActiveProfiles() {
-    return this.getProperty(DefualtProperType.ACTIVE_PROFILE);
+    return this.getProperty(DefaultProperType.ACTIVE_PROFILE);
   }
 }

@@ -8,7 +8,7 @@ import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.annotations.ConfigurationPropertiesBind;
 import hx.nine.eleven.core.annotations.NestedConfigurationProperty;
 import hx.nine.eleven.core.constant.ConstantType;
-import hx.nine.eleven.core.constant.DefualtProperType;
+import hx.nine.eleven.core.constant.DefaultProperType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import hx.nine.eleven.core.exception.ElevenApplicationRunException;
@@ -58,10 +58,10 @@ public class ElevenYamlReadUtils {
 	public ElevenYamlReadUtils readYamlConfiguration(String configPath) {
 		LoaderOptions loadingConfig = new LoaderOptions();
 		// 读取默认配置文件
-		try (InputStream content = Thread.currentThread().getContextClassLoader().getResourceAsStream(DefualtProperType.DEFAULT_FILE)) {
+		try (InputStream content = Thread.currentThread().getContextClassLoader().getResourceAsStream(DefaultProperType.DEFAULT_FILE)) {
 			loadYaml(loadingConfig, content);
 			// 读取其他配置文件
-			String activeProfile = String.valueOf(this.valueMap.get(DefualtProperType.ACTIVE_PROFILE));
+			String activeProfile = String.valueOf(this.valueMap.get(DefaultProperType.ACTIVE_PROFILE));
 			if (StringUtils.isBlank(activeProfile)) {
 				activeProfile = null;
 				LOGGER.warn("获取默认active profile 为空");
@@ -70,7 +70,7 @@ public class ElevenYamlReadUtils {
 				// 加载指定环境的配置
 				LOGGER.info("获取 active profile 为：[{}] 环境配置文件",act);
 				try (InputStream activeProfiles = Thread.currentThread().getContextClassLoader()
-						.getResourceAsStream(DefualtProperType.DEFAULT_FILE_NAME + "-" + act + DefualtProperType.SUFFIX)) {
+						.getResourceAsStream(DefaultProperType.DEFAULT_FILE_NAME + "-" + act + DefaultProperType.SUFFIX)) {
 					if (Optional.ofNullable(activeProfiles).isPresent()){
 						loadYaml(loadingConfig, activeProfiles);
 					}
@@ -79,7 +79,7 @@ public class ElevenYamlReadUtils {
 				}
 			});
 			// 读取指定配置文件
-			configPath = Optional.ofNullable(configPath).isPresent()?configPath:StringUtils.valueOf(valueMap.get(DefualtProperType.CONFIG_PATH));
+			configPath = Optional.ofNullable(configPath).isPresent()?configPath:StringUtils.valueOf(valueMap.get(DefaultProperType.CONFIG_PATH));
 			if (ObjectUtils.isNotEmpty(configPath)){
 				ElevenLoggerFactory.build(this).info("------加载指定路径的配置文件,[{}]------",configPath);
 				String configUrl = StringUtils.valueOf(configPath);

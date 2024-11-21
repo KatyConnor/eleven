@@ -1,6 +1,6 @@
 package hx.nine.eleven.core.constant;
 
-public interface DefualtProperType {
+public interface DefaultProperType {
 
      String TYPE = "file";
      String FORMAT = "yaml";

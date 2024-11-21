@@ -2,7 +2,7 @@ package hx.nine.eleven.core;
 
 import com.google.common.base.Stopwatch;
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.constant.DefualtProperType;
+import hx.nine.eleven.core.constant.DefaultProperType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.core.context.ClassPathBeanDefinitionScanner;
 import hx.nine.eleven.core.env.ElevenYamlReadUtils;
@@ -30,7 +30,7 @@ public class ElevenApplication {
 		if (args != null && args.length > 0){
 			for (String arg : args){
 				LOGGER.info("入参：{}！", arg);
-				if (arg.startsWith("-D"+ DefualtProperType.CONFIG_PATH) || arg.startsWith(DefualtProperType.CONFIG_PATH)){
+				if (arg.startsWith("-D"+ DefaultProperType.CONFIG_PATH) || arg.startsWith(DefaultProperType.CONFIG_PATH)){
 					properties = arg;
 					break;
 				}
