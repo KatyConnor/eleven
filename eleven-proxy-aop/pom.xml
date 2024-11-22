@@ -7,13 +7,13 @@
     <parent>
         <groupId>hx.nine.eleven.parent</groupId>
         <artifactId>eleven-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath></relativePath>
     </parent>
 
     <groupId>hx.nine.eleven.bytebuddy.aop</groupId>
     <artifactId>eleven-proxy-aop</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>eleven-proxy-aop</name>
 
     <properties>
@@ -33,16 +33,28 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>hx.nine.eleven.dependencies</groupId>
+                <artifactId>eleven-dependencies</artifactId>
+                <version>1.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>hx.nine.eleven.commons</groupId>
             <artifactId>eleven-common-toolkit</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>hx.nine.eleven.core</groupId>
             <artifactId>eleven-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>

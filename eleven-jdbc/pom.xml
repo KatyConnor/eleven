@@ -5,7 +5,7 @@
 
   <groupId>hx.nine.eleven.jdbc</groupId>
   <artifactId>eleven-jdbc</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>eleven-jdbc</name>
 
   <properties>
@@ -15,16 +15,28 @@
     <quasar-maven-plugin.version>0.7.9</quasar-maven-plugin.version>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>hx.nine.eleven.dependencies</groupId>
+        <artifactId>eleven-dependencies</artifactId>
+        <version>1.0.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>hx.nine.eleven.commons</groupId>
       <artifactId>eleven-common-toolkit</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>hx.nine.eleven.core</groupId>
       <artifactId>eleven-core</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
 

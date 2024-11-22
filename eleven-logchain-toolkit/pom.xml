@@ -7,13 +7,13 @@
   <parent>
     <groupId>hx.nine.eleven.parent</groupId>
     <artifactId>eleven-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <relativePath></relativePath>
   </parent>
 
   <groupId>hx.nine.eleven.logchain.toolkit</groupId>
   <artifactId>eleven-logchain-toolkit</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>eleven-logchain-toolkit</name>
 
   <properties>
@@ -26,17 +26,17 @@
     <dependency>
       <groupId>hx.nine.eleven.core</groupId>
       <artifactId>eleven-core</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>hx.nine.eleven.commons</groupId>
       <artifactId>eleven-common-toolkit</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>hx.nine.eleven.thread.pool</groupId>
       <artifactId>eleven-thread-pool</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
 <!--    <dependency>-->
 <!--      <groupId>hx.vertx.jooq.jdbc</groupId>-->

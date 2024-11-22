@@ -6,7 +6,7 @@
 
     <groupId>hx.nine.eleven.thread.pool</groupId>
     <artifactId>eleven-thread-pool</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>eleven-thread-pool</name>
 
     <properties>
@@ -23,7 +23,7 @@
             <dependency>
                 <groupId>hx.nine.eleven.dependencies</groupId>
                 <artifactId>eleven-dependencies</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>hx.nine.eleven.commons</groupId>
             <artifactId>eleven-common-toolkit</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -55,13 +55,13 @@
         <dependency>
             <groupId>hx.nine.eleven.core</groupId>
             <artifactId>eleven-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <!-- 协程 -->
         <dependency>
             <groupId>hx.nine.eleven.sync.fiber</groupId>
             <artifactId>eleven-sync-fiber</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

@@ -6,7 +6,7 @@
 
   <groupId>hx.nine.eleven.file.client</groupId>
   <artifactId>eleven-file-client</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <name>eleven-file-client</name>
 
@@ -21,7 +21,7 @@
       <dependency>
         <groupId>hx.nine.eleven.dependencies</groupId>
         <artifactId>eleven-dependencies</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
