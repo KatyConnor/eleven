@@ -38,6 +38,37 @@ public class ElevenFlexMapper {
 	}
 
 	/**
+	 * 批量插入数据
+	 * @param entities  要写入的数据集合
+	 * @param mapper    操作数据库的mapper class
+	 * @param <T>
+	 * @param <M>
+	 * @return
+	 */
+	public static <T,M extends ElevenBaseMapper> int batchInsert(Collection<T> entities,Class<M> mapper) {
+		M baseMapper = Mappers.ofMapperClass(mapper);
+		return baseMapper.insertBatch(entities);
+	}
+
+	/**
+	 * 批量修改数据
+	 * @param entities 要修改的数据源
+	 * @param mapper   操作数据库的mapper class
+	 * @param <T>
+	 * @param <M>
+	 * @return
+	 */
+	public static <T,M extends ElevenBaseMapper> int batchUpdate(Collection<T> entities,Class<M> mapper) {
+		M baseMapper = Mappers.ofMapperClass(mapper);
+		int resCount = 0;
+		for (T p :entities){
+			int res  = baseMapper.update(p);
+			resCount = res > 0?resCount++:resCount;
+		}
+		return resCount;
+	}
+
+	/**
 	 * 插入实体类数据，不忽略 null 值
 	 * @param entity
 	 * @param <T>
