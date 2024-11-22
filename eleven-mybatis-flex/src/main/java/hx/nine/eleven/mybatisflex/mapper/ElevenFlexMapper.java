@@ -29,6 +29,14 @@ public class ElevenFlexMapper {
 		this.mapper = Mappers.ofMapperClass(ElevenFlexBaseMapper.class);
 	}
 
+	public static ElevenFlexMapper build(){
+		return new ElevenFlexMapper();
+	}
+
+	public static <T extends ElevenBaseMapper> T getMapper(Class<T> mapperClass){
+		return Mappers.ofMapperClass(mapperClass);
+	}
+
 	/**
 	 * 插入实体类数据，不忽略 null 值
 	 * @param entity
