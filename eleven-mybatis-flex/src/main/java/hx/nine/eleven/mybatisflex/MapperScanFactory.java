@@ -1,5 +1,7 @@
 package hx.nine.eleven.mybatisflex;
 
+import com.mybatisflex.core.mybatis.Mappers;
+import hx.nine.eleven.core.core.context.DefaultElevenApplicationContext;
 import hx.nine.eleven.core.factory.ApplicationSubTypesInitFactory;
 import hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import hx.nine.eleven.mybatisflex.mapper.ElevenBaseMapper;
@@ -21,6 +23,10 @@ public class MapperScanFactory implements ApplicationSubTypesInitFactory {
 			ElevenLoggerFactory.build(MapperScanFactory.class).warn("项目没有添加 MapperScans ，无法自动注入 mapper");
 			return;
 		}
+
 		ElevenMybatisFlexBootStarter.start(mapperSet);
+		mapperSet.forEach(m->{
+			DefaultElevenApplicationContext.build().addBean(m.getName(), Mappers.ofMapperClass(m));
+		});
 	}
 }

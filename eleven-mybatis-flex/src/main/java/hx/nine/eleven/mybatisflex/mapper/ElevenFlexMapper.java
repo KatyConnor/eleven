@@ -5,7 +5,7 @@ import com.mybatisflex.core.mybatis.Mappers;
 import com.mybatisflex.core.query.QueryCondition;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.row.Row;
-import org.apache.ibatis.annotations.Param;
+import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import org.apache.ibatis.cursor.Cursor;
 
 import java.io.Serializable;
@@ -31,6 +31,10 @@ public class ElevenFlexMapper {
 
 	public static ElevenFlexMapper build(){
 		return new ElevenFlexMapper();
+	}
+
+	public static <T> T of(Class<T> mapperClass){
+		return ElevenApplicationContextAware.getBean(mapperClass);
 	}
 
 	public static <T extends ElevenBaseMapper> T getMapper(Class<T> mapperClass){
