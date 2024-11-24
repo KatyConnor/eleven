@@ -50,7 +50,7 @@ public class ElevenFlexMapper {
 	 * @return
 	 */
 	public static <T,M extends ElevenBaseMapper> int batchInsert(Collection<T> entities,Class<M> mapper) {
-		M baseMapper = Mappers.ofMapperClass(mapper);
+		M baseMapper = ElevenApplicationContextAware.getBean(mapper);//Mappers.ofMapperClass(mapper);
 		return baseMapper.insertBatch(entities);
 	}
 
@@ -63,7 +63,7 @@ public class ElevenFlexMapper {
 	 * @return
 	 */
 	public static <T,M extends ElevenBaseMapper> int batchUpdate(Collection<T> entities,Class<M> mapper) {
-		M baseMapper = Mappers.ofMapperClass(mapper);
+		M baseMapper =  ElevenApplicationContextAware.getBean(mapper);
 		int resCount = 0;
 		for (T p :entities){
 			int res  = baseMapper.update(p);
