@@ -3,7 +3,7 @@ package hx.nine.eleven.jobtask.enums;
 import java.util.Arrays;
 
 /**
- * 任务处理
+ * 任务处理状态
  * @author wml
  * @Discription
  * @Date 2023-06-08

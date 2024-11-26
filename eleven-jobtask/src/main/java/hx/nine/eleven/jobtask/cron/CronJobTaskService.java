@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 实现HXVertxScheduledTask，定时触发任务,
+ * 实现 ElevenScheduledTask，定时触发任务,
  * @author wml
  * @Discription
  * @Date 2023-06-02
@@ -93,8 +93,7 @@ public class CronJobTaskService extends ElevenScheduledTask {
             //任务丢入线程池，让线程池执行任务
             try {
                 HXLogger.build(this).info("CronTask:执行任务[{}],任务执行规则[{}]", p.getName(), p.getCron());
-                ScheduleTaskEntity entity = BeanUtils.copyProperties(p, ScheduleTaskEntity.class);
-                doCronTask(entity);
+                doCronTask(p);
             } catch (Exception e) {
                 // 如果抛出异常，回滚状态
                 HXLogger.build(this).error("定时任务执行异常，更新定时任务状态为[PROCESSED]", e);

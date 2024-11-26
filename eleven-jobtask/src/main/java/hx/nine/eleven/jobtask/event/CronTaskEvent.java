@@ -45,7 +45,7 @@ public class CronTaskEvent extends ThreadPoolEvent<ScheduleTaskEntity,Boolean> {
         try {
             Class<?> exeStatement = Class.forName(this.getEntity().getExeStatement());
             if (!CronTaskFacade.class.isAssignableFrom(exeStatement)){
-                HXLogger.build(this).info("任务实现类必须继承com.cqrcb.fssm.platform.common.cron.CronTaskFacade接口，并实现execute方法");
+                HXLogger.build(this).info("任务实现类必须继承 hx.nine.eleven.jobtask.cron.CronTaskFacade 接口，并实现execute方法");
                 return false;
             }
             CronTaskFacade cronTaskFacade = (CronTaskFacade) ElevenApplicationContextAware.getBean(exeStatement);
