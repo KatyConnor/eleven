@@ -65,7 +65,7 @@ public class CronTaskEvent extends ThreadPoolEvent<ScheduleTaskEntity,Boolean> {
                 Object[] values = new Object[0];
                 try {
                     values = new Object[]{res == true?"成功":"失败",
-                            "任务执行服务【"+ WebIPToolUtils.getLocalIP()+"】－执行任务名称【"+jobName+"】执行完成，处理结果为"+(res == true?"成功！":"失败！"),
+                            "任务执行服务【"+ WebIPToolUtils.getLocalIP()+"】－执行任务名称【"+jobName+"】执行完成，处理结果为["+(res == true?"成功] ！":"失败] ！"),
                             DateUtils.getTimeStampAsString(),2,jobId};
                 } catch (Exception e) {
                     HXLogger.build(CronTaskEvent.class).error("获取本机IP地址，更新到 FS_SCHEDULE_TASK_LOG 表异常；",e);
