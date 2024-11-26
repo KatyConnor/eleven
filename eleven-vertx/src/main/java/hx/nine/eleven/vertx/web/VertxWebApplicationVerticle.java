@@ -20,6 +20,8 @@ import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.Router;
 
+import java.util.Set;
+
 
 /**
  * web服务Verticle启动类
@@ -46,9 +48,9 @@ public class VertxWebApplicationVerticle extends AbstractVerticle {
 		ElevenBootApplicationProperties elevenBootApplicationProperties = ElevenApplicationContextAware.getElevenApplicationProperties();
 		router = Router.router(vertx);
 		JWTAuthOptions config = new JWTAuthOptions().addPubSecKey(new PubSecKeyOptions().setAlgorithm(properties.getAlgorithm())
-						.setBuffer(properties.getJwtSecretKey()));
+				.setBuffer(properties.getJwtSecretKey()));
 		JWTAuth authProvider = JWTAuth.create(vertx, config);
-		WebRouterInitializer.build().setAuthProvider(authProvider).setRouter(router).webInit(vertx,config);
+		WebRouterInitializer.build().setAuthProvider(authProvider).setRouter(router).webInit(vertx, config);
 		//将Router与vertx HttpServer 绑定
 		vertx.createHttpServer().requestHandler(router).listen(elevenBootApplicationProperties.getPort(), http -> {
 			if (http.succeeded()) {
@@ -59,39 +61,44 @@ public class VertxWebApplicationVerticle extends AbstractVerticle {
 			}
 		});
 
-		ElevenScheduledTask scheduledTask = ElevenApplicationContextAware.getSubTypesOfBean(ElevenScheduledTask.class);
+		Set<ElevenScheduledTask> scheduledTask = ElevenApplicationContextAware.getSubTypesOfBeans(ElevenScheduledTask.class);
 		if (ObjectUtils.isNotEmpty(scheduledTask)) {
-			vertx.setPeriodic(7000, 1000, id -> {
+			vertx.setPeriodic(30000, 1000, id -> {
 				if (ObjectUtils.isNotEmpty(scheduledTask)) {
-					vertx.executeBlocking(future -> {
-						MDCThreadUtil.wrap();
-						scheduledTask.runScheduleTask();
-						future.complete();
-						MDCThreadUtil.clear();
-					}, true, ctx -> {
-						if (ctx.succeeded()) {
+					scheduledTask.forEach(s -> {
+						vertx.executeBlocking(future -> {
+							MDCThreadUtil.wrap();
+							s.runScheduleTask();
+							future.complete();
+							MDCThreadUtil.clear();
+						}, true, ctx -> {
+							if (ctx.succeeded()) {
 
-						} else if (ctx.failed()) {
+							} else if (ctx.failed()) {
 
-						}
+							}
+						});
 					});
 				}
 			});
-			ElevenThreadTask threadTask = ElevenApplicationContextAware.getSubTypesOfBean(ElevenThreadTask.class);
-			vertx.setPeriodic(8000, 200, id -> {
+			Set<ElevenThreadTask> threadTask = ElevenApplicationContextAware.getSubTypesOfBeans(ElevenThreadTask.class);
+			vertx.setPeriodic(30000, 1000, id -> {
 				if (ObjectUtils.isNotEmpty(threadTask)) {
-					vertx.executeBlocking(future -> {
-						MDCThreadUtil.wrap();
-						threadTask.run();
-						future.complete();
-						MDCThreadUtil.clear();
-					}, true, ctx -> {
-						if (ctx.succeeded()) {
+					threadTask.forEach(s -> {
+						vertx.executeBlocking(future -> {
+							MDCThreadUtil.wrap();
+							s.run();
+							future.complete();
+							MDCThreadUtil.clear();
+						}, true, ctx -> {
+							if (ctx.succeeded()) {
 
-						} else if (ctx.failed()) {
+							} else if (ctx.failed()) {
 
-						}
+							}
+						});
 					});
+
 				}
 			});
 		}
