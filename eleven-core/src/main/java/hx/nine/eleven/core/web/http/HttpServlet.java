@@ -49,6 +49,10 @@ public class HttpServlet implements Servlet {
 					request.setAuthorityPermission(tokenReal);
 					response.addHeader(ConstantType.AUTH_TOKEN,token);
 				}
+				// 健全没通过
+				request.setAuthenticate(false);
+				request.setLoginStatus(false);
+				request.setToken(null);
 			}
 			this.httpMethodFacade.preService(request);
 			this.service(request, response);

@@ -17,5 +17,6 @@ public interface DefaultProperType {
      String TARGET_FILE_PATH = "targetFilePath";
      String AUTHENTICATE = "authenticate"; // 是否放权
      String IS_LOGIN = "isLogin"; // 是否登录状态
-     String AUTH_TOKEN = "auth_token"; // 是否登录状态
+     String AUTH_TOKEN = "auth_token"; // token
+     String USER_DATA = "user_data"; // 用户数据
 }
