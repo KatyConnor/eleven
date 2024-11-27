@@ -69,10 +69,10 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 		switch (httpMethod.name()) {
 			// 文件传输
 			case VertxHttpMethod.GET:
-				request.setMethod(HttpMethodEnum.METHOD_GET.getCode());
+				request.setHttpMethod(HttpMethodEnum.METHOD_GET);
 				break;
 			case VertxHttpMethod.POST:
-				request.setMethod(HttpMethodEnum.METHOD_POST.getCode());
+				request.setHttpMethod(HttpMethodEnum.METHOD_POST);
 				break;
 			default:
 				//暂不支持的类型
