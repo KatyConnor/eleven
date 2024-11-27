@@ -99,7 +99,7 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 			});
 		}
 		// 设置http post 请求报文的body数据
-		httpServletRequest.addBody(jsonObject);
+		httpServletRequest.addBody(jsonObject.getMap());
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 		// content-type:multipart/form-data,且可能存在文件处理
 		initMultipartHttp(jsonObject,httpServletRequest,context);
 		// 设置http post 请求报文的body数据
-		httpServletRequest.addBody(jsonObject);
+		httpServletRequest.addBody(jsonObject.getMap());
 	}
 
 	@Override
