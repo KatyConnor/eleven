@@ -6,6 +6,8 @@ import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.entity.FileUploadEntity;
 import hx.nine.eleven.core.enums.HttpMethodEnum;
 import hx.nine.eleven.core.web.ServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +16,7 @@ import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -21,7 +24,7 @@ import java.util.Map;
  * @date 2024/11/6
  */
 public class HttpServletRequest implements ServletRequest {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpServletRequest.class);
 	/**
 	 * 存储前端参数
 	 */
@@ -104,6 +107,22 @@ public class HttpServletRequest implements ServletRequest {
 
 	public HttpServletRequest addAttribute(Map<String,Object> value){
 		this.jsonObject.putAll(value);
+		return this;
+	}
+
+	public HttpServletRequest addHeader(String key,String value){
+		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)){
+			LOGGER.info("设置header存在为空，key: [{}] , value: [{}]",key,value);
+			return this;
+		}
+		this.headerMap.put(key, value);
+		return this;
+	}
+
+	public HttpServletRequest addHeaders(Map<String,String> headers){
+		if (Optional.ofNullable(headers).isPresent()){
+			this.headerMap.putAll(headers);
+		}
 		return this;
 	}
 

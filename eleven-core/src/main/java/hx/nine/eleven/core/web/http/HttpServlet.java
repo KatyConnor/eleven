@@ -47,7 +47,7 @@ public class HttpServlet implements Servlet {
 					token = provider.generateToken(token);
 					request.setToken(token);
 					request.setAuthorityPermission(tokenReal);
-					response.setHeader(ConstantType.AUTH_TOKEN,token);
+					response.addHeader(ConstantType.AUTH_TOKEN,token);
 				}
 			}
 			this.httpMethodFacade.preService(request);

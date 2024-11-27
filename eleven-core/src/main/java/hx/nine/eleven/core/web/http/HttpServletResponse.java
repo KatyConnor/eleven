@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @auth wml
@@ -70,12 +71,19 @@ public class HttpServletResponse implements ServletResponse {
 		return this;
 	}
 
-	public HttpServletResponse setHeader(String key,String value){
+	public HttpServletResponse addHeader(String key,String value){
 		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)){
 			LOGGER.info("设置header存在为空，key: [{}] , value: [{}]",key,value);
 			return this;
 		}
 		this.headerMap.put(key, value);
+		return this;
+	}
+
+	public HttpServletResponse addHeaders(Map<String,String> headers){
+		if (Optional.ofNullable(headers).isPresent()){
+			this.headerMap.putAll(headers);
+		}
 		return this;
 	}
 
