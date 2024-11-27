@@ -20,11 +20,9 @@ public class HttpServletAndDomainRouterInit implements WebRouteHandler {
 
 	@Override
 	public void loadWebRouteHandler(Reflections reflections) throws Throwable {
-		DefaultElevenApplicationContext.build().addBean(HttpServlet.class.getName(), new HttpServlet());
 		initHttpMethodFacade(reflections);
 		initDomainRouter(reflections);
-
-
+		DefaultElevenApplicationContext.build().addBean(HttpServlet.class.getName(), new HttpServlet());
 	}
 
 	private void initHttpMethodFacade(Reflections reflections){
