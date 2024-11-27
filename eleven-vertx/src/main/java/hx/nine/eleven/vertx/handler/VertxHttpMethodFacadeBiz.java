@@ -20,9 +20,11 @@ import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
 import hx.nine.eleven.vertx.constant.VertxConstantType;
 import hx.nine.eleven.vertx.constant.DefaultVertxProperType;
+import hx.nine.eleven.vertx.constant.VertxHttpMethod;
 import hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
@@ -60,18 +62,21 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 		if (StringUtils.isEmpty(contentType)) {
 			contentType = ContentTypeEnums.APPLICATION_JSON.getCode();
 		}
+		HttpMethod httpMethod = context.request().method();
 		request.setContentType(contentType);
 		// contentType
-		ContentTypeEnums contentTypeEnums = ContentTypeEnums.getByCode(contentType.split(";")[0]);
-		switch (contentTypeEnums) {
+//		ContentTypeEnums contentTypeEnums = ContentTypeEnums.getByCode(contentType.split(";")[0]);
+		switch (httpMethod.name()) {
 			// 文件传输
-			case MULTIPART_FORM_DATA:
+			case VertxHttpMethod.GET:
+				request.setMethod(HttpMethodEnum.METHOD_GET.getCode());
+				break;
+			case VertxHttpMethod.POST:
 				request.setMethod(HttpMethodEnum.METHOD_POST.getCode());
-			case APPLICATION_JSON:
-				request.setMethod(HttpMethodEnum.METHOD_POST.getCode());
+				break;
 			default:
 				//暂不支持的类型
-				throw new ElevenApplicationRunException("暂不支持的content-type类型");
+				throw new ElevenApplicationRunException(httpMethod.name()+": 暂不支持的 http method 类型");
 		}
 	}
 
