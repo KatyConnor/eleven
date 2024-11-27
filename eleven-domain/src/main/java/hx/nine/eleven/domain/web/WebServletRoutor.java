@@ -82,8 +82,8 @@ public class WebServletRoutor {
 			// 当返回的是文件流，则进行文件流返回处理
 			Boolean isDownload = res.getFileStream();
 			if (isDownload != null && isDownload) {
-				httpServletResponse.setHeader(WebHttpBodyConstant.FILE_STREAM, String.valueOf(isDownload));
-				httpServletResponse.setHeader(WebHttpBodyConstant.FILE_DOWNLOAD_PATH, res.getFileDownloadPath());
+				httpServletResponse.addHeader(WebHttpBodyConstant.FILE_STREAM, String.valueOf(isDownload));
+				httpServletResponse.addHeader(WebHttpBodyConstant.FILE_DOWNLOAD_PATH, res.getFileDownloadPath());
 			}
 			httpServletResponse.send(res);
 		} catch (Throwable ex) {
