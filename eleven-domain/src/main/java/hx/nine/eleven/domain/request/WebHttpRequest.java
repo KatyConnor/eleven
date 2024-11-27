@@ -100,6 +100,10 @@ public class WebHttpRequest implements Serializable {
 			LOGGER.warn("[{}] is null", requestBody);
 			return;
 		}
+		if(this.requestHeader == null){
+			LOGGER.warn("[requestHeader] is null");
+			return;
+		}
 		Object tradeCode = this.requestHeader.getTradeCode();
 		Object subTradeCode = this.requestHeader.getSubTradeCode();
 		tradeCode = Optional.ofNullable(tradeCode).isPresent() ? tradeCode : "";

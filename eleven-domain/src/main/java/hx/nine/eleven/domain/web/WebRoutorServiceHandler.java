@@ -11,6 +11,7 @@ import hx.nine.eleven.core.web.DomainRouter;
 import hx.nine.eleven.core.web.http.HttpResponse;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
+import hx.nine.eleven.domain.constant.WebHttpBodyConstant;
 import hx.nine.eleven.domain.exception.DomainOperatorException;
 import hx.nine.eleven.domain.exception.ParamsValidationExcetion;
 import hx.nine.eleven.domain.obj.vo.ErrorVO;
@@ -40,6 +41,10 @@ public class WebRoutorServiceHandler implements DomainRouter {
 		List<FileUploadEntity> list = httpServletRequest.getFileUploadEntities();
 		checkRequestParams(httpServletResponse,body);
 		WebHttpRequest webHttpRequest = BeanMapUtil.mapToBean(body,WebHttpRequest.class);
+		if (webHttpRequest.getRequestBody() == null){
+			webHttpRequest.setRequestBody(body.get(WebHttpBodyConstant.REQUEST_BODY));
+		}
+		validation(httpServletResponse,webHttpRequest);
 		if (CollectionUtils.isEmpty(list)){
 			//文件上传,如果没有指定body,则赋值Optional.empty()给requestBody,跳过NotNull验证
 			webHttpRequest.setFileUploadEntities(list);
@@ -68,7 +73,7 @@ public class WebRoutorServiceHandler implements DomainRouter {
 			}
 			isLogin = true;
 		}
-		validation(httpServletResponse,webHttpRequest);
+
 		WebServletRoutor.build().doService(httpServletResponse,webHttpRequest);
 		if (isLogin){
 			HttpResponse response = httpServletResponse.httpResponse();
