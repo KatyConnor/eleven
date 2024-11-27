@@ -4,6 +4,7 @@ import hx.nine.eleven.commons.utils.BeanMapUtil;
 import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.entity.FileUploadEntity;
+import hx.nine.eleven.core.enums.HttpMethodEnum;
 import hx.nine.eleven.core.web.ServletRequest;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class HttpServletRequest implements ServletRequest {
 	 */
 	private Map<String,Object> jsonObject;
 	private Map<String,String> headerMap;
+	private HttpMethodEnum httpMethod;
 	/**
 	 * 输入流
 	 */
@@ -213,6 +215,15 @@ public class HttpServletRequest implements ServletRequest {
 	@Override
 	public Principal getUserPrincipal() {
 		return null;
+	}
+
+	public HttpMethodEnum getHttpMethod() {
+		return httpMethod;
+	}
+
+	public HttpServletRequest setHttpMethod(HttpMethodEnum httpMethod) {
+		this.httpMethod = httpMethod;
+		return this;
 	}
 
 	public List<FileUploadEntity> getFileUploadEntities() {
