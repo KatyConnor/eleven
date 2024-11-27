@@ -60,7 +60,7 @@ public class HttpServlet implements Servlet {
 	}
 
 	private void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		HttpMethodEnum method = HttpMethodEnum.valueOf(req.getMethod());
+		HttpMethodEnum method = req.getHttpMethod();
 		if (method == HttpMethodEnum.METHOD_GET) {
 			httpMethodFacade.doGet(req, resp);
 		} else if (method == HttpMethodEnum.METHOD_HEAD) {
