@@ -81,7 +81,7 @@ public class WebRoutorServiceHandler implements DomainRouter {
 			Object user = responseEntity.getHttpResponseBody().getResponseBody().getData();
 			UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
 			String token = provider.generateToken(user);
-			httpServletResponse.setHeader(ConstantType.AUTH_TOKEN,token);
+			httpServletResponse.addHeader(ConstantType.AUTH_TOKEN,token);
 		}
 	}
 
