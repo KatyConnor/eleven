@@ -1,7 +1,9 @@
 package hx.nine.eleven.vertx.handler;
 
 import hx.nine.eleven.commons.utils.JSONObjectMapper;
+import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.constant.ConstantType;
+import hx.nine.eleven.core.constant.DefaultProperType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.utils.MDCThreadUtil;
 import hx.nine.eleven.core.web.http.HttpResponse;
@@ -10,6 +12,7 @@ import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
 import hx.nine.eleven.vertx.constant.DefaultVertxProperType;
 import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -35,6 +38,28 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			HttpServletRequest req = HttpServletRequest.build();
 			HttpServletResponse resp = HttpServletResponse.build();
 			req.setAttribute(DefaultVertxProperType.VERTX_CONTEXT,context);
+			MultiMap multiMap = context.request().headers();
+			if (multiMap != null && multiMap.size() > 0){
+				multiMap.forEach((k,v)->{
+					req.addHeader(k,v);
+				});
+			}
+			String authenticate = multiMap.get(DefaultProperType.AUTHENTICATE);
+			if (StringUtils.isNotEmpty(authenticate)){
+				req.setAuthenticate(Boolean.valueOf(authenticate));
+			}
+			String isLogin = multiMap.get(DefaultProperType.IS_LOGIN);
+			if (StringUtils.isNotEmpty(isLogin)){
+				req.setLoginStatus(Boolean.valueOf(isLogin));
+			}
+			String authToken = multiMap.get(DefaultProperType.AUTH_TOKEN);
+			if (StringUtils.isNotEmpty(authToken)){
+				req.setToken(authToken);
+			}
+			String userData = multiMap.get(DefaultProperType.USER_DATA);
+			if (StringUtils.isNotEmpty(userData)){
+				req.setAuthorityPermission(userData);
+			}
 			httpServlet.service(req, resp);
 			res = resp.httpResponse();
 			//

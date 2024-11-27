@@ -1,15 +1,15 @@
 package hx.nine.eleven.vertx.auth;
 
-import hx.nine.eleven.commons.utils.Builder;
+import hx.nine.eleven.commons.utils.JSONObjectMapper;
 import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.commons.utils.StringUtils;
+import hx.nine.eleven.core.UserAuthenticateProvider;
 import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.constant.DefaultProperType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
+import hx.nine.eleven.core.exception.UserAuthenticateException;
 import hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import hx.nine.eleven.core.utils.MDCThreadUtil;
-import hx.nine.eleven.vertx.code.VertxApplicationMsgCode;
-import hx.nine.eleven.vertx.constant.DefaultVertxProperType;
 import hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -19,7 +19,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.KeyStoreOptions;
 import io.vertx.ext.auth.PubSecKeyOptions;
-import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.impl.jose.JWK;
 import io.vertx.ext.auth.impl.jose.JWT;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -39,7 +38,6 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * token验证以及用户自定义验证逻辑
@@ -156,14 +154,32 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
         }
 
         String authToken = request.getHeader(ConstantType.AUTH_TOKEN);
-        // 如果token为空，则直接设置登录标志，交由下游domain进行登录验证操作；验证通过后才能进入service业务逻辑处理层
-        if (StringUtils.isEmpty(authToken)) {
-            // 默认需要登录，设置状态为无权限，且需要登录标志， 交给下游domain拦截处理登录
-            request.headers().add(DefaultProperType.AUTHENTICATE,"false");
-            request.headers().add(DefaultProperType.IS_LOGIN,"false");
-            ctx.next();
-            return;
+        if (StringUtils.isNotEmpty(authToken)){
+            UserAuthenticateProvider provider = (UserAuthenticateProvider)ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
+            if (provider == null) {
+                throw new UserAuthenticateException("用户鉴权失败，没有查找到[UserAuthenticateProvider]接口实现实例!");
+            }
+
+            if (provider.authenticate(authToken)) {
+                request.headers().add(DefaultProperType.AUTHENTICATE,"true");
+                request.headers().add(DefaultProperType.IS_LOGIN,"true");
+                Object tokenReal = provider.decodeTokenAuth(authToken);
+                request.headers().add(DefaultProperType.AUTH_TOKEN, JSONObjectMapper.toJsonString(tokenReal));
+                authToken = provider.generateToken(tokenReal);
+                request.headers().add(DefaultProperType.AUTH_TOKEN,authToken);
+                ctx.response().putHeader(DefaultProperType.AUTH_TOKEN,authToken);
+                ctx.next();
+                return;
+            }
         }
+
+        // 如果token为空，或者验证不通过，则直接设置登录标志，交由下游domain进行登录验证操作；
+        // 验证通过后才能进入service业务逻辑处理层，验证不通过则返回无权限
+        request.headers().add(DefaultProperType.AUTHENTICATE,"false");
+        request.headers().add(DefaultProperType.IS_LOGIN,"false");
+        ctx.next();
+        return;
+
     }
 
 
