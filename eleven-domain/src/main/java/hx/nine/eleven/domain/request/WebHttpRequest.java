@@ -1,13 +1,11 @@
 package hx.nine.eleven.domain.request;
 
-import hx.nine.eleven.commons.utils.BeanMapUtil;
+import hx.nine.eleven.commons.annotation.FieldTypeConvert;
 import hx.nine.eleven.core.entity.FileUploadEntity;
-import hx.nine.eleven.domain.constant.WebHttpBodyConstant;
+import hx.nine.eleven.domain.conver.WebRequestHeaderFieldConvert;
 import hx.nine.eleven.domain.enums.WebRouteParamsEnums;
-import hx.nine.eleven.commons.utils.JSONObjectMapper;
 import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.domain.conver.BeanConvert;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.domain.obj.form.HeaderForm;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -27,13 +24,12 @@ import java.util.Optional;
  * @date 2022-10-28
  */
 public class WebHttpRequest implements Serializable {
-
 	private final static Logger LOGGER = LoggerFactory.getLogger(WebHttpRequest.class);
-
 	/**
 	 * 请求报文头（header）
 	 */
 	@NotNull(message = "请求报文头 [header] 不能为空")
+	@FieldTypeConvert(using = WebRequestHeaderFieldConvert.class)
 	private HeaderForm requestHeader;
 	/**
 	 * 请求报文体[body]
@@ -64,26 +60,8 @@ public class WebHttpRequest implements Serializable {
 	 *
 	 * @param requestHeader
 	 */
-	public void setRequestHeader(Object requestHeader) {
-		if (!Optional.ofNullable(requestHeader).isPresent()) {
-			LOGGER.warn("[{}] is null", requestHeader);
-			return;
-		}
-		Map<String, Object> headerMap = null;
-		if (requestHeader instanceof Map) {
-			headerMap = (Map<String, Object>) requestHeader;
-		} else if (requestHeader instanceof String) {
-			try {
-				headerMap = JSONObjectMapper.build().readValue(requestHeader.toString(), Map.class);
-			} catch (JsonProcessingException e) {
-				LOGGER.error("requestHeader json 转换异常: {}", e);
-			}
-		} else {
-			headerMap = BeanMapUtil.beanToMap(requestHeader);
-		}
-		String headerCode = String.valueOf(headerMap.get(WebHttpBodyConstant.HEADER_CODE));
-		this.requestHeader = (HeaderForm) BeanConvert.convert(headerMap, null, headerCode,
-				WebRouteParamsEnums.HEADER_FORM.getName());
+	public void setRequestHeader(HeaderForm requestHeader) {
+		this.requestHeader = requestHeader;
 	}
 
 	public Object getRequestBody() {
