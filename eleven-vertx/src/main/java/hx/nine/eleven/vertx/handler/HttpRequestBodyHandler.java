@@ -1,5 +1,6 @@
 package hx.nine.eleven.vertx.handler;
 
+import hx.nine.eleven.commons.utils.BeanMapUtil;
 import hx.nine.eleven.commons.utils.JSONObjectMapper;
 import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.constant.ConstantType;
@@ -11,6 +12,7 @@ import hx.nine.eleven.core.web.http.HttpServlet;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
 import hx.nine.eleven.vertx.constant.DefaultVertxProperType;
+import hx.nine.eleven.vertx.entity.VertxHttpResponseEntity;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonObject;
@@ -71,11 +73,15 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			}
 
 			// 判断是否有文件流返回,如果有则直接返回下载的文件流
-			JsonObject jsonObject = JsonObject.mapFrom(res.getBody());
-			Boolean fileDownload = jsonObject.getBoolean(ConstantType.FILE_STREAM);
-			Object  fileDownloadPath = jsonObject.getValue(ConstantType.FILE_DOWNLOAD_PATH);
-			Object  httpResponseBody = jsonObject.getValue(ConstantType.HTTP_RESPONSE_BODY);
-			res.setBody(httpResponseBody);
+			Map<String,Object> jsonObject = BeanMapUtil.beanToMap(res.getBody());
+			Boolean fileDownload = Boolean.valueOf(StringUtils.valueOf(jsonObject.get(ConstantType.FILE_STREAM)));
+			Object  fileDownloadPath = jsonObject.get(ConstantType.FILE_DOWNLOAD_PATH);
+			Object httpResponseBody = jsonObject.get(ConstantType.HTTP_RESPONSE_BODY);
+			Map<String,Object> responseBodyMap = BeanMapUtil.beanToMap(httpResponseBody);
+			VertxHttpResponseEntity responseEntity = new VertxHttpResponseEntity();
+			responseEntity.setResponseHeader(responseBodyMap.get(ConstantType.RESPONSE_HEADER_ENTITY))
+					.setResponseBody(responseBodyMap.get(ConstantType.RESPONSE_BODY_ENTITY));
+			res.setBody(responseEntity);
 			if (fileDownload){
 				context.response().sendFile(String.valueOf(fileDownloadPath));
 			}else {
