@@ -74,6 +74,8 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			JsonObject jsonObject = JsonObject.mapFrom(res.getBody());
 			Boolean fileDownload = jsonObject.getBoolean(ConstantType.FILE_STREAM);
 			Object  fileDownloadPath = jsonObject.getValue(ConstantType.FILE_DOWNLOAD_PATH);
+			Object  httpResponseBody = jsonObject.getValue(ConstantType.HTTP_RESPONSE_BODY);
+			res.setBody(httpResponseBody);
 			if (fileDownload){
 				context.response().sendFile(String.valueOf(fileDownloadPath));
 			}else {
