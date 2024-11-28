@@ -3,7 +3,7 @@ package hx.nine.eleven.commons.utils;
 import hx.nine.eleven.commons.annotation.FieldList;
 import hx.nine.eleven.commons.annotation.FieldTypeConvert;
 import hx.nine.eleven.commons.entity.BeanMappingEntity;
-import hx.nine.eleven.commons.enums.DefaultBaseDataTypeEnums;
+import hx.nine.eleven.commons.enums.FundamentalDataTypeEnums;
 import hx.nine.eleven.commons.exception.BeanConvertException;
 import hx.nine.eleven.commons.function.IAction;
 import hx.nine.eleven.commons.json.convert.FieldConvert;
@@ -13,9 +13,11 @@ import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -90,7 +92,7 @@ public class BeanUtils {
      * @return
      */
     public static <S, T, A extends BeanMappingEntity> T copyProperties(S source, Class<T> target, IAction<A> action) {
-        T instance = newInstance(target);//baseMapper(source, target);
+        T instance = newInstance(target);
         return setField(source, instance, action);
     }
 
@@ -228,29 +230,35 @@ public class BeanUtils {
         if (!Optional.ofNullable(source).isPresent()) {
             return instance;
         }
+
+        // sourceMap：元数据，beanMap：目标对象，fieldMap：目标对象的所有字段，fieldSetMethodMap：目标对象所有方法
         Map sourceMap = source instanceof Map ? (Map) source : BeanMap.create(source);
         BeanMap beanMap = BeanMap.create(instance);
-        Map<String, Field> fieldMap = new HashMap<>();
-        Map<String, Class> classMap = new HashMap<>();
-        Map<String, Object> returnObjMap = new HashMap<>();
-        Map<String, Boolean> fieldSetMethodMap = new HashMap<>();
-        findFieldTypeClass(instance.getClass(), classMap, fieldMap, fieldSetMethodMap);
+
+        Map<String, Field> targetField = new HashMap<>();//存储目标对象的所有字段缓存
+        Map<String, Class> fieldAnnotationClass = new HashMap<>();//目标对象属性字段添加 @FieldList 注解缓存
+        Map<String, Boolean> targetFieldSetMethod = new HashMap<>();// 目标对象的所有 setter方法缓存
+
+        findFieldTypeClass(instance.getClass(), fieldAnnotationClass, targetField, targetFieldSetMethod);
+
+        Map<String, Object> returnObjMap = new HashMap<>();// 属性字段是自定义类对象，key: 属性字段,value:对象值
         sourceMap.forEach((k, v) -> {
+            // 非空值才进行复制
             if (Optional.ofNullable(v).isPresent()) {
-                if (beanMap.containsKey(k)) {
+                if (beanMap.containsKey(k) || beanMap.containsKey(StringUtils.convertFirstUpperCase(k.toString()))) {
                     // 属性字段set方法是否有返回值并且添加FieldSetMethodReturn注解
-                    Field field = fieldMap.get(k.toString());
+                    Field field = targetField.get(k.toString());
                     if(field == null){
-                        field = fieldMap.get(StringUtils.convertFirstUpperCase(k.toString()));
+                        field = targetField.get(StringUtils.convertFirstUpperCase(k.toString()));
                     }
                     if (field == null){
                         LOGGER.warn("field [{}] not in [{}]",k.toString(),instance.getClass());
                     }else {
-                        if (fieldSetMethodMap.get(SET_METHOD + StringUtils.convertFirstUpperCase(field.getName())) != null) {
-                            Object value = getValue(beanMap, field, classMap, k.toString(), v);
+                        if (targetFieldSetMethod.get(SET_METHOD + StringUtils.convertFirstUpperCase(field.getName())) != null) {
+                            Object value = getValue(beanMap, field, fieldAnnotationClass, k.toString(), v);
                             returnObjMap.put(k.toString(), value);
                         } else {
-                            Object value = getValue(beanMap, field, classMap, k.toString(), v);
+                            Object value = getValue(beanMap, field, fieldAnnotationClass, k.toString(), v);
                             if (value != null){
                                 beanMap.put(k, value);
                             }
@@ -285,30 +293,45 @@ public class BeanUtils {
         return null;
     }
 
-    private static Object getValue(BeanMap beanMap, Field field, Map<String, Class> classMap, String key, Object value) {
-        // 字段是否添加FieldTypeConvert注解
-        Class<?> type = beanMap.getPropertyType(key);
+    /**
+     *
+     * @param beanMap
+     * @param field
+     * @param fieldAnnotationClass
+     * @param fieldKey
+     * @param value
+     * @return
+     */
+    private static Object getValue(BeanMap beanMap, Field field, Map<String, Class> fieldAnnotationClass, String fieldKey, Object value) {
+        Class<?> propertyType = beanMap.getPropertyType(fieldKey);
         FieldTypeConvert fieldDeserializer = field.getAnnotation(FieldTypeConvert.class);
         if (fieldDeserializer != null) {
+            // 字段是否添加FieldTypeConvert注解，存在则按照用户自定义赋值
             FieldConvert fieldConvert = newInstance(fieldDeserializer.using());
             return fieldConvert.convert(value);
-        } else if (isReferenceClass(type)) {
-            if (type.isAssignableFrom(value.getClass())) {
+        } else if (isReferenceClass(propertyType)) {
+            // 如果field字段是引用对象，则继续按照对象方式赋值，如果是接口、抽象类则直接返回该值，不在继续往下寻早字段赋值
+            if (propertyType.isAssignableFrom(value.getClass())) {
                 return value;
             }
-            Object obj = newInstance(type);
+            Object obj = newInstance(propertyType);
             return setField(value, obj);
-        } else if (Collection.class.isAssignableFrom(type)) {
-            //字段是Collection集合
-            if (value instanceof List) {
-                List<Object> valueMap = (List) value;
-                Class<?> fieldClass = classMap.get(key);
+        } else if (Collection.class.isAssignableFrom(propertyType)) {
+            //字段和value都是Collection集合,按照 @FieldList 注解集合处理逻辑
+            if (value instanceof List && field.getType().isAssignableFrom(List.class)) {
+                List<Object> valueList = (List) value;
+                Class<?> fieldClass = fieldAnnotationClass.get(fieldKey);
+                // 没有指定就需要检查是否是基本类型或者Map类型的泛型
                 if (fieldClass == null) {
-                    LOGGER.warn("目标对象字段[{}]属于List集合，并且没有指定明确的泛型类型，将跳过该字段赋值，可以尝试添加@FieldList注解",type.getName());
+                    LOGGER.warn("目标对象字段[{}]属于List集合，并且没有指定明确的泛型类型，将跳过该字段赋值，可以尝试添加 @FieldList 注解",propertyType.getName());
+                    Type[] type = ((ParameterizedTypeImpl) field.getGenericType()).getActualTypeArguments();
+                    if (FundamentalDataTypeEnums.findMatch(type[0].getTypeName())){
+                        return valueList;
+                    }
                     return null;
                 }
                 List<Object> list = new ArrayList<>();
-                for (Object obj : valueMap) {
+                for (Object obj : valueList) {
                     if (obj instanceof Map) {
                         if (!Map.class.isAssignableFrom(fieldClass)) {
                             Object object = newInstance(fieldClass);
@@ -332,9 +355,9 @@ public class BeanUtils {
                 return list;
             } else {
                 // @TODO 抛出异常，属性类型不匹配
-                throw new BeanConvertException(value.getClass().getName() + "不能直接转换成" + type.getName());
+                throw new BeanConvertException(value.getClass().getName() + "不能直接转换成" + propertyType.getName());
             }
-        } else if (Map.class.isAssignableFrom(type)) {
+        } else if (Map.class.isAssignableFrom(propertyType)) {
             return value instanceof Map ? value : BeanMapUtil.beanToMap(value);
         } else {
             return value;
@@ -410,40 +433,42 @@ public class BeanUtils {
     }
 
     /**
-     * 查找属性中是否有添加@FieldList注解字段，根据注解标识的class类型将值进行转换
-     *
-     * @param beanClass
-     * @param classMap
-     * @param fieldMap
+     *  查找属性中是否有添加@FieldList注解字段，根据注解标识的class类型将值进行转换
+     * @param beanClass               目标对象Class
+     * @param fieldAnnotationClass    目标对象属性字段添加 @FieldList 注解缓存
+     * @param targetField             存储目标对象的所有字段缓存
+     * @param targetFieldSetMethod       目标对象的所有 setter方法缓存
      * @param <T>
-     * @return
      */
-    public static <T> void findFieldTypeClass(Class<T> beanClass, Map<String, Class> classMap, Map<String, Field> fieldMap, Map<String, Boolean> fieldSetMethodMap) {
+    public static <T> void findFieldTypeClass(Class<T> beanClass, Map<String, Class> fieldAnnotationClass,
+                                              Map<String, Field> targetField, Map<String, Boolean> targetFieldSetMethod) {
+
         Field[] fields = beanClass.getDeclaredFields();
         Method[] methods = beanClass.getDeclaredMethods();
+        // 1、查找所有有返回值的 setter 方法
         for (Method method : methods) {
-            Class<?> returnType = method.getReturnType();
-            if (returnType != null) {
-                fieldSetMethodMap.put(method.getName(), true);
+            if (method.getName().startsWith(SET_METHOD) && method.getReturnType() != null) {
+                targetFieldSetMethod.put(method.getName(), true);
             }
         }
 
+        // 2、查找目标对象所有属性字段，并且将添加了 @FieldList 注解字段表明出来
         for (Field field : fields) {
+            targetField.put(field.getName(), field);
             Class<?> fieldType = field.getType();
             if (Collection.class.isAssignableFrom(fieldType)) {
                 FieldList fieldList = field.getAnnotation(FieldList.class);
                 if (ObjectUtils.isEmpty(fieldList)){
-                    LOGGER.warn("当前字段[{}]类型[{}]没有添加@FieldList注解，跳过List赋值",field.getName(),field.getType().getName());
+                    LOGGER.warn("当前字段[{}]类型是[{}]，但是没有添加@FieldList注解，无法确定List泛型类型，跳过该字段 List 赋值",field.getName(),field.getType().getName());
                     continue;
                 }
-                classMap.put(field.getName(), fieldList.convertType());
+                fieldAnnotationClass.put(field.getName(), fieldList.convertType());
             }
-            fieldMap.put(field.getName(), field);
         }
 
         Class superClass = beanClass.getSuperclass();
         if (isReferenceClass(superClass) && !superClass.getSimpleName().equals("Object")) {
-            findFieldTypeClass(superClass, classMap, fieldMap, fieldSetMethodMap);
+            findFieldTypeClass(superClass, fieldAnnotationClass, targetField, targetFieldSetMethod);
         }
     }
 
@@ -455,7 +480,7 @@ public class BeanUtils {
      */
     private static boolean isBasicTypes(Class<?> classzz) {
         // 基本数据类型,枚举类型、集合,如果当前字段的类型就是当前类本身，则退出，否则会进入死循环
-        if (classzz.isEnum() || classzz.isPrimitive() || !DefaultBaseDataTypeEnums.noneMatch(classzz.getSimpleName())) {
+        if (classzz.isEnum() || classzz.isPrimitive() || !FundamentalDataTypeEnums.noneMatch(classzz.getSimpleName())) {
             return true;
         }
         return false;
