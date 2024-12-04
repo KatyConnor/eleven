@@ -45,7 +45,7 @@ public class WebRoutorServiceHandler implements DomainRouter {
 			webHttpRequest.setRequestBody(body.get(WebHttpBodyConstant.REQUEST_BODY));
 		}
 		validation(httpServletResponse,webHttpRequest);
-		if (CollectionUtils.isEmpty(list)){
+		if (CollectionUtils.isNotEmpty(list)){
 			//文件上传,如果没有指定body,则赋值Optional.empty()给requestBody,跳过NotNull验证
 			webHttpRequest.setFileUploadEntities(list);
 		}
@@ -65,8 +65,14 @@ public class WebRoutorServiceHandler implements DomainRouter {
 				return;
 			}
 
-			if (!StringUtils.isNotEmpty(subTradeCode) &&
-					!subTradeCode.equals(StringUtils.valueOf(properties.getLoginTradeCode()))){
+			if (StringUtils.isNotEmpty(properties.getLoginSubTradeCode()) && StringUtils.isEmpty(subTradeCode)){
+				ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
+				httpServletResponse.send(res);
+				return;
+			}
+
+			if (StringUtils.isNotEmpty(subTradeCode) &&
+					!subTradeCode.equals(StringUtils.valueOf(properties.getLoginSubTradeCode()))){
 				ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
 				httpServletResponse.send(res);
 				return;
