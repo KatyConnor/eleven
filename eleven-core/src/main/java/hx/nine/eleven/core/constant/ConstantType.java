@@ -17,7 +17,7 @@ public interface ConstantType {
   String RESPONSE_BODY_ENTITY = "responseBody";
   String STATUS_CODE= "statusCode";
   String SUCCESS = "SS";
-  String AUTH_TOKEN = "auth_token";
+  String AUTH_TOKEN = "authorized_token";
   String TOKEN = "token";
   String TRADE_CODE = "tradeCode";
   String DATA = "data";
