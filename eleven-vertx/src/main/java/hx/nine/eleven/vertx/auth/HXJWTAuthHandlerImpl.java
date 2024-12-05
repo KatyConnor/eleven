@@ -155,7 +155,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
         String authToken = request.getHeader(ConstantType.AUTH_TOKEN);
         if (StringUtils.isNotEmpty(authToken)){
-            UserAuthenticateProvider provider = (UserAuthenticateProvider)ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
+            UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
             if (provider == null) {
                 throw new UserAuthenticateException("用户鉴权失败，没有查找到[UserAuthenticateProvider]接口实现实例!");
             }
