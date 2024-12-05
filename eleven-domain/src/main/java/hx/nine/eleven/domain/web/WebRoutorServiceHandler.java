@@ -3,7 +3,8 @@ package hx.nine.eleven.domain.web;
 import hx.nine.eleven.commons.utils.BeanMapUtil;
 import hx.nine.eleven.commons.utils.CollectionUtils;
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.UserAuthenticateProvider;
+import hx.nine.eleven.core.auth.UserAuthResponseBody;
+import hx.nine.eleven.core.auth.UserAuthenticateProvider;
 import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.entity.FileUploadEntity;
@@ -90,7 +91,11 @@ public class WebRoutorServiceHandler implements DomainRouter {
 			int expires = env.getIntProperty("eleven.boot.expires");
 			UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
 			String token = provider.generateToken(user,expires);
+			// 1、默认设置token到header
 			httpServletResponse.addHeader(ConstantType.AUTH_TOKEN,token);
+			// 1、设置token到 body->data 中，需要用户自定义实现
+			UserAuthResponseBody userAuthResponseBody = ElevenApplicationContextAware.getBean(UserAuthResponseBody.class);
+			userAuthResponseBody.addAuthorizedTokenToBody(token,user);
 		}
 	}
 
