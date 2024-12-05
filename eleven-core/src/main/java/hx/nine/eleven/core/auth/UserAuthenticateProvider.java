@@ -1,4 +1,4 @@
-package hx.nine.eleven.core;
+package hx.nine.eleven.core.auth;
 
 /**
  * 用户token验证和生成接口

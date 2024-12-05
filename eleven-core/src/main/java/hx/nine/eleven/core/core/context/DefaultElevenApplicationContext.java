@@ -109,7 +109,7 @@ public class DefaultElevenApplicationContext implements ElevenApplicationContext
 
     @Override
     public Environment getEnvironment() {
-        return null;
+        return DefaultElevenApplicationContext.build().getProperties();
     }
 
     public static DefaultElevenApplicationContext build(){

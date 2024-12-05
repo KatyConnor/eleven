@@ -1,7 +1,7 @@
 package hx.nine.eleven.core.web.http;
 
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.UserAuthenticateProvider;
+import hx.nine.eleven.core.auth.UserAuthenticateProvider;
 import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.enums.HttpMethodEnum;
