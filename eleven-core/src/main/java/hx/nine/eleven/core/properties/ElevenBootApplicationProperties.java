@@ -33,18 +33,25 @@ public class ElevenBootApplicationProperties {
 
     /**
      *  静态文件拦截地址
+     * @TODO  应该移入对应的web框架中
      */
     private String staticPath = "/*";
     /**
      * 静态文件地址
+     *  @TODO  应该移入对应的web框架中
      */
-    private String staticRoot = "webroot/web";
+    private String staticRoot = "webroot";
 
     /**
      * 指定项目扫描路径
      */
     @JsonDeserialize(using = FieldStringToArraysDeserializer.class)
     private String[] scanPackages;
+
+    /**
+     * 会话过期时长，单位默认秒
+     */
+    private int expires;
 
     public String getConfigPath() {
         return configPath;
@@ -100,5 +107,13 @@ public class ElevenBootApplicationProperties {
 
     public void setScanPackages(String[] scanPackages) {
         this.scanPackages = scanPackages;
+    }
+
+    public int getExpires() {
+        return expires;
+    }
+
+    public void setExpires(int expires) {
+        this.expires = expires;
     }
 }
