@@ -7,4 +7,32 @@ public interface Environment extends PropertyResolver{
    * @return
    */
   String getActiveProfiles();
+
+  /**
+   * 获取int属性
+   * @param key
+   * @return
+   */
+  int getIntProperty(String key);
+
+  /**
+   * 获取int属性，如果未获取到返回指定默认值
+   * @param key
+   * @return
+   */
+  int getIntProperty(String key,int defaultInt);
+
+  /**
+   * 获取 boolean属性
+   * @param key
+   * @return
+   */
+  boolean getBooleanProperty(String key);
+
+  /**
+   * 获取 boolean属性，如果未获取到返回指定默认值
+   * @param key
+   * @return
+   */
+  boolean getBooleanProperty(String key,boolean defaultInt);
 }

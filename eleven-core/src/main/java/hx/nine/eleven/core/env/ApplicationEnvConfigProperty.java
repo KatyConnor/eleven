@@ -41,12 +41,12 @@ public class ApplicationEnvConfigProperty extends HashMap implements Environment
 
   @Override
   public String getProperty(String key) {
-    return String.valueOf(this.get(key));
+    return StringUtils.valueOf(this.get(key));
   }
 
   @Override
   public String getProperty(String key, String defaultValue) {
-    String value = String.valueOf(this.get(key));
+    String value = StringUtils.valueOf(this.get(key));
     return StringUtils.isBlank(value)?defaultValue:value;
   }
 
@@ -75,5 +75,29 @@ public class ApplicationEnvConfigProperty extends HashMap implements Environment
   @Override
   public String getActiveProfiles() {
     return this.getProperty(DefaultProperType.ACTIVE_PROFILE);
+  }
+
+  @Override
+  public int getIntProperty(String key) {
+    String value = this.getProperty(key);
+    return StringUtils.isNotEmpty(value)?Integer.valueOf(value):-1;
+  }
+
+  @Override
+  public int getIntProperty(String key, int defaultInt) {
+    String value = this.getProperty(key);
+    return StringUtils.isNotEmpty(value)?Integer.valueOf(value):defaultInt;
+  }
+
+  @Override
+  public boolean getBooleanProperty(String key) {
+    String value = this.getProperty(key);
+    return StringUtils.isNotEmpty(value)?Boolean.valueOf(value):false;
+  }
+
+  @Override
+  public boolean getBooleanProperty(String key, boolean defaultInt) {
+    String value = this.getProperty(key);
+    return StringUtils.isNotEmpty(value)?Boolean.valueOf(value):defaultInt;
   }
 }
