@@ -1,6 +1,7 @@
 package hx.nine.eleven.core;
 
 /**
+ * 用户token验证和生成接口
  * @auth wml
  * @date 2024/11/21
  */
@@ -23,11 +24,28 @@ public interface UserAuthenticateProvider {
 	<T> String generateToken(T object);
 
 	/**
+	 * 生成token信息
+	 * @param object  生成token对象数据
+	 * @param expires  token 过期时间
+	 * @param <T>
+	 * @return
+	 */
+	<T> String generateToken(T object,int expires);
+
+	/**
 	 * 生成token，根据原token解析后生成新的token
 	 * @param token 原token数据
 	 * @return
 	 */
 	String generateToken(String token);
+
+	/**
+	 * 生成token，根据原token解析后生成新的token
+	 * @param token   原 token数据
+	 * @param expires token 过期时间
+	 * @return
+	 */
+	String generateToken(String token,int expires);
 
 	/**
 	 * 解析 token,返回token 所有信息
