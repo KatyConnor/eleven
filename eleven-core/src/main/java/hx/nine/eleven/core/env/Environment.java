@@ -35,4 +35,18 @@ public interface Environment extends PropertyResolver{
    * @return
    */
   boolean getBooleanProperty(String key,boolean defaultInt);
+
+  /**
+   * 获取 long 属性
+   * @param key
+   * @return
+   */
+  long getLongProperty(String key);
+
+  /**
+   * 获取 long 属性，如果未获取到返回指定默认值
+   * @param key
+   * @return
+   */
+  long getLongProperty(String key,long defaultInt);
 }

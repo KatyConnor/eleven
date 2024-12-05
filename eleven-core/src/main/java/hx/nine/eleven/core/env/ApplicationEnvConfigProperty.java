@@ -100,4 +100,16 @@ public class ApplicationEnvConfigProperty extends HashMap implements Environment
     String value = this.getProperty(key);
     return StringUtils.isNotEmpty(value)?Boolean.valueOf(value):defaultInt;
   }
+
+  @Override
+  public long getLongProperty(String key) {
+    String value = this.getProperty(key);
+    return StringUtils.isNotEmpty(value)?Long.valueOf(value):-1;
+  }
+
+  @Override
+  public long getLongProperty(String key, long defaultInt) {
+    String value = this.getProperty(key);
+    return StringUtils.isNotEmpty(value)?Long.valueOf(value):defaultInt;
+  }
 }
