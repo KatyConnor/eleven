@@ -41,7 +41,7 @@ public class UserAuthenticatePermissionProvider implements UserAuthenticateProvi
                     authNext.set(true);
                     // 解析token，将解析信息放入请求中
                 } else {
-                    ElevenLoggerFactory.build(this).info("认证失败,token无效");
+                    ElevenLoggerFactory.build(this).info("token认证失败,token无效");
                 }
             });
             return authNext.get();
