@@ -7,6 +7,7 @@ import hx.nine.eleven.core.UserAuthenticateProvider;
 import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.entity.FileUploadEntity;
+import hx.nine.eleven.core.env.Environment;
 import hx.nine.eleven.core.web.DomainRouter;
 import hx.nine.eleven.core.web.http.HttpResponse;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
@@ -85,8 +86,10 @@ public class WebRoutorServiceHandler implements DomainRouter {
 			HttpResponse response = httpServletResponse.httpResponse();
 			ResponseEntity responseEntity = (ResponseEntity)response.getBody();
 			Object user = responseEntity.getHttpResponseBody().getResponseBody().getData();
+			Environment env = ElevenApplicationContextAware.getEnvironment();
+			int expires = env.getIntProperty("eleven.boot.expires");
 			UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
-			String token = provider.generateToken(user);
+			String token = provider.generateToken(user,expires);
 			httpServletResponse.addHeader(ConstantType.AUTH_TOKEN,token);
 		}
 	}
