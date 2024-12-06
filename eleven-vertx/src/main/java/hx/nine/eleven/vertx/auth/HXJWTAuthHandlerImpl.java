@@ -3,7 +3,7 @@ package hx.nine.eleven.vertx.auth;
 import hx.nine.eleven.commons.utils.JSONObjectMapper;
 import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.UserAuthenticateProvider;
+import hx.nine.eleven.core.auth.UserAuthenticateProvider;
 import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.constant.DefaultProperType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
@@ -14,6 +14,7 @@ import hx.nine.eleven.vertx.properties.VertxApplicationProperties;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.file.FileSystemException;
+import io.vertx.core.http.Cookie;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.JWTOptions;
@@ -78,7 +79,6 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
 
         this.permissionsClaimKey = config.getPermissionsClaimKey();
         this.jwtOptions = config.getJWTOptions();
-        provider.setAuthProvider(authProvider).setJwtOptions(config.getJWTOptions());
         // set the nonce algorithm
         jwt.nonceAlgorithm(jwtOptions.getNonceAlgorithm());
 
@@ -131,6 +131,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                     }
                 }
             }
+            provider.setAuthProvider(authProvider).setJwtOptions(config.getJWTOptions()).setJwt(this.jwt);
         } catch (KeyStoreException | IOException | FileSystemException | CertificateException | NoSuchAlgorithmException |
                 NoSuchProviderException e) {
             throw new RuntimeException(e);
@@ -154,20 +155,28 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
         }
 
         String authToken = request.getHeader(ConstantType.AUTH_TOKEN);
+        if (StringUtils.isEmpty(authToken)) {
+            Cookie tokenCookie = ctx.request().getCookie(ConstantType.AUTH_TOKEN);
+            authToken = (tokenCookie == null) ? "" : tokenCookie.getValue();
+        }
+
         if (StringUtils.isNotEmpty(authToken)){
             UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
             if (provider == null) {
                 throw new UserAuthenticateException("用户鉴权失败，没有查找到[UserAuthenticateProvider]接口实现实例!");
             }
 
+            // 授权成功生成一个新的token,放入refresh_authorized_token
             if (provider.authenticate(authToken)) {
                 request.headers().add(DefaultProperType.AUTHENTICATE,"true");
                 request.headers().add(DefaultProperType.IS_LOGIN,"true");
                 Object tokenReal = provider.decodeTokenAuth(authToken);
                 request.headers().add(DefaultProperType.AUTH_TOKEN, JSONObjectMapper.toJsonString(tokenReal));
-                authToken = provider.generateToken(tokenReal);
+                String refreshAuthToken = provider.generateToken(tokenReal);
                 request.headers().add(DefaultProperType.AUTH_TOKEN,authToken);
-                ctx.response().putHeader(DefaultProperType.AUTH_TOKEN,authToken);
+                ctx.response().putHeader(DefaultProperType.REFRESH_AUTH_TOKEN,refreshAuthToken);
+                // token保存到httponly的cookie中，后续不用再通过token登录web应用
+                ctx.response().addCookie(Cookie.cookie(DefaultProperType.REFRESH_AUTH_TOKEN, authToken).setHttpOnly(true).setPath("/*"));
                 ctx.next();
                 return;
             }

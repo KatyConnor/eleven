@@ -1,12 +1,11 @@
 package hx.nine.eleven.vertx.auth;
 
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.UserAuthenticateProvider;
 import hx.nine.eleven.core.annotations.Component;
+import hx.nine.eleven.core.auth.UserAuthenticateProvider;
 import hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.JWTOptions;
-import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.impl.jose.JWT;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -23,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 public class UserAuthenticatePermissionProvider implements UserAuthenticateProvider {
 
-    private final JWT jwt = new JWT();
+    private JWT jwt;
     private JWTAuth authProvider;
     private JWTOptions jwtOptions;
 
@@ -34,12 +33,8 @@ public class UserAuthenticatePermissionProvider implements UserAuthenticateProvi
             AtomicBoolean authNext = new AtomicBoolean(false);
             this.authProvider.authenticate(new TokenCredentials(authToken), auth -> {
                 if (auth.succeeded()) {
-                    User user = auth.result();
-                    JsonObject authData = user.principal();
-                    String userId = authData.getString("userCode");
-                    ElevenLoggerFactory.build(this).info("用户 {} token 认证成功！", userId);
+                    ElevenLoggerFactory.build(this).info("token 认证成功！");
                     authNext.set(true);
-                    // 解析token，将解析信息放入请求中
                 } else {
                     ElevenLoggerFactory.build(this).info("token认证失败,token无效");
                 }
@@ -79,6 +74,7 @@ public class UserAuthenticatePermissionProvider implements UserAuthenticateProvi
             payload = this.jwt.decode(authToken);
         } catch (RuntimeException e) {
             // 认证失败，返回信息
+            ElevenLoggerFactory.build(this).error("token解析失败",e);
             throw new RuntimeException("token解析失败",e);
         }
         return payload;
@@ -89,9 +85,9 @@ public class UserAuthenticatePermissionProvider implements UserAuthenticateProvi
         JsonObject payload = null;
         try {
             payload = this.jwt.decode(authToken);
-            //TODO 删除token数据
         } catch (RuntimeException e) {
             // 认证失败，返回信息
+            ElevenLoggerFactory.build(this).error("token解析失败",e);
             throw new RuntimeException("token解析失败",e);
         }
         return payload;
@@ -104,6 +100,11 @@ public class UserAuthenticatePermissionProvider implements UserAuthenticateProvi
 
     public UserAuthenticatePermissionProvider setJwtOptions(JWTOptions jwtOptions) {
         this.jwtOptions = jwtOptions;
+        return this;
+    }
+
+    public UserAuthenticatePermissionProvider setJwt(JWT jwt) {
+        this.jwt = jwt;
         return this;
     }
 }
