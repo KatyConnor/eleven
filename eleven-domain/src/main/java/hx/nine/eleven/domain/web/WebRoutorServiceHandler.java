@@ -45,9 +45,11 @@ public class WebRoutorServiceHandler implements DomainRouter {
 			webHttpRequest.setRequestBody(body.get(WebHttpBodyConstant.REQUEST_BODY));
 		}
 		String token = httpServletRequest.getToken();
-		UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
-		Object principal = provider.decodeToken(token);
-		webHttpRequest.setPrincipal(principal);
+		if(StringUtils.isNotEmpty(token)){
+			UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
+			Object principal = provider.decodeToken(token);
+			webHttpRequest.setPrincipal(principal);
+		}
 
 		validation(httpServletResponse,webHttpRequest);
 		if (CollectionUtils.isNotEmpty(list)){
