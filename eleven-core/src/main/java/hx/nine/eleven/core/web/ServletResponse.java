@@ -46,7 +46,6 @@ public interface ServletResponse {
 
 	/**
 	 *  获取报文长度
-	 * @param contentLength
 	 */
 	long getContentLengthLong();
 

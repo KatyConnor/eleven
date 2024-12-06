@@ -28,7 +28,7 @@ public class HttpServletResponse implements ServletResponse {
 	/**
 	 * HTTP 请求头
 	 */
-	private Map<String,String> headerMap;
+	private Map<String,Object> headerMap;
 	private OutputStream outputStream;
 	private HttpResponse httpResponse;
 
@@ -71,7 +71,7 @@ public class HttpServletResponse implements ServletResponse {
 		return this;
 	}
 
-	public HttpServletResponse addHeader(String key,String value){
+	public HttpServletResponse addHeader(String key,Object value){
 		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)){
 			LOGGER.info("设置header存在为空，key: [{}] , value: [{}]",key,value);
 			return this;
@@ -80,7 +80,7 @@ public class HttpServletResponse implements ServletResponse {
 		return this;
 	}
 
-	public HttpServletResponse addHeaders(Map<String,String> headers){
+	public HttpServletResponse addHeaders(Map<String,Object> headers){
 		if (Optional.ofNullable(headers).isPresent()){
 			this.headerMap.putAll(headers);
 		}
@@ -130,7 +130,7 @@ public class HttpServletResponse implements ServletResponse {
 
 	@Override
 	public String getContentType() {
-		return  this.headerMap.get("Content-Type");
+		return  StringUtils.valueOf(this.headerMap.get("Content-Type"));
 	}
 
 	@Override
@@ -140,7 +140,8 @@ public class HttpServletResponse implements ServletResponse {
 
 	@Override
 	public long getContentLengthLong() {
-		return  Long.valueOf(this.headerMap.get("Content-Length"));
+		String value = StringUtils.valueOf(this.headerMap.get("Content-Length"));
+		return  StringUtils.isEmpty(value)?-1:Long.valueOf(value);
 	}
 
 	/**
@@ -172,11 +173,11 @@ public class HttpServletResponse implements ServletResponse {
 	 * @return
 	 */
 	public HttpServletResponse setContentLengthLong(long contentLength) {
-		this.headerMap.put("Content-Length",String.valueOf(contentLength));
+		this.headerMap.put("Content-Length",contentLength);
 		return this;
 	}
 
-	public Map<String, String> getHeaderMap() {
+	public Map<String, Object> getHeaderMap() {
 		return headerMap;
 	}
 }
