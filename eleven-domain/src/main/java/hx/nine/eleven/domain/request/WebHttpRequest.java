@@ -50,6 +50,11 @@ public class WebHttpRequest implements Serializable {
 	 */
 	private Boolean openFiber = false;
 
+	/**
+	 * 用户主题数据
+	 */
+	private Object principal;
+
 	public HeaderForm getRequestHeader() {
 		return requestHeader;
 	}
@@ -117,6 +122,14 @@ public class WebHttpRequest implements Serializable {
 
 	public void setOpenFiber(Boolean openFiber) {
 		this.openFiber = openFiber;
+	}
+
+	public Object getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(Object principal) {
+		this.principal = principal;
 	}
 
 	@Override

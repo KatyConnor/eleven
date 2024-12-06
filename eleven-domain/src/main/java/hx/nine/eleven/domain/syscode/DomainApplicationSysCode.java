@@ -35,7 +35,7 @@ public interface DomainApplicationSysCode extends ApplicationSystemCode {
     MessageCode B0100000002 = new MessageCode(SystemCodeType.BUSINESS,"B0100000002", "报文中requestBody为空");
     MessageCode B0100000003 = new MessageCode(SystemCodeType.BUSINESS,"B0100000003", "报文中requestBody数据格式错误");
     MessageCode B0100000004 = new MessageCode(SystemCodeType.BUSINESS,"B0100000004", "业务交易处理异常"); // @TODO 需要重新定义错误码
-
+    MessageCode B0100000005 = new MessageCode(SystemCodeType.BUSINESS,"B0100000005", "验证登录之后需要header设置token"); // @TODO 需要重新定义错误码
 
     MessageCode N0300010000 = new MessageCode(SystemCodeType.NETWORK,"N0300010000", "HTTP请求HttpServletRequest中body数据为null");
     MessageCode N0300010001 = new MessageCode(SystemCodeType.BUSINESS,"N0300010001", "读取HTTP请求HttpServletRequest中body数据成功");

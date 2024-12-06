@@ -2,13 +2,11 @@ package hx.nine.eleven.domain.web;
 
 import hx.nine.eleven.commons.utils.BeanMapUtil;
 import hx.nine.eleven.commons.utils.CollectionUtils;
+import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.auth.UserAuthResponseBody;
 import hx.nine.eleven.core.auth.UserAuthenticateProvider;
-import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.core.ElevenApplicationContextAware;
 import hx.nine.eleven.core.entity.FileUploadEntity;
-import hx.nine.eleven.core.env.Environment;
 import hx.nine.eleven.core.web.DomainRouter;
 import hx.nine.eleven.core.web.http.HttpResponse;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
@@ -46,13 +44,17 @@ public class WebRoutorServiceHandler implements DomainRouter {
 		if (webHttpRequest.getRequestBody() == null){
 			webHttpRequest.setRequestBody(body.get(WebHttpBodyConstant.REQUEST_BODY));
 		}
+		String token = httpServletRequest.getToken();
+		UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
+		Object principal = provider.decodeToken(token);
+		webHttpRequest.setPrincipal(principal);
+
 		validation(httpServletResponse,webHttpRequest);
 		if (CollectionUtils.isNotEmpty(list)){
 			//文件上传,如果没有指定body,则赋值Optional.empty()给requestBody,跳过NotNull验证
 			webHttpRequest.setFileUploadEntities(list);
 		}
 		DomainEventListenerHandlerProperties properties = ElevenApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
-		boolean isLogin = false;
 		if (!httpServletRequest.getAuthenticate()){
 			String tradeCode = webHttpRequest.getRequestHeader().getTradeCode();
 			String subTradeCode = webHttpRequest.getRequestHeader().getSubTradeCode();
@@ -79,23 +81,14 @@ public class WebRoutorServiceHandler implements DomainRouter {
 				httpServletResponse.send(res);
 				return;
 			}
-			isLogin = true;
 		}
 
 		WebServletRoutor.build().doService(httpServletResponse,webHttpRequest);
-		if (isLogin){
-			HttpResponse response = httpServletResponse.httpResponse();
-			ResponseEntity responseEntity = (ResponseEntity)response.getBody();
-			Object user = responseEntity.getHttpResponseBody().getResponseBody().getData();
-			Environment env = ElevenApplicationContextAware.getEnvironment();
-			int expires = env.getIntProperty("eleven.boot.expires");
-			UserAuthenticateProvider provider = ElevenApplicationContextAware.getSubTypesOfBean(UserAuthenticateProvider.class);
-			String token = provider.generateToken(user,expires);
-			// 1、默认设置token到header
-			httpServletResponse.addHeader(ConstantType.AUTH_TOKEN,token);
-			// 1、设置token到 body->data 中，需要用户自定义实现
-			UserAuthResponseBody userAuthResponseBody = ElevenApplicationContextAware.getBean(UserAuthResponseBody.class);
-			userAuthResponseBody.addAuthorizedTokenToBody(token,user);
+		HttpResponse response = httpServletResponse.httpResponse();
+		ResponseEntity responseEntity = (ResponseEntity)response.getBody();
+		Map<String, Object> headers = responseEntity.getHeaderMap();
+		if (ObjectUtils.isNotEmpty(headers)){
+			httpServletResponse.addHeaders(headers);
 		}
 	}
 

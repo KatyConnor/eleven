@@ -1,9 +1,12 @@
 package hx.nine.eleven.domain.response;
 
+import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.msg.code.code.ApplicationSystemCode;
 import hx.nine.eleven.msg.code.enums.SystemCode;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 接口交互数据结果集
@@ -18,9 +21,11 @@ public class ResponseEntity<H,E> implements Serializable{
     private WebHttpResponse<H,E> httpResponseBody;
     private Boolean fileStream = false;
     private String fileDownloadPath;
+    private Map<String, Object> headerMap;
 
     public ResponseEntity(){
         this.httpResponseBody = new WebHttpResponse<>();
+        headerMap = new LinkedHashMap();
         this.successful();
     }
 
@@ -86,6 +91,43 @@ public class ResponseEntity<H,E> implements Serializable{
         response.setCode(ApplicationSystemCode.B0000000001.getCode());
         response.setMessage(ApplicationSystemCode.B0000000001.getMessage());
         return this;
+    }
+
+    public ResponseEntity addHeader(String key,Object value){
+        this.headerMap.put(key,value);
+        return this;
+    }
+
+    public ResponseEntity addHeader(Map<String,Object> headers){
+        this.headerMap.putAll(headers);
+        return this;
+    }
+
+    public Object getHeader(String key){
+        return this.headerMap.get(key);
+    }
+
+    public String getStringHeader(String key){
+        return StringUtils.valueOf(this.headerMap.get(key));
+    }
+
+    public Boolean getBooleanHeader(String key){
+        String value = StringUtils.valueOf(this.headerMap.get(key));
+        return StringUtils.isEmpty(value)?null:Boolean.valueOf(value);
+    }
+
+    public Integer getIntegerHeader(String key){
+        String value = StringUtils.valueOf(this.headerMap.get(key));
+        return StringUtils.isEmpty(value)?-1:Integer.valueOf(value);
+    }
+
+    public Long getLongHeader(String key){
+        String value = StringUtils.valueOf(this.headerMap.get(key));
+        return StringUtils.isEmpty(value)?null:Long.valueOf(value);
+    }
+
+    public Map<String, Object> getHeaderMap() {
+        return headerMap;
     }
 
     public Boolean getFileStream() {
