@@ -2,6 +2,7 @@ package hx.nine.eleven.vertx.auth;
 
 import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.annotations.Component;
+import hx.nine.eleven.core.annotations.SubComponent;
 import hx.nine.eleven.core.auth.UserAuthenticateProvider;
 import hx.nine.eleven.core.utils.ElevenLoggerFactory;
 import io.vertx.core.json.JsonObject;
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @Discription
  * @Date 2023-08-06
  */
-@Component
+@SubComponent(interfaces = UserAuthenticateProvider.class)
 public class UserAuthenticatePermissionProvider implements UserAuthenticateProvider {
 
     private JWT jwt;
