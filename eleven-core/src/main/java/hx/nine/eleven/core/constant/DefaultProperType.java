@@ -18,5 +18,6 @@ public interface DefaultProperType {
      String AUTHENTICATE = "authenticate"; // 是否放权
      String IS_LOGIN = "isLogin"; // 是否登录状态
      String AUTH_TOKEN = "authorized_token"; // token
+     String REFRESH_AUTH_TOKEN = "refresh_authorized_token"; // 刷新tokentoken
      String USER_DATA = "user_data"; // 用户数据
 }
