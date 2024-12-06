@@ -116,7 +116,7 @@ public interface ServletRequest {
 	 * 获取header
 	 * @return
 	 */
-	Map<String,String> getHeaders();
+	Map<String,Object> getHeaders();
 
 	/**
 	 * http请求类型

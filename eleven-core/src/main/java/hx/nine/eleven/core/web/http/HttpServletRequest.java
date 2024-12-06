@@ -29,7 +29,7 @@ public class HttpServletRequest implements ServletRequest {
 	 * 存储前端参数
 	 */
 	private Map<String,Object> jsonObject;
-	private Map<String,String> headerMap;
+	private Map<String,Object> headerMap;
 	private HttpMethodEnum httpMethod;
 	/**
 	 * 输入流
@@ -119,7 +119,7 @@ public class HttpServletRequest implements ServletRequest {
 		return this;
 	}
 
-	public HttpServletRequest addHeaders(Map<String,String> headers){
+	public HttpServletRequest addHeaders(Map<String,Object> headers){
 		if (Optional.ofNullable(headers).isPresent()){
 			this.headerMap.putAll(headers);
 		}
@@ -153,7 +153,8 @@ public class HttpServletRequest implements ServletRequest {
 
 	@Override
 	public String getCharacterEncoding() {
-		return this.headerMap.get("Accept-Charset")+";"+this.headerMap.get("Accept-Encoding");
+		return StringUtils.valueOf(this.headerMap.get("Accept-Charset"))+";"+
+				StringUtils.valueOf(this.headerMap.get("Accept-Encoding"));
 	}
 
 	@Override
@@ -163,12 +164,13 @@ public class HttpServletRequest implements ServletRequest {
 
 	@Override
 	public long getContentLengthLong() {
-		return  Long.valueOf(this.headerMap.get("Content-Length"));
+		String value = StringUtils.valueOf(this.headerMap.get("Content-Length"));
+		return  StringUtils.isEmpty(value)?-1:Long.valueOf(value);
 	}
 
 	@Override
 	public String getContentType() {
-		return  this.headerMap.get("Content-Type");
+		return  StringUtils.valueOf(this.headerMap.get("Content-Type"));
 	}
 
 	@Override
@@ -188,47 +190,48 @@ public class HttpServletRequest implements ServletRequest {
 
 	@Override
 	public String getProtocol() {
-		return this.headerMap.get("Protocol");
+		return StringUtils.valueOf(this.headerMap.get("Protocol"));
 	}
 
 	@Override
 	public String getServletPath() {
-		return  this.headerMap.get("Servlet-Path");
+		return  StringUtils.valueOf(this.headerMap.get("Servlet-Path"));
 	}
 
 	@Override
 	public String getServerName() {
-		return this.headerMap.get("Server-Name");
+		return StringUtils.valueOf(this.headerMap.get("Server-Name"));
 	}
 
 	@Override
 	public int getServerPort() {
-		return Integer.valueOf(this.headerMap.get("Server-port"));
+		String value = StringUtils.valueOf(this.headerMap.get("Server-port"));
+		return StringUtils.isEmpty(value)?-1:Integer.valueOf(value);
 	}
 
 	@Override
 	public String getLocalHost() {
-		return this.headerMap.get("Local-Host");
+		return StringUtils.valueOf(this.headerMap.get("Local-Host"));
 	}
 
 	@Override
 	public String getRemoteHost() {
-		return this.headerMap.get("Remote-Host");
+		return StringUtils.valueOf(this.headerMap.get("Remote-Host"));
 	}
 
 	@Override
 	public String getHeader(String key) {
-		return this.headerMap.get(key);
+		return StringUtils.valueOf(this.headerMap.get(key));
 	}
 
 	@Override
-	public Map<String, String> getHeaders() {
+	public Map<String, Object> getHeaders() {
 		return this.headerMap;
 	}
 
 	@Override
 	public String getMethod() {
-		return this.headerMap.get("Method");
+		return StringUtils.valueOf(this.headerMap.get("Method"));
 	}
 
 	@Override
