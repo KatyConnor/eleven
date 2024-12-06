@@ -1,7 +1,6 @@
 package hx.nine.eleven.vertx.auth;
 
 import hx.nine.eleven.commons.utils.StringUtils;
-import hx.nine.eleven.core.annotations.Component;
 import hx.nine.eleven.core.annotations.SubComponent;
 import hx.nine.eleven.core.auth.UserAuthenticateProvider;
 import hx.nine.eleven.core.utils.ElevenLoggerFactory;

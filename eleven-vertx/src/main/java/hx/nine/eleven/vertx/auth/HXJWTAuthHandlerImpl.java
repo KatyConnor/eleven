@@ -174,9 +174,12 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
                 request.headers().add(DefaultProperType.AUTH_TOKEN, JSONObjectMapper.toJsonString(tokenReal));
                 String refreshAuthToken = provider.generateToken(tokenReal);
                 request.headers().add(DefaultProperType.AUTH_TOKEN,authToken);
+
+                ctx.response().putHeader(DefaultProperType.AUTH_TOKEN,authToken);
                 ctx.response().putHeader(DefaultProperType.REFRESH_AUTH_TOKEN,refreshAuthToken);
                 // token保存到httponly的cookie中，后续不用再通过token登录web应用
-                ctx.response().addCookie(Cookie.cookie(DefaultProperType.REFRESH_AUTH_TOKEN, authToken).setHttpOnly(true).setPath("/*"));
+                ctx.response().addCookie(Cookie.cookie(DefaultProperType.AUTH_TOKEN, authToken).setHttpOnly(true).setPath("/*"));
+                ctx.response().addCookie(Cookie.cookie(DefaultProperType.REFRESH_AUTH_TOKEN, refreshAuthToken).setHttpOnly(true).setPath("/*"));
                 ctx.next();
                 return;
             }
