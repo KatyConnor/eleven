@@ -70,7 +70,7 @@ public class HXJWTAuthHandlerImpl extends JWTAuthHandlerImpl {
         super(authProvider, realm);
         MDCThreadUtil.wrap();
         VertxApplicationProperties properties = ElevenApplicationContextAware.getProperties(VertxApplicationProperties.class);
-        UserAuthenticatePermissionProvider provider = ElevenApplicationContextAware.getBean(UserAuthenticatePermissionProvider.class);
+        UserAuthenticatePermissionProvider provider = (UserAuthenticatePermissionProvider)ElevenApplicationContextAware.getBean(UserAuthenticateProvider.class);
         this.authProvider = authProvider;
         this.authentication = properties.getAuthentication();
         String[] ignoreAuthentications = properties.getIgnoreAuthentication();
