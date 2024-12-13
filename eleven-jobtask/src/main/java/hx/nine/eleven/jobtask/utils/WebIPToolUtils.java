@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 /**
@@ -29,9 +30,14 @@ public class WebIPToolUtils {
      *
      * @throws Exception
      */
-    public static String getLocalIP() throws Exception {
+    public static String getLocalIP(){
         if (isWindowsOS()) {
-            return InetAddress.getLocalHost().getHostAddress();
+            try {
+                return InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                LOGGER.error("获取IP地址失败,返回默认的[127.0.0.1]",e);
+                return "127.0.0.1";
+            }
         } else {
             return getLinuxLocalIp();
         }

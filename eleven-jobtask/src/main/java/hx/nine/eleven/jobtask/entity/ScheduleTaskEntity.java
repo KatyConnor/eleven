@@ -6,7 +6,7 @@ package hx.nine.eleven.jobtask.entity;
  * @Discription
  * @Date 2023-06-05
  */
-public class ScheduleTaskEntity {
+public class ScheduleTaskEntity extends TaskEntity{
 
     // 主键ID
     private String id;
@@ -16,24 +16,24 @@ public class ScheduleTaskEntity {
     private String name;
     // 任务执行状态
     private String status;
+    // 任务状态，任务是否启用
+    private Boolean taskStatus;
     // 任务执行时间表达式
     private String cron;
     // 任务执行关联实体
-    private String exeStatement;
-    // 版本号
-    private Long version;
+    private String execStatement;
+    //  任务执行触发方法
+    private String execMethod;
+    // 执行时间
+    private String complete;
     // 创建时间
     private String createTime;
     // 修改时间
     private String updateTime;
-    // 任务状态，任务是否启用
-    private Boolean taskStatus;
-    //  任务执行触发方法
-    private String method;
+    // 版本号
+    private Long version;
     // 数据是否有效
     private Boolean effective;
-    // 执行时间
-    private String complete;
 
     public String getId() {
         return id;
@@ -67,6 +67,14 @@ public class ScheduleTaskEntity {
         this.status = status;
     }
 
+    public Boolean getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(Boolean taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
     public String getCron() {
         return cron;
     }
@@ -75,28 +83,28 @@ public class ScheduleTaskEntity {
         this.cron = cron;
     }
 
-    public String getExeStatement() {
-        return exeStatement;
+    public String getExecStatement() {
+        return execStatement;
     }
 
-    public void setExeStatement(String exeStatement) {
-        this.exeStatement = exeStatement;
+    public void setExecStatement(String execStatement) {
+        this.execStatement = execStatement;
     }
 
-    public String getMethod() {
-        return method;
+    public String getExecMethod() {
+        return execMethod;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public void setExecMethod(String execMethod) {
+        this.execMethod = execMethod;
     }
 
-    public Long getVersion() {
-        return version;
+    public String getComplete() {
+        return complete;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setComplete(String complete) {
+        this.complete = complete;
     }
 
     public String getCreateTime() {
@@ -115,12 +123,12 @@ public class ScheduleTaskEntity {
         this.updateTime = updateTime;
     }
 
-    public Boolean getTaskStatus() {
-        return taskStatus;
+    public Long getVersion() {
+        return version;
     }
 
-    public void setTaskStatus(Boolean taskStatus) {
-        this.taskStatus = taskStatus;
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Boolean getEffective() {
@@ -129,13 +137,5 @@ public class ScheduleTaskEntity {
 
     public void setEffective(Boolean effective) {
         this.effective = effective;
-    }
-
-    public String getComplete() {
-        return complete;
-    }
-
-    public void setComplete(String complete) {
-        this.complete = complete;
     }
 }

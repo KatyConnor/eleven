@@ -4,8 +4,10 @@ package hx.nine.eleven.jobtask.cron;
 import hx.nine.eleven.commons.utils.*;
 import hx.nine.eleven.core.annotations.SubComponent;
 import hx.nine.eleven.core.task.ElevenScheduledTask;
+import hx.nine.eleven.jobtask.ScheduleSQL;
+import hx.nine.eleven.jobtask.entity.TaskEntity;
+import hx.nine.eleven.jobtask.utils.ScheduleExe;
 import hx.nine.eleven.logchain.toolkit.util.HXLogger;
-import hx.nine.eleven.jobtask.constant.ScheduleSQL;
 import hx.nine.eleven.jobtask.constant.ScheduleValues;
 import hx.nine.eleven.jobtask.entity.ScheduleTaskEntity;
 import hx.nine.eleven.jobtask.enums.TaskProcessEnum;
@@ -13,6 +15,8 @@ import hx.nine.eleven.jobtask.event.CronTaskEvent;
 import hx.nine.eleven.jobtask.mapperfactory.DomainOOPMapperFactory;
 import hx.nine.eleven.jobtask.utils.DateUtil;
 import hx.nine.eleven.thread.pool.executor.pool.ThreadPoolService;
+
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,27 +33,17 @@ public class CronJobTaskService extends ElevenScheduledTask {
     private static final Map<String, Class<?>> resultMap = new HashMap<>();
     private static final String threadGroupName = "cron-task";
 
-    static {
-        resultMap.put("id",String.class);
-        resultMap.put("name",String.class);
-        resultMap.put("status",String.class);
-        resultMap.put("cron",String.class);
-        resultMap.put("exe_statement",String.class);
-        resultMap.put("version",Long.class);
-        resultMap.put("create_time",String.class);
-        resultMap.put("update_time",String.class);
-        resultMap.put("task_status",Boolean.class);
-        resultMap.put("method",String.class);
-        resultMap.put("effective",Boolean.class);
-        resultMap.put("complete",String.class);
-    }
+    @Resource
+    private ScheduleSQL scheduleSQL;
 
     @Override
     public void runScheduleTask() {
         //执行数据库查询,获取可执行的定时任务清单列表
         List<Map<String,Object>> resultList = DomainOOPMapperFactory
-                .executeQuery(ScheduleSQL.TASK_QUERY_SQL, ScheduleValues.DO_QUERY_VALUES,resultMap);
-        List<ScheduleTaskEntity> taskEntityList = BeanMapUtil.listMapsToBeans(resultList,ScheduleTaskEntity.class);
+                .executeQuery(scheduleSQL.getScheduleSql(ScheduleValues.TASK_QUERY_SQL),
+                        scheduleSQL.getScheduleSqlValue(ScheduleValues.TASK_QUERY_SQL),resultMap);
+        ScheduleSQL scheduleSQL = ScheduleExe.getScheduleSQL();
+        List<? extends ScheduleTaskEntity> taskEntityList = BeanMapUtil.listMapsToBeans(resultList,scheduleSQL.getScheduleTaskEntity());
         runTask(taskEntityList);
     }
 
@@ -57,7 +51,7 @@ public class CronJobTaskService extends ElevenScheduledTask {
      * 执行任务，将满足条件的任务丢入线程池执行
      * @param taskEntityList 任务清单列表
      */
-    public void runTask(List<ScheduleTaskEntity> taskEntityList) {
+    public void runTask(List<? extends ScheduleTaskEntity> taskEntityList) {
         //没有满足条件的可执行任务
         if (ObjectUtils.isEmpty(taskEntityList)) {
             return;
@@ -81,10 +75,10 @@ public class CronJobTaskService extends ElevenScheduledTask {
             }
 
             p.setStatus(TaskProcessEnum.IN_PROCESS.getCode());
+            ScheduleSQL scheduleSQL = ScheduleExe.getScheduleSQL();
             long version = p.getVersion() + 1;
-            Object[] vslues = new Object[] {TaskProcessEnum.IN_PROCESS.getCode(), DateUtils.getTimeStampAsString(),
-                    version,p.getId(),p.getVersion()};
-            int count = DomainOOPMapperFactory.executeUpdate(ScheduleSQL.TASK_DO_UPDATE,vslues);
+            Object[] values = scheduleSQL.initScheduleValue(version,p.getId(),p.getVersion());
+            int count = DomainOOPMapperFactory.executeUpdate(scheduleSQL.getScheduleSql(ScheduleValues.TASK_DO_UPDATE),values);
             //---CronTask:定时任务已被其他服务执行，本服务跳过
             if (count != 1) {
                 continue;
