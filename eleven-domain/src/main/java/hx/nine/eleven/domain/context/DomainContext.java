@@ -59,6 +59,11 @@ public class DomainContext {
      */
     private OutputStream outputStream;
 
+    /**
+     * 用户主体数据
+     */
+    private Object principal;
+
     public DomainContext() {
         this.domainContext = new HashMap<>();
         this.contextId = UlidCreator.getUlid().toString();
@@ -232,6 +237,14 @@ public class DomainContext {
 
     public void setDomainServiceMethod(String domainServiceMethod) {
         this.domainServiceMethod = domainServiceMethod;
+    }
+
+    public Object getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(Object principal) {
+        this.principal = principal;
     }
 
     //    public HttpServletRequest getHttpServletRequest() {

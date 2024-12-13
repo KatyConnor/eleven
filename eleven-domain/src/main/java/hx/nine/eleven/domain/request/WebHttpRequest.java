@@ -51,7 +51,7 @@ public class WebHttpRequest implements Serializable {
 	private Boolean openFiber = false;
 
 	/**
-	 * 用户主题数据
+	 * 用户主体数据
 	 */
 	private Object principal;
 

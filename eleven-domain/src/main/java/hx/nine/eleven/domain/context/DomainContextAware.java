@@ -66,6 +66,7 @@ public class DomainContextAware {
 		if (!ObjectUtils.isEmpty(webHttpRequest.getFileUploadEntities())) {
 			domainContext.putDomainContext(WebHttpBodyConstant.FILE_UPLOAD, webHttpRequest.getFileUploadEntities());
 		}
+		domainContext.setPrincipal(webHttpRequest.getPrincipal());
 		domainContext.setInputStream(webHttpRequest.getInputStream());
 		HeaderForm headerForm = webHttpRequest.getRequestHeader();
 		String tradeCode = headerForm.getTradeCode();
