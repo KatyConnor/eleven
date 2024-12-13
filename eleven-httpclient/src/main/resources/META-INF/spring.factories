@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hx.http.client.config.HttpClientPoolAutoConfiguration
+hx.nine.eleven.http.client.config.HttpClientPoolAutoConfiguration

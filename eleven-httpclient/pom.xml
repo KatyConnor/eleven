@@ -2,11 +2,12 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.hx.nine.eleven.httpclient</groupId>
+  <groupId>hx.nine.eleven.httpclient</groupId>
   <artifactId>eleven-httpclient</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>eleven-httpclient</name>
 
   <properties>
@@ -21,16 +22,28 @@
     <jackson.version>2.11.0</jackson.version>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>hx.nine.eleven.dependencies</groupId>
+        <artifactId>eleven-dependencies</artifactId>
+        <version>1.0.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
-      <groupId>com.hx.nine.eleven.core</groupId>
+      <groupId>hx.nine.eleven.core</groupId>
       <artifactId>eleven-core</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>com.hx.nine.eleven.commons</groupId>
+      <groupId>hx.nine.eleven.commons</groupId>
       <artifactId>eleven-common-toolkit</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -76,16 +89,15 @@
       <version>4.1.31.Final</version>
     </dependency>
   </dependencies>
+
   <distributionManagement>
     <repository>
-      <id>maven-releases</id>
-      <name>maven-releases</name>
-      <url>http://10.187.67.132:8081/repository/maven-releases/</url>
+      <id>2334813-release-V2fReL</id>
+      <url>https://packages.aliyun.com/maven/repository/2334813-release-V2fReL</url>
     </repository>
     <snapshotRepository>
-      <id>maven-snapshots</id>
-      <name>maven-snapshots</name>
-      <url>http://10.187.67.132:8081/repository/maven-snapshots/</url>
+      <id>2334813-snapshot-o6H6fS</id>
+      <url>https://packages.aliyun.com/maven/repository/2334813-snapshot-o6H6fS</url>
     </snapshotRepository>
   </distributionManagement>
 
