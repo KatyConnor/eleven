@@ -45,7 +45,10 @@ public class BeanConvert {
         if (StringUtils.isNotEmpty(tradeCode)){
             classzz = DomainApplicationContainer.build().getClass(type + tradeCode);
             if (ObjectUtils.isEmpty(classzz)){
-                throw new RuntimeException(StringUtils.format("[{}]:主子交易没有找到对应的映射对象",tradeCode));
+                if (WebRouteParamsEnums.BODY_PARAM != WebRouteParamsEnums.getByName(type)){
+                    throw new RuntimeException(StringUtils.format("参数对象-[{}]--[{}]:主子交易没有找到对应的映射对象",type,tradeCode));
+                }
+                LOGGER.info("参数对象-[{}]--主子交易-[{}]，没有配置数据库[param]参数对象，如需要对数据库条件匹配操作，请设置[param]实体类",type,tradeCode);
             }
             instance = BeanUtils.newInstance(classzz);
             return BeanUtils.copyProperties(obj, instance);
