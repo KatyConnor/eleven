@@ -1,7 +1,12 @@
 package hx.nine.eleven.domain.obj.po;
 
+import com.esotericsoftware.reflectasm.FieldAccess;
+import com.esotericsoftware.reflectasm.MethodAccess;
+import com.github.f4b6a3.ulid.UlidCreator;
+import hx.nine.eleven.commons.utils.DateUtils;
 import hx.nine.eleven.commons.utils.ObjectUtils;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -10,7 +15,7 @@ import java.time.format.DateTimeFormatter;
  * @Author wml
  * @Date 2019-02-15
  */
-public class BasePO<E> implements Serializable {
+public abstract class BasePO<E> implements Serializable {
     // 公共信息部分
 //    @TableId
     private E id;
@@ -18,6 +23,18 @@ public class BasePO<E> implements Serializable {
     private String updateTime;
     private Long version;
     private Boolean effective;
+
+    public BasePO(){
+        String typeName = this.getClass().getTypeParameters()[0].getTypeName();
+        if ("String".equals(typeName)){
+            this.id = (E) UlidCreator.getUlid().toString();
+        }
+        this.createTime = DateUtils.getTimeStampAsString();
+        this.updateTime = DateUtils.getTimeStampAsString();
+        this.version = 1L;
+        this.effective = true;
+
+    }
 
     public E getId() {
         return id;
