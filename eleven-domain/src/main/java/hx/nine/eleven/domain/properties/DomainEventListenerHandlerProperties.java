@@ -67,6 +67,12 @@ public class DomainEventListenerHandlerProperties {
 	 */
 	private String loginSubTradeCode;
 
+	@JsonDeserialize(using = FieldStringToArraysDeserializer.class)
+	private String[] ignoreAuthTradeCode;
+
+	@JsonDeserialize(using = FieldStringToArraysDeserializer.class)
+	private String[] ignoreAuthSubTradeCode;
+
 	public Boolean getEnabled() {
 		return enabled;
 	}
@@ -161,5 +167,21 @@ public class DomainEventListenerHandlerProperties {
 
 	public void setLoginSubTradeCode(String loginSubTradeCode) {
 		this.loginSubTradeCode = loginSubTradeCode;
+	}
+
+	public String[] getIgnoreAuthTradeCode() {
+		return ignoreAuthTradeCode;
+	}
+
+	public void setIgnoreAuthTradeCode(String[] ignoreAuthTradeCode) {
+		this.ignoreAuthTradeCode = ignoreAuthTradeCode;
+	}
+
+	public String[] getIgnoreAuthSubTradeCode() {
+		return ignoreAuthSubTradeCode;
+	}
+
+	public void setIgnoreAuthSubTradeCode(String[] ignoreAuthSubTradeCode) {
+		this.ignoreAuthSubTradeCode = ignoreAuthSubTradeCode;
 	}
 }

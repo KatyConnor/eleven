@@ -24,6 +24,8 @@ import hx.nine.eleven.commons.entity.ValidationResultEntity;
 import hx.nine.eleven.commons.utils.Builder;
 import hx.nine.eleven.commons.utils.ValidationUtils;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,33 +60,38 @@ public class WebRoutorServiceHandler implements DomainRouter {
 		}
 		DomainEventListenerHandlerProperties properties = ElevenApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
 		if (!httpServletRequest.getAuthenticate()){
+			String[] ignoreAuthTradeCode = properties.getIgnoreAuthTradeCode();
+			String[] ignoreAuthSubTradeCode = properties.getIgnoreAuthSubTradeCode();
+			List<String> ignoreAuthTradeCodes =  ObjectUtils.isNotEmpty(ignoreAuthTradeCode)?Arrays.asList(ignoreAuthTradeCode): Collections.emptyList();
+			List<String> ignoreAuthSubTradeCodes = ObjectUtils.isNotEmpty(ignoreAuthSubTradeCode)?Arrays.asList(ignoreAuthSubTradeCode):Collections.emptyList();
 			String tradeCode = webHttpRequest.getRequestHeader().getTradeCode();
 			String subTradeCode = webHttpRequest.getRequestHeader().getSubTradeCode();
-			if (StringUtils.isEmpty(tradeCode)){
-				ResponseEntity res = ResponseEntity.build().failure().addMessage("主交易码不能为空");
-				httpServletResponse.send(res);
-				return;
-			}
-			if (!tradeCode.equals(StringUtils.valueOf(properties.getLoginTradeCode()))){
-				ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
-				httpServletResponse.send(res);
-				return;
-			}
+			if (!(ignoreAuthTradeCodes.contains(tradeCode) && ignoreAuthSubTradeCodes.contains(subTradeCode))){
+				if (StringUtils.isEmpty(tradeCode)){
+					ResponseEntity res = ResponseEntity.build().failure().addMessage("主交易码不能为空");
+					httpServletResponse.send(res);
+					return;
+				}
+				if (!tradeCode.equals(StringUtils.valueOf(properties.getLoginTradeCode()))){
+					ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
+					httpServletResponse.send(res);
+					return;
+				}
 
-			if (StringUtils.isNotEmpty(properties.getLoginSubTradeCode()) && StringUtils.isEmpty(subTradeCode)){
-				ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
-				httpServletResponse.send(res);
-				return;
-			}
+				if (StringUtils.isNotEmpty(properties.getLoginSubTradeCode()) && StringUtils.isEmpty(subTradeCode)){
+					ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
+					httpServletResponse.send(res);
+					return;
+				}
 
-			if (StringUtils.isNotEmpty(subTradeCode) &&
-					!subTradeCode.equals(StringUtils.valueOf(properties.getLoginSubTradeCode()))){
-				ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
-				httpServletResponse.send(res);
-				return;
+				if (StringUtils.isNotEmpty(subTradeCode) &&
+						!subTradeCode.equals(StringUtils.valueOf(properties.getLoginSubTradeCode()))){
+					ResponseEntity res = ResponseEntity.build().failure().addMessage("该用户没有权限，请登录后操作");
+					httpServletResponse.send(res);
+					return;
+				}
 			}
 		}
-
 		WebServletRoutor.build().doService(httpServletResponse,webHttpRequest);
 		HttpResponse response = httpServletResponse.httpResponse();
 		ResponseEntity responseEntity = (ResponseEntity)response.getBody();
