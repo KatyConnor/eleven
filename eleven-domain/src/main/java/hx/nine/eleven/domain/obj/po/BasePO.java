@@ -1,12 +1,12 @@
 package hx.nine.eleven.domain.obj.po;
 
-import com.esotericsoftware.reflectasm.FieldAccess;
-import com.esotericsoftware.reflectasm.MethodAccess;
 import com.github.f4b6a3.ulid.UlidCreator;
 import hx.nine.eleven.commons.utils.DateUtils;
 import hx.nine.eleven.commons.utils.ObjectUtils;
+import hx.nine.eleven.core.utils.ElevenLoggerFactory;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
  */
 public abstract class BasePO<E> implements Serializable {
     // 公共信息部分
-//    @TableId
     private E id;
     private String createTime;
     private String updateTime;
@@ -25,12 +24,16 @@ public abstract class BasePO<E> implements Serializable {
     private Boolean effective;
 
     public BasePO(){
-        String typeName = this.getClass().getTypeParameters()[0].getTypeName();
-        if ("String".equals(typeName)){
-            this.id = (E) UlidCreator.getUlid().toString();
+        try{
+            String typeName = ((ParameterizedTypeImpl)this.getClass().getGenericSuperclass()).getActualTypeArguments()[0].getTypeName();
+            if ("java.lang.String".equals(typeName)){
+                this.id = (E) UlidCreator.getUlid().toString();
+            }
+        }catch (Exception e){
+            ElevenLoggerFactory.build(this).error("生成[id]异常",e);
         }
-        this.createTime = DateUtils.getTimeStampAsString();
-        this.updateTime = DateUtils.getTimeStampAsString();
+        this.createTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         this.version = 1L;
         this.effective = true;
 
