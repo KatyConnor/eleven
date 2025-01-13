@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -168,7 +169,19 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 				} else {
 					if (isSub) {
 						Class<?> interfaces = (Class<?>) methodAccess.invoke(an,"interfaces");
-						DefaultElevenApplicationContext.build().addBean(interfaces.getName(),obj);
+						Object interfacesObj = ElevenApplicationContextAware.getBean(interfaces);
+						Set subObjList= ElevenApplicationContextAware.getSubTypesOfBeans(interfaces);
+						if (ObjectUtils.isNotEmpty(interfacesObj)){
+							Set subObjs = new HashSet<>();
+							subObjs.add(interfacesObj);
+							subObjs.add(obj);
+							DefaultElevenApplicationContext.build().addSubTypesOfBean(interfaces,subObjs);
+						}else if (ObjectUtils.isNotEmpty(subObjList)){
+							subObjList.add(obj);
+							DefaultElevenApplicationContext.build().addSubTypesOfBean(interfaces,subObjList);
+						}else {
+							DefaultElevenApplicationContext.build().addBean(interfaces.getName(),obj);
+						}
 					} else {
 						DefaultElevenApplicationContext.build().addBean(obj);
 					}
