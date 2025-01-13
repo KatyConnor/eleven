@@ -111,7 +111,8 @@ public class ApplicationContextContainer {
 			return  (T)obj;
 		}
 		for (Map.Entry entry : beanContainer.entrySet()){
-			if (entry.getValue().getClass().isInstance(tClass) || checkImplInterfaces(entry.getValue(),tClass)){
+			Class valueClass = entry.getValue().getClass();
+			if (valueClass.getSuperclass().getName().equals(tClass.getName()) || valueClass.isInstance(tClass) || checkImplInterfaces(entry.getValue(),tClass)){
 				obj = entry.getValue();
 			}
 		}
