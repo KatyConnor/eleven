@@ -30,7 +30,6 @@ import java.util.Map;
  */
 @SubComponent(interfaces = ElevenScheduledTask.class)
 public class CronJobTaskService extends ElevenScheduledTask {
-    private static final Map<String, Class<?>> resultMap = new HashMap<>();
     private static final String threadGroupName = "cron-task";
 
     @Resource
@@ -41,7 +40,7 @@ public class CronJobTaskService extends ElevenScheduledTask {
         //执行数据库查询,获取可执行的定时任务清单列表
         List<Map<String,Object>> resultList = DomainOOPMapperFactory
                 .executeQuery(scheduleSQL.getScheduleSql(ScheduleValues.TASK_QUERY_SQL),
-                        scheduleSQL.getScheduleSqlValue(ScheduleValues.TASK_QUERY_SQL),resultMap);
+                        scheduleSQL.getScheduleSqlValue(ScheduleValues.TASK_QUERY_SQL),scheduleSQL.resultMap());
         ScheduleSQL scheduleSQL = ScheduleExe.getScheduleSQL();
         List<? extends ScheduleTaskEntity> taskEntityList = BeanMapUtil.listMapsToBeans(resultList,scheduleSQL.getScheduleTaskEntity());
         runTask(taskEntityList);
