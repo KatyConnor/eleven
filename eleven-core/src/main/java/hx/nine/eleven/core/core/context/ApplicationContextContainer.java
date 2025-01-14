@@ -1,9 +1,11 @@
 package hx.nine.eleven.core.core.context;
 
+import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.core.env.ApplicationEnvConfigProperty;
 import hx.nine.eleven.core.exception.ApplicationInitialzerException;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -96,10 +98,21 @@ public class ApplicationContextContainer {
 	 * @return
 	 */
 	public <T> Set<T> getSubTypesOfBeans(Class<T> tClass) {
-		return (Set<T>) beanContainer.get(tClass.getName());
+		Object value = beanContainer.get(tClass.getName());
+		if (ObjectUtils.isNotEmpty(value) && value instanceof Set){
+			return (Set<T>)value;
+		}
+
+		if (ObjectUtils.isNotEmpty(value)){
+			Set<T> set = new HashSet<>();
+			set.add((T) value);
+			return set;
+		}
+		return null;
 	}
 
 	/**
+	 * @TODO issue：当一个接口或则类有多个实现或继承时，且都各自使用@conponent 或者@subconponet不指定interfaces时，并成功注册到了容器中，这此处可能是返回第一个被匹配的子类对象
 	 * 查找父类的继承类实例化对象
 	 * @param tClass
 	 * @param <T>

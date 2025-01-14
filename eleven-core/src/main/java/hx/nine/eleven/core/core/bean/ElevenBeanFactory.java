@@ -64,7 +64,7 @@ public class ElevenBeanFactory {
 
 		// 初始化之前检查时候有其他类依赖
 		if (!checkAfterBean(tClass)) {
-			LOGGER.info("Class=[{}] 有依赖类在容器Z红没有找到实例对象，[{}]放入缓存待依赖对象实例完成后再实例化"
+			LOGGER.info("Class=[{}] 有依赖类在容器中没有找到实例对象，[{}]放入缓存待依赖对象实例完成后再实例化"
 					, tClass.getSimpleName(), tClass.getSimpleName());
 			return null;
 		}
