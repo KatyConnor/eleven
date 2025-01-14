@@ -62,7 +62,7 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 		subComponentSet.forEach(c->{
 			if (annotationSet.contains(c)){
 				annotationSet.remove(c);
-				LOGGER.warn("{}类@SubComponent注解等效@Component注解，删除@Component逻辑实例，避免重复创建bean对象");
+				LOGGER.warn("{}类@SubComponent注解等效@Component注解，删除@Component逻辑实例，避免重复创建bean对象",c.getName());
 			}
 		});
 
@@ -130,8 +130,12 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 			while (bean != null) {
 				Field field = bean.getField();
 				Object obj = ElevenApplicationContextAware.getBean(bean.getObj());
-				field.setAccessible(true);
-				field.set(obj, ElevenApplicationContextAware.getBean(field.getType()));
+				if (ObjectUtils.isNotEmpty(obj)){
+					field.setAccessible(true);
+					field.set(obj, ElevenApplicationContextAware.getBean(field.getType()));
+				}else {
+					LOGGER.error("[{}]对象再容器中没找到，请检查重启服务，避免运行中报 NullPointerException 异常",bean.getObj());
+				}
 				resourceBeansQueue.remove(bean);
 				bean = resourceBeansQueue.peek();
 			}
@@ -261,7 +265,7 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 				fieldObj = ObjectUtils.isEmpty(fieldTypeClass.getAnnotation(ConfigurationPropertiesBind.class))?
 						ElevenApplicationContextAware.getBean(fieldTypeClass): ElevenApplicationContextAware.getProperties(fieldTypeClass);
 				if (fieldObj == null) {
-					BeanResourceEntity resourceEntity = new BeanResourceEntity(field, obj.getClass().getName());
+					BeanResourceEntity resourceEntity = new BeanResourceEntity(field, isSub?bean.getSuperclass().getName():bean.getName());
 					ConcurrentLinkedQueue<BeanResourceEntity> resourceBeansQueue = ElevenApplicationContextAware.getBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN);
 					if (CollectionUtils.isEmpty(resourceBeansQueue)) {
 						resourceBeansQueue = new ConcurrentLinkedQueue();
