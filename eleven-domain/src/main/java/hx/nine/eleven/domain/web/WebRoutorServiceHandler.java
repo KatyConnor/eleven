@@ -12,8 +12,11 @@ import hx.nine.eleven.core.web.http.HttpResponse;
 import hx.nine.eleven.core.web.http.HttpServletRequest;
 import hx.nine.eleven.core.web.http.HttpServletResponse;
 import hx.nine.eleven.domain.constant.WebHttpBodyConstant;
+import hx.nine.eleven.domain.conver.BeanConvert;
+import hx.nine.eleven.domain.enums.WebRouteParamsEnums;
 import hx.nine.eleven.domain.exception.DomainOperatorException;
 import hx.nine.eleven.domain.exception.ParamsValidationExcetion;
+import hx.nine.eleven.domain.obj.form.HeaderForm;
 import hx.nine.eleven.domain.obj.vo.ErrorVO;
 import hx.nine.eleven.domain.properties.DomainEventListenerHandlerProperties;
 import hx.nine.eleven.domain.request.WebHttpRequest;
@@ -43,7 +46,12 @@ public class WebRoutorServiceHandler implements DomainRouter {
 		List<FileUploadEntity> list = httpServletRequest.getFileUploadEntities();
 		checkRequestParams(httpServletResponse,body);
 		WebHttpRequest webHttpRequest = BeanMapUtil.mapToBean(body,WebHttpRequest.class);
-		if (webHttpRequest.getRequestBody() == null){
+		if (ObjectUtils.isNotEmpty(webHttpRequest.getFileUploadEntities())){
+			String headerCode = String.valueOf(body.get(WebHttpBodyConstant.HEADER_CODE));
+			HeaderForm header = (HeaderForm)BeanConvert.convert(body, null, headerCode, WebRouteParamsEnums.HEADER_FORM.getName());
+			webHttpRequest.setRequestHeader(header);
+			webHttpRequest.setRequestBody(body);
+		}else if (webHttpRequest.getRequestBody() == null){
 			webHttpRequest.setRequestBody(body.get(WebHttpBodyConstant.REQUEST_BODY));
 		}
 		String token = httpServletRequest.getToken();
