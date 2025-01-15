@@ -43,14 +43,16 @@ public class WebRoutorServiceHandler implements DomainRouter {
 	@Override
 	public void route(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		Map<String,Object> body = httpServletRequest.getBody();
-		List<FileUploadEntity> list = httpServletRequest.getFileUploadEntities();
+		List<FileUploadEntity> fileUploadEntities = httpServletRequest.getFileUploadEntities();
 		checkRequestParams(httpServletResponse,body);
 		WebHttpRequest webHttpRequest = BeanMapUtil.mapToBean(body,WebHttpRequest.class);
-		if (ObjectUtils.isNotEmpty(webHttpRequest.getFileUploadEntities())){
+		if (ObjectUtils.isNotEmpty(fileUploadEntities)){
 			String headerCode = String.valueOf(body.get(WebHttpBodyConstant.HEADER_CODE));
 			HeaderForm header = (HeaderForm)BeanConvert.convert(body, null, headerCode, WebRouteParamsEnums.HEADER_FORM.getName());
 			webHttpRequest.setRequestHeader(header);
 			webHttpRequest.setRequestBody(body);
+			//文件上传,如果没有指定body,则赋值Optional.empty()给requestBody,跳过NotNull验证
+			webHttpRequest.setFileUploadEntities(fileUploadEntities);
 		}else if (webHttpRequest.getRequestBody() == null){
 			webHttpRequest.setRequestBody(body.get(WebHttpBodyConstant.REQUEST_BODY));
 		}
@@ -62,10 +64,7 @@ public class WebRoutorServiceHandler implements DomainRouter {
 		}
 
 		validation(httpServletResponse,webHttpRequest);
-		if (CollectionUtils.isNotEmpty(list)){
-			//文件上传,如果没有指定body,则赋值Optional.empty()给requestBody,跳过NotNull验证
-			webHttpRequest.setFileUploadEntities(list);
-		}
+
 		DomainEventListenerHandlerProperties properties = ElevenApplicationContextAware.getProperties(DomainEventListenerHandlerProperties.class);
 		if (!httpServletRequest.getAuthenticate()){
 			String[] ignoreAuthTradeCode = properties.getIgnoreAuthTradeCode();
