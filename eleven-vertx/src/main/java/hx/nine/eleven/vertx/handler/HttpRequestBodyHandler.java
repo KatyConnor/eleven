@@ -103,6 +103,12 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			if(ObjectUtils.isEmpty(res)){
 				res = resp.httpResponse();
 			}
+			VertxHttpResponseEntity responseEntity = new VertxHttpResponseEntity();
+			Map<String, Object> jsonObject = BeanMapUtil.beanToMap(res.getBody());
+			Object httpResponseBody = jsonObject.get(ConstantType.HTTP_RESPONSE_BODY);
+			Map<String, Object> responseBodyMap = BeanMapUtil.beanToMap(httpResponseBody);
+			responseEntity.setResponseHeader(responseBodyMap.get(ConstantType.RESPONSE_HEADER_ENTITY))
+					.setResponseBody(responseBodyMap.get(ConstantType.RESPONSE_BODY_ENTITY));
 			res = res != null ? res : HttpResponse.build()
 					.setCode(DefaultVertxProperType.RESPONSE_FAIL_CODE)
 					.setMessage(DefaultVertxProperType.RESPONSE_FAIL_MSG);
