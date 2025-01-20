@@ -106,6 +106,8 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			res = res != null ? res : HttpResponse.build()
 					.setCode(DefaultVertxProperType.RESPONSE_FAIL_CODE)
 					.setMessage(DefaultVertxProperType.RESPONSE_FAIL_MSG);
+			res.setCode(DefaultVertxProperType.RESPONSE_FAIL_CODE)
+					.setMessage(DefaultVertxProperType.RESPONSE_FAIL_MSG);
 			context.put(ConstantType.RESPONSE_BODY, res);
 			throw new RuntimeException(ex);
 		}
