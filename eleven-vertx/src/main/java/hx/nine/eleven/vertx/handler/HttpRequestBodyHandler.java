@@ -2,6 +2,7 @@ package hx.nine.eleven.vertx.handler;
 
 import hx.nine.eleven.commons.utils.BeanMapUtil;
 import hx.nine.eleven.commons.utils.JSONObjectMapper;
+import hx.nine.eleven.commons.utils.ObjectUtils;
 import hx.nine.eleven.commons.utils.StringUtils;
 import hx.nine.eleven.core.constant.ConstantType;
 import hx.nine.eleven.core.constant.DefaultProperType;
@@ -36,11 +37,11 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 	@Override
 	public void handle(RoutingContext context) {
 		HttpServlet httpServlet = ElevenApplicationContextAware.getBean(HttpServlet.class);
+		HttpServletRequest req = HttpServletRequest.build();
+		HttpServletResponse resp = HttpServletResponse.build();
 		HttpResponse res = null;
 		try {
 			MDCThreadUtil.wrap();
-			HttpServletRequest req = HttpServletRequest.build();
-			HttpServletResponse resp = HttpServletResponse.build();
 			req.setAttribute(DefaultVertxProperType.VERTX_CONTEXT, context);
 			MultiMap multiMap = context.request().headers();
 			if (multiMap != null && multiMap.size() > 0) {
@@ -99,6 +100,9 @@ public class HttpRequestBodyHandler implements Handler<RoutingContext> {
 			}
 			MDCThreadUtil.clear();
 		} catch (Throwable ex) {
+			if(ObjectUtils.isEmpty(res)){
+				res = resp.httpResponse();
+			}
 			res = res != null ? res : HttpResponse.build()
 					.setCode(DefaultVertxProperType.RESPONSE_FAIL_CODE)
 					.setMessage(DefaultVertxProperType.RESPONSE_FAIL_MSG);

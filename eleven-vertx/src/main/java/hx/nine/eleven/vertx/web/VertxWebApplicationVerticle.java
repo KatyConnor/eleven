@@ -55,7 +55,7 @@ public class VertxWebApplicationVerticle extends AbstractVerticle {
 		vertx.createHttpServer().requestHandler(router).listen(elevenBootApplicationProperties.getPort(), http -> {
 			if (http.succeeded()) {
 				startPromise.complete();
-				LOGGER.info("-----------------HTTP server started on port" + elevenBootApplicationProperties.getPort());
+				LOGGER.info("-----------------HTTP server started on port: " + elevenBootApplicationProperties.getPort());
 			} else {
 				startPromise.fail(http.cause());
 			}
