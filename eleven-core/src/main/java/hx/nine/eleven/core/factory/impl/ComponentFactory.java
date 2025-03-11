@@ -58,6 +58,14 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 	public void loadAnnotations(Reflections reflections) throws Exception {
 		Set<Class<?>> annotationSet = reflections.getTypesAnnotatedWith(Component.class);
 		Set<Class<?>> subComponentSet = reflections.getTypesAnnotatedWith(SubComponent.class);
+		// 重复赛选
+		subComponentSet.forEach(c->{
+			if (annotationSet.contains(c)){
+				annotationSet.remove(c);
+				LOGGER.warn("{}类@SubComponent注解等效@Component注解，删除@Component逻辑实例，避免重复创建bean对象",c.getName());
+			}
+		});
+
 		initBean(subComponentSet, true);  // 初始化子类，存储主键为父类
 		initBean(annotationSet, false);
 		// 初始化有依赖的类
@@ -122,8 +130,12 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 			while (bean != null) {
 				Field field = bean.getField();
 				Object obj = ElevenApplicationContextAware.getBean(bean.getObj());
-				field.setAccessible(true);
-				field.set(obj, ElevenApplicationContextAware.getBean(field.getType()));
+				if (ObjectUtils.isNotEmpty(obj)){
+					field.setAccessible(true);
+					field.set(obj, ElevenApplicationContextAware.getBean(field.getType()));
+				}else {
+					LOGGER.error("[{}]对象再容器中没找到，请检查重启服务，避免运行中报 NullPointerException 异常",bean.getObj());
+				}
 				resourceBeansQueue.remove(bean);
 				bean = resourceBeansQueue.peek();
 			}
@@ -169,18 +181,22 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 				} else {
 					if (isSub) {
 						Class<?> interfaces = (Class<?>) methodAccess.invoke(an,"interfaces");
-						Object interfacesObj = ElevenApplicationContextAware.getBean(interfaces);
-						Set subObjList= ElevenApplicationContextAware.getSubTypesOfBeans(interfaces);
-						if (ObjectUtils.isNotEmpty(interfacesObj)){
-							Set subObjs = new HashSet<>();
-							subObjs.add(interfacesObj);
-							subObjs.add(obj);
-							DefaultElevenApplicationContext.build().addSubTypesOfBean(interfaces,subObjs);
-						}else if (ObjectUtils.isNotEmpty(subObjList)){
-							subObjList.add(obj);
-							DefaultElevenApplicationContext.build().addSubTypesOfBean(interfaces,subObjList);
+						if (ObjectUtils.isEmpty(interfaces)){
+							DefaultElevenApplicationContext.build().addBean(obj);
 						}else {
-							DefaultElevenApplicationContext.build().addBean(interfaces.getName(),obj);
+							Object interfacesObj = ElevenApplicationContextAware.getBean(interfaces);
+							Set subObjList= ElevenApplicationContextAware.getSubTypesOfBeans(interfaces);
+							if (ObjectUtils.isNotEmpty(interfacesObj)){
+								Set subObjs = new HashSet<>();
+								subObjs.add(interfacesObj);
+								subObjs.add(obj);
+								DefaultElevenApplicationContext.build().addSubTypesOfBean(interfaces,subObjs);
+							}else if (ObjectUtils.isNotEmpty(subObjList)){
+								subObjList.add(obj);
+								DefaultElevenApplicationContext.build().addSubTypesOfBean(interfaces,subObjList);
+							}else {
+								DefaultElevenApplicationContext.build().addBean(interfaces.getName(),obj);
+							}
 						}
 					} else {
 						DefaultElevenApplicationContext.build().addBean(obj);
@@ -249,7 +265,7 @@ public class ComponentFactory implements ApplicationAnnotationFactory {
 				fieldObj = ObjectUtils.isEmpty(fieldTypeClass.getAnnotation(ConfigurationPropertiesBind.class))?
 						ElevenApplicationContextAware.getBean(fieldTypeClass): ElevenApplicationContextAware.getProperties(fieldTypeClass);
 				if (fieldObj == null) {
-					BeanResourceEntity resourceEntity = new BeanResourceEntity(field, obj.getClass().getName());
+					BeanResourceEntity resourceEntity = new BeanResourceEntity(field, isSub?bean.getSuperclass().getName():bean.getName());
 					ConcurrentLinkedQueue<BeanResourceEntity> resourceBeansQueue = ElevenApplicationContextAware.getBean(ConstantType.RESOURCE_BEAN_ON_AFTER_BEAN);
 					if (CollectionUtils.isEmpty(resourceBeansQueue)) {
 						resourceBeansQueue = new ConcurrentLinkedQueue();

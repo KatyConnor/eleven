@@ -53,19 +53,19 @@ public class DomainServiceRouteSupport {
 		Class classzz = obj.getClass();
 		Method[] methods = classzz.getDeclaredMethods();
 		MethodAccess methodAccess = MethodAccess.get(classzz);
-		String mapperFactoryMethod = null;
-		String domainServiceMethod = null;
-		if (ObjectUtils.isNotEmpty(domainOrMapperMethod)) {
-			if (domainOrMapperMethod.startsWith(WebHttpBodyConstant.MAPPER_FACTORY_METHOD)){
-				mapperFactoryMethod = domainOrMapperMethod;
-			}
-			if (domainOrMapperMethod.startsWith(WebHttpBodyConstant.DOMAIN_SERVICE_METHOD)){
-				domainServiceMethod = domainOrMapperMethod;
-			}
-		}
-		String methodName = checkMethodName(methods, isMapper, subTradeCode, isMapper?mapperFactoryMethod:domainServiceMethod);
+//		String mapperFactoryMethod = null;
+//		String domainServiceMethod = null;
+//		if (ObjectUtils.isNotEmpty(domainOrMapperMethod)) {
+//			if (domainOrMapperMethod.startsWith(WebHttpBodyConstant.MAPPER_FACTORY_METHOD)){
+//				mapperFactoryMethod = domainOrMapperMethod;
+//			}
+//			if (domainOrMapperMethod.startsWith(WebHttpBodyConstant.DOMAIN_SERVICE_METHOD)){
+//				domainServiceMethod = domainOrMapperMethod;
+//			}
+//		}
+		String methodName = checkMethodName(methods, isMapper, subTradeCode, domainOrMapperMethod);
 		//使用完毕清空当前mapperFactoryMethod
-		if (ObjectUtils.isNotEmpty(mapperFactoryMethod)) {
+		if (ObjectUtils.isNotEmpty(domainOrMapperMethod)) {
 			DomainContextAware.build().getDomainContext().setMapperFactoryMethod(null);
 		}
 		// 如果为空，返回null, 走默认方法调用
@@ -87,6 +87,13 @@ public class DomainServiceRouteSupport {
 		return getMethodName(isMapper,subTradeCode,methodMap);
 	}
 
+	/**
+	 * 此处之所以采用list来缓存匹配的可执行方法，主要因为用户在配置时，可能存在配置重复，此时就需要抛出异常，终止程序继续执行
+	 * @param method               当前检测方法
+	 * @param subTradeCode         方法子交易码
+	 * @param mapperFactoryMethod  方法制定的当前可执行编码
+	 * @param methodMap            存储匹配满足条件的方法
+	 */
 	private static void checkMapperFactoryMethod(Method method, String subTradeCode,String mapperFactoryMethod,
 												   Map<String, List<RouterMethodEntity>> methodMap) {
 		MapperMethod mapperMethod = method.getAnnotation(MapperMethod.class);
@@ -141,14 +148,14 @@ public class DomainServiceRouteSupport {
 		if (isMapper) {
 			List<RouterMethodEntity> routerMethodEntityList = methodMap.get(MAPPER_METHOD + subTradeCode);
 			if (ObjectUtils.isEmpty(routerMethodEntityList) || routerMethodEntityList.size() > 1){
-				throw new RuntimeException("没有匹配到满足条件的MapperFactory可执行方法");
+				throw new RuntimeException(String.format("没有匹配到满足条件的MapperFactory可执行方法，满足条件的[%s]方法有[%d]个",MAPPER_METHOD + subTradeCode,routerMethodEntityList.size()));
 			}
 			return routerMethodEntityList.get(0).getMethodName();
 		}
 
 		List<RouterMethodEntity> routerMethodEntityList = methodMap.get(DOMAIN_SUPPORT + subTradeCode);
 		if (ObjectUtils.isEmpty(routerMethodEntityList) || routerMethodEntityList.size() > 1){
-			throw new RuntimeException("没有匹配到满足条件的DomainService可执行方法");
+			throw new RuntimeException(String.format("没有匹配到满足条件的DomainService可执行方法，满足条件的[%s]方法有[%d]个",DOMAIN_SUPPORT + subTradeCode,routerMethodEntityList.size()));
 		}
 		return routerMethodEntityList.get(0).getMethodName();
 	}

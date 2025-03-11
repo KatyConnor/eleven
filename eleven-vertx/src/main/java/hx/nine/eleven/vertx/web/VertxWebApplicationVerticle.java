@@ -55,52 +55,58 @@ public class VertxWebApplicationVerticle extends AbstractVerticle {
 		vertx.createHttpServer().requestHandler(router).listen(elevenBootApplicationProperties.getPort(), http -> {
 			if (http.succeeded()) {
 				startPromise.complete();
-				LOGGER.info("-----------------HTTP server started on port" + elevenBootApplicationProperties.getPort());
+				LOGGER.info("-----------------HTTP server started on port: " + elevenBootApplicationProperties.getPort());
 			} else {
 				startPromise.fail(http.cause());
 			}
 		});
 
-		Set<ElevenScheduledTask> scheduledTask = ElevenApplicationContextAware.getSubTypesOfBeans(ElevenScheduledTask.class);
-		if (ObjectUtils.isNotEmpty(scheduledTask)) {
-			vertx.setPeriodic(30000, 1000, id -> {
-				if (ObjectUtils.isNotEmpty(scheduledTask)) {
-					scheduledTask.forEach(s -> {
-						vertx.executeBlocking(future -> {
-							MDCThreadUtil.wrap();
-							s.runScheduleTask();
-							future.complete();
-							MDCThreadUtil.clear();
-						}, true, ctx -> {
-							if (ctx.succeeded()) {
-
-							} else if (ctx.failed()) {
-
-							}
-						});
-					});
-				}
-			});
+		try{
+			Set<ElevenScheduledTask> scheduledTask = ElevenApplicationContextAware.getSubTypesOfBeans(ElevenScheduledTask.class);
 			Set<ElevenThreadTask> threadTask = ElevenApplicationContextAware.getSubTypesOfBeans(ElevenThreadTask.class);
-			vertx.setPeriodic(30000, 1000, id -> {
-				if (ObjectUtils.isNotEmpty(threadTask)) {
-					threadTask.forEach(s -> {
-						vertx.executeBlocking(future -> {
-							MDCThreadUtil.wrap();
-							s.run();
-							future.complete();
-							MDCThreadUtil.clear();
-						}, true, ctx -> {
-							if (ctx.succeeded()) {
+			if (ObjectUtils.isNotEmpty(scheduledTask)) {
+				vertx.setPeriodic(30000, 1000, id -> {
+					if (ObjectUtils.isNotEmpty(scheduledTask)) {
+						scheduledTask.forEach(s -> {
+							vertx.executeBlocking(future -> {
+								MDCThreadUtil.wrap();
+								s.runScheduleTask();
+								future.complete();
+								MDCThreadUtil.clear();
+							}, true, ctx -> {
+								if (ctx.succeeded()) {
 
-							} else if (ctx.failed()) {
+								} else if (ctx.failed()) {
 
-							}
+								}
+							});
 						});
-					});
+					}
+				});
+			}
+			if (ObjectUtils.isNotEmpty(threadTask)) {
+				vertx.setPeriodic(30000, 1000, id -> {
+					if (ObjectUtils.isNotEmpty(threadTask)) {
+						threadTask.forEach(s -> {
+							vertx.executeBlocking(future -> {
+								MDCThreadUtil.wrap();
+								s.run();
+								future.complete();
+								MDCThreadUtil.clear();
+							}, true, ctx -> {
+								if (ctx.succeeded()) {
 
-				}
-			});
+								} else if (ctx.failed()) {
+
+								}
+							});
+						});
+
+					}
+				});
+			}
+		}catch (Exception e){
+			LOGGER.error("启动定时任务异常");
 		}
 
 		fs = vertx.fileSystem();

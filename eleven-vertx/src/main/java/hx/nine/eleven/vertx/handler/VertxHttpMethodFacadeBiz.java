@@ -133,7 +133,7 @@ public class VertxHttpMethodFacadeBiz implements HttpMethodFacade {
 				ElevenLoggerFactory.build(this).error("request body is null,or Request has already been read");
 			}
 		} else {
-			jsonObject = bodyBuffer.toJsonObject();
+			jsonObject = StringUtils.isEmpty(bodyBuffer)?JsonObject.of():bodyBuffer.toJsonObject();
 		}
 		// content-type:multipart/form-data,且可能存在文件处理
 		initMultipartHttp(jsonObject,httpServletRequest,context);
