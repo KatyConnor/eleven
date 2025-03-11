@@ -1,6 +1,8 @@
 package hx.nine.eleven.commons.utils;
 
+import hx.nine.eleven.commons.annotation.BeanField;
 import hx.nine.eleven.commons.annotation.FieldList;
+import hx.nine.eleven.commons.annotation.FieldMapper;
 import hx.nine.eleven.commons.annotation.FieldTypeConvert;
 import hx.nine.eleven.commons.entity.BeanMappingEntity;
 import hx.nine.eleven.commons.enums.FundamentalDataTypeEnums;
@@ -9,6 +11,7 @@ import hx.nine.eleven.commons.function.IAction;
 import hx.nine.eleven.commons.json.convert.FieldConvert;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.MethodAccess;
+import hx.nine.eleven.commons.json.convert.ObjectConvert;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 import org.slf4j.Logger;
@@ -140,6 +143,33 @@ public class BeanUtils {
         T instance = newInstance(target);
         return setField(source, instance);
     }
+
+    /**
+     *
+     * @param source
+     * @param target
+     * @param <S>
+     * @param <T>
+     * @return
+     */
+    public static <S, T> T copyBean(S source, Class<T> target) {
+        T instance = newInstance(target);
+        return copyField(source, instance);
+    }
+
+    /**
+     *
+     * @param source
+     * @param target
+     * @param <S>
+     * @param <T>
+     * @return
+     */
+    public static <S, T> T copyBean(S source, T target) {
+        return copyField(source, target);
+    }
+
+
 
     /**
      * 将一个对象转换成另一个对象
@@ -293,6 +323,73 @@ public class BeanUtils {
         return null;
     }
 
+    private static <T, S> T copyField(S source, T instance){
+        if (ObjectUtils.isEmpty(source)) {
+            return instance;
+        }
+
+        Map sourceMap = source instanceof Map ? (Map) source : BeanMap.create(source);
+        BeanMap beanMap = BeanMap.create(instance);
+
+        Map<String, Field> fieldMap = new HashMap<>();//存储目标对象的所有字段缓存
+        Map<String, Field> fieldMapping = new HashMap<>();//目标对象属性字段添加 @FieldList 注解缓存
+        Field[] fields = instance.getClass().getDeclaredFields();
+        for (Field field : fields){
+            fieldMap.put(field.getName(),field);
+            FieldMapper fieldMapper = field.getAnnotation(FieldMapper.class);
+            if (ObjectUtils.isNotEmpty(fieldMapper)){
+                fieldMapping.put(fieldMapper.name(),field);
+            }
+        }
+
+        sourceMap.forEach((k, v) -> {
+            // 非空值才进行复制
+            if (ObjectUtils.isNotEmpty(v)) {
+                if (beanMap.containsKey(k) || beanMap.containsKey(StringUtils.convertFirstUpperCase(k.toString()))) {
+                    if (v.getClass().getName().equals(beanMap.getPropertyType(k.toString()).getName())) {
+                        beanMap.put(k, v);
+                    } else {
+                        Field field = fieldMap.get(k.toString());
+                        if (ObjectUtils.isNotEmpty(field)) {
+                            BeanField beanField = field.getAnnotation(BeanField.class);
+                            if (ObjectUtils.isEmpty(beanField)) {
+                                LOGGER.info("字段[{}]源对象和目标对象类型不一致，源对象[{}]中类型[{}],目标对象[{}]类型[{}]",
+                                        k, source.getClass().getName(), v.getClass().getName(),
+                                        instance.getClass().getName(), beanMap.getPropertyType(k.toString()).getName());
+                            } else {
+                                ObjectConvert objectConvert = newInstance(beanField.using());
+                                try {
+                                    Object value = objectConvert.convert(v);
+                                    beanMap.put(k, value);
+                                } catch (Exception e) {
+                                    LOGGER.error(StringUtils.format("属性[{}]执行[{}]转换异常", k.toString(), objectConvert.getClass().getName()), e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }else {
+                Field field = fieldMapping.get(k.toString());
+                String fieldName = field.getName();
+                if (v.getClass().getName().equals(beanMap.getPropertyType(k.toString()).getName())){
+                    beanMap.put(k,v);
+                }else {
+                    FieldMapper fieldMapper = field.getAnnotation(FieldMapper.class);
+                    if (ObjectUtils.isNotEmpty(fieldMapper)){
+                        ObjectConvert objectConvert = newInstance(fieldMapper.using());
+                        try{
+                            Object value = objectConvert.convert(v);
+                            beanMap.put(k,value);
+                        }catch (Exception e){
+                            LOGGER.error(StringUtils.format("属性[{}]执行[{}]转换异常",k.toString(),objectConvert.getClass().getName()),e);
+                        }
+                    }
+                }
+            }
+        });
+        return (T) beanMap.getBean();
+    }
+
     /**
      *
      * @param beanMap
@@ -440,7 +537,7 @@ public class BeanUtils {
      * @param targetFieldSetMethod       目标对象的所有 setter方法缓存
      * @param <T>
      */
-    public static <T> void findFieldTypeClass(Class<T> beanClass, Map<String, Class> fieldAnnotationClass,
+    private static <T> void findFieldTypeClass(Class<T> beanClass, Map<String, Class> fieldAnnotationClass,
                                               Map<String, Field> targetField, Map<String, Boolean> targetFieldSetMethod) {
 
         Field[] fields = beanClass.getDeclaredFields();

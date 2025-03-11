@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>hx.nine.eleven.commons</groupId>
-    <artifactId>eleven-common-toolkit</artifactId>
+    <artifactId>eleven-toolkit</artifactId>
     <version>1.0.0</version>
-    <name>eleven-common-toolkit</name>
+    <name>eleven-toolkit</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
