@@ -148,7 +148,9 @@ public class FileUploadEntity {
 
 	public FileUploadEntity setFileName(String fileName) {
 		this.fileName = fileName;
-		this.fileFormat = this.fileName.split(".")[1];
+		if (fileName.indexOf(".") != -1){
+			this.fileFormat = fileName.split("\\.")[1];
+		}
 		return this;
 	}
 
